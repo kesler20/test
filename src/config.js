@@ -2,18 +2,19 @@ import sha256 from "crypto-js/sha256";
 import hmacSHA512 from "crypto-js/hmac-sha512";
 import Base64 from "crypto-js/enc-base64";
 // the endpoint can be found in the settings
+
+const mqtt = require("mqtt");
+export const mqttClient = new mqtt.MQTTClient();
 class P4 {
   sign = function (key, msg) {
     const hashDigest = sha256(msg);
-    const hmacDigest = Base64.stringify(
-      hmacSHA512(hashDigest, key)
-    );
-    return hmacDigest
+    const hmacDigest = Base64.stringify(hmacSHA512(hashDigest, key));
+    return hmacDigest;
   };
 
   sha256 = function (msg) {
     const hash = sha256(msg);
-    return Base64.stringify(hash)
+    return Base64.stringify(hash);
   };
 
   getSignatureKey = function (key, dateStamp, regionName, serviceName) {
@@ -59,3 +60,5 @@ export default function getEndpoint() {
     );
   return `wss://${IOT_ENDPOINT}/mqtt?${qs}`;
 }
+
+

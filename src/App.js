@@ -5,7 +5,7 @@ import { Amplify, Auth } from "aws-amplify";
 import awsExports from "./aws-exports"; //Some tutorials suggest awsconfig instead
 import Iot from "./components/Iot";
 import { withAuthenticator, Button, defaultTheme } from "@aws-amplify/ui-react";
-import MQTTClient from "./components/mqtt";
+import MqttClient from "./components/mqtt";
 
 
 Amplify.configure(awsExports); //some configure using awsconfig rather than awsExports
@@ -67,7 +67,7 @@ function App() {
     <div>
       <Button theme={defaultTheme}>Sign Out</Button>
       <Iot />
-      <MQTTClient />
+      <MqttClient />
     </div>
   );
 }
