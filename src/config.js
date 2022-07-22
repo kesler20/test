@@ -1,26 +1,26 @@
-import sha256 from 'crypto-js/sha256';
-import hmacSHA512 from 'crypto-js/hmac-sha512';
-import Base64 from 'crypto-js/enc-base64';
-
-const hashDigest = sha256(nonce + message);
-const hmacDigest = Base64.stringify(hmacSHA512(path + hashDigest, privateKey));
-
+import sha256 from "crypto-js/sha256";
+import hmacSHA512 from "crypto-js/hmac-sha512";
+import Base64 from "crypto-js/enc-base64";
 // the endpoint can be found in the settings
 class P4 {
   sign = function (key, msg) {
-    const hash = CryptoJS.HmacSHA256(msg, key);
-    return hash.toString(CryptoJS.enc.Hex);
+    const hashDigest = sha256(msg);
+    const hmacDigest = Base64.stringify(
+      hmacSHA512(hashDigest, key)
+    );
+    return hmacDigest
   };
 
   sha256 = function (msg) {
-    const hash = CryptoJS.SHA256(msg);
-    return hash.toString(CryptoJS.enc.Hex);
+    const hash = sha256(msg);
+    return Base64.stringify(hash)
   };
+
   getSignatureKey = function (key, dateStamp, regionName, serviceName) {
-    const kDate = CryptoJS.HmacSHA256(dateStamp, "AWS4" + key);
-    const kRegion = CryptoJS.HmacSHA256(regionName, kDate);
-    const kService = CryptoJS.HmacSHA256(serviceName, kRegion);
-    const kSigning = CryptoJS.HmacSHA256("aws4_request", kService);
+    const kDate = sha256(dateStamp, "AWS4" + key);
+    const kRegion = sha256(regionName, kDate);
+    const kService = sha256(serviceName, kRegion);
+    const kSigning = sha256("aws4_request", kService);
     return kSigning;
   };
 }
@@ -58,4 +58,4 @@ export default function getEndpoint() {
       `AWS4-HMAC-SHA256\n${fdt}\n${scope}\n${p4.sha256(req)}`
     );
   return `wss://${IOT_ENDPOINT}/mqtt?${qs}`;
-};
+}
