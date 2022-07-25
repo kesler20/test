@@ -1,292 +1,251 @@
-import Plot from "react-plotly.js";
-import React, { Component } from "react";
+import React from "react";
 import { Button } from "@material-ui/core";
+import client, { check } from "./mqttProtocol";
+import { useEffect, useState } from "react";
 
-// client.onConnectionLost = function (responseObject) {
-//   console.log("Connection Lost: " + responseObject.errorMessage);
-// };
+const plotly = window.Plotly;
 
-// const onConnect = () => {
-//   console.log("Connected!");
-//   client.subscribe("pump/pressure");
-// };
+let layout = {
+  title: "Random Number Streams",
+  yaxis: {
+    title: "Value",
+    range: [900, 1150],
+    titlefont: {
+      family: "Arial, sans-serif",
+      size: 18,
+      color: "black",
+    },
+  },
+  xaxis: {
+    title: "Random Number ID",
+    titlefont: {
+      family: "Arial, sans-serif",
+      size: 18,
+      color: "black",
+    },
+  },
+};
 
-// client.connect({
-//   onSuccess: onConnect,
-// });
+const getData = (data) => {
+  try {
+    return [
+      data["trend_1"],
+      data["total_1"],
+      data["trend_2"],
+      data["total_2"],
+      data["x_value"],
+    ];
+  } catch (e) {
+    console.log(e);
+    return [0, 0, 0, 0];
+  }
+};
 
-// var data;
+let config = {
+  responsive: true,
+  editable: true,
+};
 
-// const check = (client, t1a, y1a, t2a, y2a) => {
-//   if (t1a > y1a + 20) {
-//     x1 = -1;
-//   } else if (t1a < y1a - 20) {
-//     x1 = 1;
-//   } else {
-//     x1 = 0;
-//   }
+const initialisePlotData = (data) => {
+  let trend1 = {
+    x: [0],
+    y: [getData(data)[0]],
+    mode: "lines",
+    name: "Trend 1",
+    line: {
+      color: "blue",
+      dash: "dot",
+    },
+  };
 
-//   if (t2a > y2a + 5) {
-//     x2 = -1;
-//   } else if (t2a < y2a - 5) {
-//     x2 = 1;
-//   } else {
-//     x2 = 0;
-//   }
+  let total1 = {
+    x: [0],
+    y: [getData(data)[1]],
+    mode: "lines",
+    name: "Channel 1",
+    line: {
+      color: "blue",
+      dash: "solid",
+      width: "5",
+    },
+  };
 
-//   let payload = { control1: [x1], control2: [x2] };
-//   if (!clicked) {
-//     console.log('process control has being stopped')
-//     payload = { control1: [0], control2: [0] };
-//   }
-//   let payloadText = JSON.stringify(payload);
-//   let message = new Paho.MQTT.Message(payloadText);
-//   message.destinationName = "pump/control";
-//   message.retained = false;
-//   message.qos = 0;
-//   client.send(message);
-// };
+  let trend2 = {
+    x: [0],
+    y: [getData(data)[2]],
+    name: "Trend 2",
+    mode: "lines",
+    line: {
+      color: "red",
+      dash: "dot",
+    },
+  };
 
-// client.onMessageArrived = (message) => {
-//   info = JSON.parse(message.payloadString);
-//   data = info;
-//   check(
-//     client,
-//     info["trend_1"],
-//     info["total_1"],
-//     info["trend_2"],
-//     info["total_2"]
-//   );
-//   console.log("Message Arrived: " + message.payloadString);
-//   console.log("Topic:     " + message.destinationName);
-//   console.log("QoS:       " + message.qos);
-//   console.log("Retained:  " + message.retained);
-//   // Read Only, set if message might be a duplicate sent from broker
-//   console.log("Duplicate: " + message.duplicate);
-// };
+  let total2 = {
+    x: [0],
+    y: [getData(data)[3]],
+    mode: "lines",
+    name: "Channel 2",
+    line: {
+      color: "red",
+      dash: "solid",
+      width: "5",
+    },
+  };
 
-// const getData = () => {
-//   try {
-//     return [
-//       data["trend_1"],
-//       data["total_1"],
-//       data["trend_2"],
-//       data["total_2"],
-//       data["x_value"],
-//     ];
-//   } catch (e) {
-//     console.log(e);
-//     return [0, 0, 0, 0];
-//   }
-// };
+  let trend1UpperBoundary = {
+    x: [0],
+    y: [getData(data)[0] + 20],
+    mode: "lines",
+    name: "Trend 1 Upper Bound",
+    line: {
+      color: "rgb(55,128,191)",
+    },
+  };
 
-// let layout = {
-//   title: "Random Number Streams",
-//   yaxis: {
-//     title : 'Value',
-//     range: [900, 1150],
-//     titlefont: {
-//       family: 'Arial, sans-serif',
-//       size: 18,
-//       color: 'black'
-//     },
-//   },
-//   xaxis: {
-//     title : 'Random Number ID',
-//     titlefont: {
-//       family: 'Arial, sans-serif',
-//       size: 18,
-//       color: 'black'
-//     },
-//   },
-// };
+  let trend1LowerBoundary = {
+    x: [0],
+    y: [getData(data)[0] - 20],
+    mode: "lines",
+    fill: "tonexty",
+    name: "Trend 1 Lower Bound",
+    line: {
+      color: "rgb(55,128,191)",
+    },
+  };
+  let trend2UpperBoundary = {
+    x: [0],
+    y: [getData(data)[2] + 5],
+    mode: "lines",
+    name: "Trend 2 Upper Bound",
+    line: {
+      color: "rgb(254,92,92)",
+    },
+  };
 
-// let config = {
-//   responsive: true,
-//   editable: true,
-// };
+  let trend2LowerBoundary = {
+    x: [0],
+    y: [getData(data)[2] - 5],
+    mode: "lines",
+    fill: "tonexty",
+    name: "Trend 2 Lower Bound",
+    line: {
+      color: "rgb(254,92,92)",
+    },
+  };
 
-// let trend1 = {
-//   x: [getData()[4]],
-//   y: [getData()[0]],
-//   mode: "lines",
-//   name: "Trend 1",
-//   line: {
-//     color: "blue",
-//     dash: "dot",
-//   },
-// };
+  return [
+    trend1,
+    total1,
+    trend2,
+    total2,
+    trend1UpperBoundary,
+    trend1LowerBoundary,
+    trend2UpperBoundary,
+    trend2LowerBoundary,
+  ];
+};
 
-// let total1 = {
-//   x: [getData()[4]],
-//   y: [getData()[1]],
-//   mode: "lines",
-//   name: "Channel 1",
-//   line: {
-//     color: "blue",
-//     dash: "solid",
-//     width: "5",
-//   },
-// };
+const initialData = {
+  x_value: 2,
+  total_1: 1001.0,
+  total_2: 1079.3520691329636,
+  trend_1: 1000.0,
+  trend_2: 1079.8000000000002,
+};
 
-// let trend2 = {
-//   x: [getData()[4]],
-//   y: [getData()[2]],
-//   name: "Trend 2",
-//   mode: "lines",
-//   line: {
-//     color: "red",
-//     dash: "dot",
-//   },
-// };
+const Iot = () => {
+  const [clicked, setClicked] = useState(false);
+  const [data, setData] = useState(initialisePlotData(initialData));
 
-// let total2 = {
-//   x: [getData()[4]],
-//   y: [getData()[3]],
-//   mode: "lines",
-//   name: "Channel 2",
-//   line: {
-//     color: "red",
-//     dash: "solid",
-//     width: "5",
-//   },
-// };
+  useEffect(() => {
+    let cnt = 0;
+    plotly.plot("plot", data, layout, config);
 
-// let trend1UpperBoundary = {
-//   x: [getData()[4]],
-//   y: [getData()[0] + 20],
-//   mode: "lines",
-//   name: 'Trend 1 Upper Bound',
-//   line: {
-//     color: "rgb(55,128,191)",
-//   },
-// };
-
-// let trend1LowerBoundary = {
-//   x: [getData()[4]],
-//   y: [getData()[0] - 20],
-//   mode: "lines",
-//   fill: "tonexty",
-//   name: 'Trend 1 Lower Bound',
-//   line: {
-//     color: "rgb(55,128,191)",
-//   },
-// };
-// let trend2UpperBoundary = {
-//   x: [getData()[4]],
-//   y: [getData()[2] + 5],
-//   mode: "lines",
-//   name: 'Trend 2 Upper Bound',
-//   line: {
-//     color: "rgb(254,92,92)",
-//   },
-// };
-
-// let trend2LowerBoundary = {
-//   x: [getData()[4]],
-//   y: [getData()[2] - 5],
-//   mode: "lines",
-//   fill: "tonexty",
-//   name: 'Trend 2 Lower Bound',
-//   line: {
-//     color: "rgb(254,92,92)",
-//   },
-// };
-
-// let plotData = [
-//   trend1,
-//   total1,
-//   trend2,
-//   total2,
-//   trend1UpperBoundary,
-//   trend1LowerBoundary,
-//   trend2UpperBoundary,
-//   trend2LowerBoundary,
-// ];
-
-// console.log("plot data", plotData);
-
-// Plotly.plot("plot", plotData, layout, config);
-
-// var cnt = 0;
-
-// setInterval(function () {
-//   Plotly.extendTraces(
-//     "plot",
-//     {
-//       y: [
-//         [getData()[0]],
-//         [getData()[1]],
-//         [getData()[2]],
-//         [getData()[3]],
-//         [getData()[0] + 20],
-//         [getData()[0] - 20],
-//         [getData()[2] + 5],
-//         [getData()[2] - 5],
-//       ],
-//       x: [
-//         [getData()[4]],
-//         [getData()[4]],
-//         [getData()[4]],
-//         [getData()[4]],
-//         [getData()[4]],
-//         [getData()[4]],
-//         [getData()[4]],
-//         [getData()[4]],
-//       ],
-//     },
-//     [0, 1, 2, 3, 4, 5, 6, 7]
-//   );
-//   cnt++;
-
-//   if (cnt > 5000) {
-//     Plotly.relayout("plot", {
-//       yaxis: {
-//         range: [getData()[3], getData()[1]],
-//       },
-//       xaxis: {
-//         range: [cnt - 500, cnt],
-//       },
-//     });
-//   }
-// }, 2000);
-
-
-class Iot extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [
-        {
-          x: [1, 2, 3],
-          y: [2, 6, 3],
-          type: "scatter",
-          mode: "lines+markers",
-          marker: { color: "red" },
+    client.on("connect", () => {
+      console.log("Connected!");
+      client.subscribe("pump/pressure", (err) => {
+        if (!err) {
+          console.log(
+            "Subscribed to pump/pressure listening to upcoming messages..."
+          );
         }
-      ],
-    };
-  }
+      });
+    });
 
-  changeData = () => {
-    let data = this.state.data;
-    data[0].x = data[0].x.map(item => item += 1);
-    data[0].x.push(data[0].x[data[0].x.length - 1] + 1)
-    data[0].y.push(4)
-    console.log(data)
-    this.setState({ data });
-  }
-  render() {
-    return (
-      <React.Fragment>
-        <Plot
-          data={this.state.data}
-          layout={{ width: 320, height: 240, title: "A Fancy Plot" }}
-        />
-        <Button color="primary" onClick={this.changeData}>Add 1</Button>
-      </React.Fragment>
-    );
-  }
-}
+    client.on("message", (topic, message) => {
+      console.log("Message Arrived: " + message.toString());
+      console.log("Topic:     " + topic);
+      console.log("QoS:       " + message.qos);
+      console.log("Retained:  " + message.retained);
+      // Read Only, set if message might be a duplicate sent from broker
+      console.log("Duplicate: " + message.duplicate);
+
+      let info = JSON.parse(message.toString());
+      setData(initialisePlotData(info));
+
+      check(
+        client,
+        info["trend_1"],
+        info["total_1"],
+        info["trend_2"],
+        info["total_2"],
+        clicked
+      );
+
+      plotly.extendTraces(
+        "plot",
+        {
+          y: [
+            [getData(data)[0]],
+            [getData(data)[1]],
+            [getData(data)[2]],
+            [getData(data)[3]],
+            [getData(data)[0] + 20],
+            [getData(data)[0] - 20],
+            [getData(data)[2] + 5],
+            [getData(data)[2] - 5],
+          ],
+          x: [
+            [getData(data)[4]],
+            [getData(data)[4]],
+            [getData(data)[4]],
+            [getData(data)[4]],
+            [getData(data)[4]],
+            [getData(data)[4]],
+            [getData(data)[4]],
+            [getData(data)[4]],
+          ],
+        },
+        [0, 1, 2, 3, 4, 5, 6, 7]
+      );
+      cnt++;
+
+      if (cnt > 5000) {
+        plotly.relayout("plot", {
+          yaxis: {
+            range: [getData(data)[3], getData(data)[1]],
+          },
+          xaxis: {
+            range: [cnt - 500, cnt],
+          },
+        });
+      }
+    });
+  }, []);
+
+  const toggleClicked = () => {
+    let newClicked = !clicked;
+    setClicked(newClicked);
+  };
+  return (
+    <React.Fragment>
+      <div id="plot"></div>
+      <Button color="primary" onClick={toggleClicked}>
+        Add 1
+      </Button>
+    </React.Fragment>
+  );
+};
 
 export default Iot;

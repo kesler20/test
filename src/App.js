@@ -5,8 +5,6 @@ import { Amplify, Auth } from "aws-amplify";
 import awsExports from "./aws-exports"; //Some tutorials suggest awsconfig instead
 import Iot from "./components/Iot";
 import { withAuthenticator, Button, defaultTheme } from "@aws-amplify/ui-react";
-import MqttClient from "./components/mqtt";
-
 
 Amplify.configure(awsExports); //some configure using awsconfig rather than awsExports
 
@@ -16,7 +14,7 @@ function App() {
   useEffect(() => {
     Auth.currentCredentials().then((info) => {
       const cognitoIdentityId = info.identityId;
-      console.log(cognitoIdentityId)
+      console.log(cognitoIdentityId);
     });
 
     Auth.currentUserInfo().then((user) => {
@@ -29,6 +27,14 @@ function App() {
       console.log("token set");
     });
   }, []);
+
+  async function signOut() {
+    try {
+      await Auth.signOut();
+    } catch (error) {
+      console.log("error signing out: ", error);
+    }
+  }
 
   async function loadUserDash() {
     const response = await fetch(
@@ -65,9 +71,10 @@ function App() {
 
   return (
     <div>
-      <Button theme={defaultTheme}>Sign Out</Button>
+      <Button theme={defaultTheme} onClick={signOut}>
+        Sign Out
+      </Button>
       <Iot />
-      <MqttClient />
     </div>
   );
 }
