@@ -3,8 +3,9 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Amplify, Auth } from "aws-amplify";
 import awsExports from "./aws-exports"; //Some tutorials suggest awsconfig instead
-import Iot from "./components/Iot";
 import { withAuthenticator, Button, defaultTheme } from "@aws-amplify/ui-react";
+import Iot from "./components/Iot";
+
 
 Amplify.configure(awsExports); //some configure using awsconfig rather than awsExports
 
@@ -71,10 +72,10 @@ function App() {
 
   return (
     <div>
+      <Iot />
       <Button theme={defaultTheme} onClick={signOut}>
         Sign Out
       </Button>
-      <Iot />
     </div>
   );
 }
