@@ -37,9 +37,9 @@ function App() {
     }
   }
 
-  async function loadUserDash() {
+  uploadUserFiles = async () => {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/loaddash`,
+      `${process.env.REACT_APP_BACKEND_URL}/uploadfile`,
       {
         headers: { "X-JWT": "Bearer " + localStorage.getItem("jwtToken") },
       }
@@ -49,25 +49,6 @@ function App() {
       alert("No dashboard save found");
       return null;
     }
-
-    let dashboard = await response.json();
-    dashboard = JSON.parse(dashboard);
-    console.log(dashboard);
-
-    localStorage.setItem("userDash", JSON.stringify(dashboard.userDash));
-    localStorage.setItem("theme", dashboard.theme);
-
-    for (const [key, value] of Object.entries(dashboard.grids)) {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
-
-    // The elements were never parsed so these values don't need to be stringified
-    for (const [key, value] of Object.entries(dashboard.elements)) {
-      localStorage.setItem(key, value);
-    }
-
-    // Easy method: Force refresh for graphs to re-render
-    window.location.reload();
   }
 
   return (
