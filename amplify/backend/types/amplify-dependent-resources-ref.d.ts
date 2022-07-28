@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
     "auth": {
-        "testiot42fb2a08": {
+        "test83ed4818": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
             "UserPoolId": "string",
@@ -16,6 +16,18 @@ export type AmplifyDependentResourcesAttributes = {
             "HostingBucketName": "string",
             "WebsiteURL": "string",
             "S3BucketSecureURL": "string"
+        }
+    },
+    "storage": {
+        "dynamo28f97260": {
+            "Name": "string",
+            "Arn": "string",
+            "StreamArn": "string",
+            "PartitionKeyName": "string",
+            "PartitionKeyType": "string",
+            "SortKeyName": "string",
+            "SortKeyType": "string",
+            "Region": "string"
         }
     }
 }

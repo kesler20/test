@@ -1,19 +1,38 @@
 {
-  "dev": {
+  "testuser": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-testiot-dev-163222-authRole",
-      "UnauthRoleArn": "arn:aws:iam::876979855395:role/amplify-testiot-dev-163222-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::876979855395:role/amplify-testiot-dev-163222-authRole",
+      "AuthRoleName": "amplify-test-testuser-133744-authRole",
+      "UnauthRoleArn": "arn:aws:iam::876979855395:role/amplify-test-testuser-133744-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::876979855395:role/amplify-test-testuser-133744-authRole",
       "Region": "eu-west-2",
-      "DeploymentBucketName": "amplify-testiot-dev-163222-deployment",
-      "UnauthRoleName": "amplify-testiot-dev-163222-unauthRole",
-      "StackName": "amplify-testiot-dev-163222",
-      "StackId": "arn:aws:cloudformation:eu-west-2:876979855395:stack/amplify-testiot-dev-163222/51070190-090a-11ed-8b05-061cdb55090a",
-      "AmplifyAppId": "dnjoqvehpb5e4"
+      "DeploymentBucketName": "amplify-test-testuser-133744-deployment",
+      "UnauthRoleName": "amplify-test-testuser-133744-unauthRole",
+      "StackName": "amplify-test-testuser-133744",
+      "StackId": "arn:aws:cloudformation:eu-west-2:876979855395:stack/amplify-test-testuser-133744/1509d560-0e72-11ed-b46c-02804ba31882",
+      "AmplifyAppId": "d33isupz2kpt8q"
     },
     "categories": {
       "auth": {
-        "testiot42fb2a08": {}
+        "test54f997ec": {},
+        "true": {}
+      }
+    }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-test-dev-140005-authRole",
+      "UnauthRoleArn": "arn:aws:iam::876979855395:role/amplify-test-dev-140005-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::876979855395:role/amplify-test-dev-140005-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-test-dev-140005-deployment",
+      "UnauthRoleName": "amplify-test-dev-140005-unauthRole",
+      "StackName": "amplify-test-dev-140005",
+      "StackId": "arn:aws:cloudformation:eu-west-2:876979855395:stack/amplify-test-dev-140005/3434ee40-0e75-11ed-9a03-0aced92a98bc",
+      "AmplifyAppId": "d33isupz2kpt8q"
+    },
+    "categories": {
+      "auth": {
+        "test83ed4818": {}
       }
     }
   }
