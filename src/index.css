@@ -1,13 +1,235 @@
-body {
+@import url("https://fonts.googleapis.com/css?family=Lato:100");
+@import url("https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200&display=swap");
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/*-------------------------------------------------- General Styling ---------------------------------------------------------------------------------*/
+/* style or your elements here such as p tags etc.. */
+
+a {
+  text-decoration: none;
 }
+
+body {
+  --primary-font-family: "Red Hat Mono", monospace;
+  --primary-font-colour: #18394a;
+  --secondary-font-color: red;
+  --primary-font-size: 1.3rem;
+  --primary-font-weight: 600;
+  --secondary-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --primary-color: white;
+  --secondary-color: #f2f2f2;
+  --tertiary-color: #62839c;
+  --nav-color: #62839c;
+  --borders-color: #ffeea4;
+  --static-color: white;
+  background-color: var(--secondary-color);
+  margin: 0% 20%;
+  max-height: 50vh;
+  overflow: hidden;
+  scrollbar-color: var(--secondary-color);
+}
+
+body.dark {
+  --primary-font-family: "Red Hat Mono", monospace;
+  --primary-font-colour: #2bc1e2;
+  --secondary-font-color: #abb8ca;
+  --primary-font-size: 1.3rem;
+  --primary-font-weight: 600;
+  --secondary-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --primary-color: #111827;
+  --secondary-color: #1d2432;
+  --tertiary-color: #050c1b;
+  --nav-color: #39424e;
+  --borders-color: #111827;
+  --static-color: white;
+}
+
+button {
+  text-decoration: none;
+}
+
+/*---------------------------------------------------Structural Styling-----------------------------------------------------------------------------------------*/
+/*include all the styles which affect the order in which components are laid*/
+
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: repeat(1fr, 2);
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/*---------------------------------------------------COMPONENTS-----------------------------------------------------------------------------------------*/
+/* to facilitate transition into react, most of your css code should be here*/
+
+.btn {
+  height: 64px;
+  width: 245px;
+  padding: 2px;
+  border: 1px solid #3d94e0;
+  font-size: 24px;
+  font-weight: 400;
+  font-family: var(--primary-font-family);
+  border-radius: 10px;
+  color: #3d94e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.btn:hover {
+  border: 3px solid #3d94e0;
+  background-color: white;
+  color: #3d94e0;
+}
+
+.button {
+  height: 64px;
+  width: 245px;
+  padding: 2px;
+  font-size: 24px;
+  font-weight: 400;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  font-weight: 500;
+}
+.button:hover {
+  box-shadow: 1px 1px 1px 10px rgb(245, 255, 229);
+}
+
+
+.card {
+  border: solid 1px rgb(221, 220, 220);
+  border-radius: 15px;
+  width: 250px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 15px;
+  font-family: var(--another-font-family);
+  font-weight: 400;
+  font-size: 25px;
+  color: #202124;
+}
+
+.card:hover {
+  box-shadow: 2px 1px 4px grey;
+  transform: skewY(2deg);
+}
+
+/* -------------------------- SPECIFIC ----------------------*/
+/* no more specific then 0,1,0
+
+
+/* --------------------------------------------------------------- Media Queries -----------------------------------------------*/
+@media (max-width: 990px) {
+  header div.nav navbar ul {
+    flex-direction: column;
+    position: fixed;
+    background: #5b78c7;
+    height: 100vh;
+    width: 100%;
+  }
+
+  header div.nav div.site-title {
+    margin-left: 5%;
+  }
+  header div.nav img {
+    display: none;
+  }
+
+  header div.nav nav div.hamburger {
+    position: absolute;
+    cursor: pointer;
+    right: 5%;
+    top: 50%;
+    transform: translate(-5%, -50%);
+  }
+}
+
+@media (min-width: 990px) {
+  header div.nav div.site-title {
+    margin-right: 55%;
+  }
+}
+
+/* --------------------------------------------------------------- Key Frames -----------------------------------------------*/
+
+@keyframes fade-out-left {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes animate {
+  0% {
+    background-position: -500%;
+  }
+  100% {
+    background-position: 500%;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes roll-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(-40%, 0, 0);
+  }
+} ;
