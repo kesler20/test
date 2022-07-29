@@ -20,9 +20,9 @@ const Navbar = () => {
     if (toRender) {
       return (
         <SideBar>
-          <Link to={"./diet"}>Diet Plan</Link>
-          <Link to={"./meal"}>Meals</Link>
-          <Link to={"./food"}>Foods</Link>
+          <Link to={"./"}>IoT</Link>
+          <Link to={"./userUpload"}>Upload Files</Link>
+          <Link to={"./userAccount"}>Account</Link>
         </SideBar>
       );
     } else {
@@ -38,9 +38,6 @@ const Navbar = () => {
           <div className="hamburger"></div>
         </HamburgerMenu>
         <SiteTitle>
-          <Link to={"./"}>
-            <img src={Logo} alt="site logo" />
-          </Link>
           <p>JOURNAL</p>
         </SiteTitle>
         <Version>

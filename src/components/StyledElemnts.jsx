@@ -83,6 +83,9 @@ export const PrimaryBtn = styled.button`
   );
   border: none;
   color: white;
+  :hover {
+    box-shadow: 5px 5px 40px rgb(187, 187, 187);
+  }
 `;
 
 export const AddRowBtn = styled.div`

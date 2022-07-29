@@ -1,34 +1,22 @@
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { useForm } from "react-hook-form";
+import { PrimaryBtn } from "../StyledElemnts";
 
 import "./drop-file-input.css";
 
 import { ImageConfig } from "../../config/ImageConfig";
 import uploadImg from "../../assets/cloud-upload-regular-240.png";
 
+const PrimaryBtnStyles = {
+  marginTop: 25,
+  width: 160,
+  height: 60,
+  fontSize: "1.2rem",
+  borderRadius: 20,
+};
+
 const DropFileInput = (props) => {
-  const { register, handleSubmit } = useForm();
-
-  const onSubmit = async (data) => {
-    const formData = new FormData();
-    formData.append("csvfile", data.csvfile[0]);
-    console.log(formData);
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/uploadfile`,
-      {
-        headers: new Headers({
-          "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-        }),
-        method: "POST",
-        body: formData,
-      }
-    );
-    console.log(response);
-    const responseToJson = await response.json();
-    console.log(responseToJson);
-  };
-
   const wrapperRef = useRef(null);
 
   const [fileList, setFileList] = useState([]);
@@ -48,6 +36,30 @@ const DropFileInput = (props) => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      if (file.type.includes("csv")) {
+        formData.append("csvfiles", file);
+        console.log('added a csv file 📁',file)
+      }
+    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL_DEV}/uploadfile`,
+      {
+        headers: new Headers({
+          "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
+        }),
+        method: "POST",
+        body: formData,
+      }
+    );
+    console.log(response);
+    const responseToJson = await response.json();
+    console.log(responseToJson);
+  };
+
   const fileRemove = (file) => {
     const updatedList = [...fileList];
     updatedList.splice(fileList.indexOf(file), 1);
@@ -56,7 +68,7 @@ const DropFileInput = (props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form>
       <div
         ref={wrapperRef}
         className="drop-file-input"
@@ -95,6 +107,9 @@ const DropFileInput = (props) => {
           ))}
         </div>
       ) : null}
+      <PrimaryBtn style={PrimaryBtnStyles} onClick={(e) => handleSubmit(e)}>
+        Submit
+      </PrimaryBtn>
     </form>
   );
 };

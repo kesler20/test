@@ -27,7 +27,6 @@
     display: flex;
     justify-content: center;
     padding-top: 100px;
-    height: 100vh;
 
 }
 
@@ -35,7 +34,6 @@
     background-color: var(--box-bg);
     padding: 30px;
     border-radius: 20px;
-    height: 50%;
     box-shadow: var(--box-shadow);
 }
 
