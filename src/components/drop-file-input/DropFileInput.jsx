@@ -36,7 +36,7 @@ const DropFileInput = (props) => {
 
   const uploadData = async (formData) => {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/CREATE`,
+      `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/`,
       {
         headers: new Headers({
           "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),

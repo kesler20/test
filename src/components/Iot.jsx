@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import MQTTApi, { check } from "../mqttProtocol";
 import DatabaseApi from "./redisDatabase";
 import { PrimaryBtn } from "../components/StyledElemnts";
+import { AiFillCaretUp, AiFillCaretDown } from "react-icons/ai";
 
 const PrimaryBtnStyles = {
   margin: 25,
@@ -11,11 +12,59 @@ const PrimaryBtnStyles = {
   borderRadius: 20,
 };
 
+const IncreaseBtnStyles = {
+  margin: 25,
+  width: 50,
+  height: 50,
+  borderRadius: "50%",
+};
+
 const plotly = window.Plotly;
 
 const dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
 
-const constructInitialPlot = (dataFromLocalStorage) => {
+let smaData = [];
+let cleanSMA = [];
+const uploadSMAData = async () => {
+  let smaFromStorage = [];
+
+  if (smaFromStorage.length > 0) return smaFromStorage;
+  const response = await fetch(
+    `${process.env.REACT_APP_BACKEND_URL_DEV}/jobs/SMA`,
+    {
+      headers: new Headers({
+        "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
+      }),
+      method: "POST",
+      body: JSON.stringify(dataFromLocalStorage),
+    }
+  );
+  response.json().then((res) => {
+    smaData.push(JSON.parse(res["job completed"]));
+    for (let i = 0; i < 100; i++) {
+      smaData[0][`SMA${i}`].x = [];
+      smaData[0][`SMA${i}`].y = [];
+      Object.keys(smaData[0][`SMA${i}`]).forEach((key) => {
+        smaData[0][`SMA${i}`].x.push(key - 100);
+        smaData[0][`SMA${i}`].y.push(smaData[0][`SMA${i}`][key]);
+      });
+      let val = {
+        x: smaData[0][`SMA${i}`].x,
+        y: smaData[0][`SMA${i}`].y,
+        mode: "lines",
+        name: `SMA${i}`,
+        line: {
+          dash: "dot",
+        },
+      };
+      cleanSMA.push(val);
+    }
+  });
+};
+
+uploadSMAData();
+
+const constructInitialPlot = (dataFromLocalStorage, sma, trend1Bound, trend2Bound) => {
   let x_values = [];
   let trends_1 = [];
   let totals_1 = [];
@@ -167,7 +216,10 @@ const constructInitialPlot = (dataFromLocalStorage) => {
     trend1LowerBoundary,
     trend2UpperBoundary,
     trend2LowerBoundary,
+    cleanSMA[sma],
   ];
+  console.log(cleanSMA);
+  console.log(plotData);
 
   return [plotData, layout, config];
 };
@@ -178,6 +230,7 @@ class Iot extends Component {
     mqttClient: new MQTTApi(),
     db: new DatabaseApi("json-database"),
     clicked: false,
+    sma: 0,
   };
 
   toggleClicked = () => {
@@ -189,26 +242,22 @@ class Iot extends Component {
     this.setState({ clicked: !this.state.clicked });
   };
 
-  uploadSMAData = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL_DEV}/jobs/SMA`,
-      {
-        headers: new Headers({
-          "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-        }),
-        method: "POST",
-        body: JSON.stringify(dataFromLocalStorage),
-      }
-    );
-    console.log(response);
+  increaseSMA = () => {
+    this.setState({ sma: this.state.sma + 1 });
+    plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
+  };
+  decreaseSMA = () => {
+    this.setState({ sma: this.state.sma - 1 });
+    plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
   };
 
   componentDidMount() {
-    this.uploadSMAData();
-
     this.state.mqttClient.onConnect(() => {
       this.state.mqttClient.subscribeClient("pump/pressure", () => {
-        plotly.plot("plot", ...constructInitialPlot(dataFromLocalStorage));
+        plotly.plot(
+          "plot",
+          ...constructInitialPlot(dataFromLocalStorage, this.state.sma)
+        );
       });
     });
 
@@ -297,6 +346,12 @@ class Iot extends Component {
         </PrimaryBtn>
         <PrimaryBtn style={PrimaryBtnStyles} onClick={this.toggleClicked}>
           Control Process
+        </PrimaryBtn>
+        <PrimaryBtn style={IncreaseBtnStyles} onClick={this.increaseSMA}>
+          <AiFillCaretUp />
+        </PrimaryBtn>
+        <PrimaryBtn style={IncreaseBtnStyles}onClick={this.decreaseSMA}>
+          <AiFillCaretDown />
         </PrimaryBtn>
       </>
     );
