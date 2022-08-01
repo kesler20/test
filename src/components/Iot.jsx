@@ -21,10 +21,14 @@ const IncreaseBtnStyles = {
 
 const plotly = window.Plotly;
 
-const dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
+let dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
+if (dataFromLocalStorage === null) {
+  dataFromLocalStorage = []
+}
 
 let smaData = [];
 let cleanSMA = [];
+
 const uploadSMAData = async () => {
   let smaFromStorage = [];
 
@@ -45,7 +49,7 @@ const uploadSMAData = async () => {
       smaData[0][`SMA${i}`].x = [];
       smaData[0][`SMA${i}`].y = [];
       Object.keys(smaData[0][`SMA${i}`]).forEach((key) => {
-        smaData[0][`SMA${i}`].x.push(key - 100);
+        smaData[0][`SMA${i}`].x.push(key-20);
         smaData[0][`SMA${i}`].y.push(smaData[0][`SMA${i}`][key]);
       });
       let val = {
@@ -64,7 +68,7 @@ const uploadSMAData = async () => {
 
 uploadSMAData();
 
-const constructInitialPlot = (dataFromLocalStorage, sma, trend1Bound, trend2Bound) => {
+const constructInitialPlot = (dataFromLocalStorage, sma) => {
   let x_values = [];
   let trends_1 = [];
   let totals_1 = [];
@@ -77,21 +81,26 @@ const constructInitialPlot = (dataFromLocalStorage, sma, trend1Bound, trend2Boun
 
   const dataSet = [];
 
-  for (let i = 1; i < 100; i++) {
-    dataSet.push(dataFromLocalStorage[dataFromLocalStorage.length - i]);
+  try {
+    for (let i = 1; i < 100; i++) {
+      dataSet.push(dataFromLocalStorage[dataFromLocalStorage.length - i]);
+    }
+  
+  
+    dataSet.forEach((element) => {
+      x_values.push(element.x_value);
+      trends_1.push(element.trend_1);
+      totals_1.push(element.total_1);
+      trends_2.push(element.trend_2);
+      totals_2.push(element.total_2);
+      trend1Upper.push(element.trend_1 + 20);
+      trend1Lower.push(element.trend_1 - 20);
+      trend2Upper.push(element.trend_2 + 5);
+      trend2Lower.push(element.trend_2 - 5);
+    });
+  } catch(e) {
+    console.log(e)
   }
-
-  dataSet.forEach((element) => {
-    x_values.push(element.x_value);
-    trends_1.push(element.trend_1);
-    totals_1.push(element.total_1);
-    trends_2.push(element.trend_2);
-    totals_2.push(element.total_2);
-    trend1Upper.push(element.trend_1 + 20);
-    trend1Lower.push(element.trend_1 - 20);
-    trend2Upper.push(element.trend_2 + 5);
-    trend2Lower.push(element.trend_2 - 5);
-  });
 
   let layout = {
     title: "Random Number Streams",
@@ -216,7 +225,7 @@ const constructInitialPlot = (dataFromLocalStorage, sma, trend1Bound, trend2Boun
     trend1LowerBoundary,
     trend2UpperBoundary,
     trend2LowerBoundary,
-    cleanSMA[sma],
+    //cleanSMA[sma],
   ];
   console.log(cleanSMA);
   console.log(plotData);
@@ -242,14 +251,14 @@ class Iot extends Component {
     this.setState({ clicked: !this.state.clicked });
   };
 
-  increaseSMA = () => {
-    this.setState({ sma: this.state.sma + 1 });
-    plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
-  };
-  decreaseSMA = () => {
-    this.setState({ sma: this.state.sma - 1 });
-    plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
-  };
+  // increaseSMA = () => {
+  //   this.setState({ sma: this.state.sma + 1 });
+  //   plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
+  // };
+  // decreaseSMA = () => {
+  //   this.setState({ sma: this.state.sma - 1 });
+  //   plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
+  // };
 
   componentDidMount() {
     this.state.mqttClient.onConnect(() => {
@@ -347,12 +356,12 @@ class Iot extends Component {
         <PrimaryBtn style={PrimaryBtnStyles} onClick={this.toggleClicked}>
           Control Process
         </PrimaryBtn>
-        <PrimaryBtn style={IncreaseBtnStyles} onClick={this.increaseSMA}>
+        {/* <PrimaryBtn style={IncreaseBtnStyles} onClick={this.increaseSMA}>
           <AiFillCaretUp />
         </PrimaryBtn>
         <PrimaryBtn style={IncreaseBtnStyles}onClick={this.decreaseSMA}>
           <AiFillCaretDown />
-        </PrimaryBtn>
+        </PrimaryBtn> */}
       </>
     );
   }

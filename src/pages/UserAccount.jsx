@@ -2,14 +2,14 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Grid, Cards } from "../components/StyledElemnts";
+import "../components/UserAccount.css";
 
-
-let initialFiles = []
+let initialFiles = [];
 
 try {
   initialFiles = JSON.parse(localStorage.getItem("userFiles"));
 } catch (e) {
-  console.log(e);  
+  console.log(e);
 }
 
 const UserAccount = () => {
@@ -37,13 +37,14 @@ const UserAccount = () => {
   };
   return (
     <div>
-      <Grid>
+      {/* <Grid>
         {files.map((file) => {
           return (
             <Cards key={files.indexOf(file)}>{JSON.stringify(file)}</Cards>
           );
         })}
-      </Grid>
+      </Grid> */}
+      <div className="card">Card Content</div>
     </div>
   );
 };
