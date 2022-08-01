@@ -1,8 +1,6 @@
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { useForm } from "react-hook-form";
 import { PrimaryBtn } from "../StyledElemnts";
-
 import "./drop-file-input.css";
 
 import { ImageConfig } from "../../config/ImageConfig";
@@ -36,17 +34,9 @@ const DropFileInput = (props) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      if (file.type.includes("csv")) {
-        formData.append("csvfiles", file);
-        console.log('added a csv file 📁',file)
-      }
-    });
+  const uploadData = async (formData) => {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL_DEV}/uploadfile`,
+      `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/CREATE`,
       {
         headers: new Headers({
           "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
@@ -56,8 +46,16 @@ const DropFileInput = (props) => {
       }
     );
     console.log(response);
-    const responseToJson = await response.json();
-    console.log(responseToJson);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append("user_files", file);
+      console.log("added a csv file 📁", file);
+      uploadData(formData)
+    });
   };
 
   const fileRemove = (file) => {

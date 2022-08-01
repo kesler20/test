@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-export const Cards = styled(Link)`
+export const Cards = styled.div`
   text-decoration: none;
-  font0-size:1.5rem;
+  font-size:1.5rem;
   font-weight400;
   font-family: 'Lobster Two', cursive;
 `;

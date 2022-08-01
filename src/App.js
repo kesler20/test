@@ -8,8 +8,6 @@ import Pages from "./pages/Pages";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "../src/components/Navbar"
-import { GiKnifeFork } from "react-icons/gi";
-import { FaPizzaSlice } from "react-icons/fa";
 
 Amplify.configure(awsExports); //some configure using awsconfig rather than awsExports
 
@@ -56,8 +54,6 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Navbar>
-          <GiKnifeFork />
-          <FaPizzaSlice />
           <Logo to={"/"}>Site Title</Logo>
         </Navbar>
         <Pages />

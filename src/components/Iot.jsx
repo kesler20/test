@@ -1,64 +1,78 @@
 import React, { Component } from "react";
 import MQTTApi, { check } from "../mqttProtocol";
+import DatabaseApi from "./redisDatabase";
+import { PrimaryBtn } from "../components/StyledElemnts";
+
+const PrimaryBtnStyles = {
+  margin: 25,
+  width: 160,
+  height: 60,
+  fontSize: "1.2rem",
+  borderRadius: 20,
+};
 
 const plotly = window.Plotly;
 
-let layout = {
-  title: "Random Number Streams",
-  yaxis: {
-    title: "Value",
-    range: [900, 1150],
-    titlefont: {
-      family: "Arial, sans-serif",
-      size: 18,
-      color: "black",
-    },
-  },
-  xaxis: {
-    title: "Random Number ID",
-    titlefont: {
-      family: "Arial, sans-serif",
-      size: 18,
-      color: "black",
-    },
-  },
-};
+const dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
 
-const getData = (data) => {
-  try {
-    return [
-      data["trend_1"],
-      data["total_1"],
-      data["trend_2"],
-      data["total_2"],
-      data["x_value"],
-    ];
-  } catch (e) {
-    console.log(e);
-    return [0, 0, 0, 0];
+const constructInitialPlot = (dataFromLocalStorage) => {
+  let x_values = [];
+  let trends_1 = [];
+  let totals_1 = [];
+  let trends_2 = [];
+  let totals_2 = [];
+  let trend1Upper = [];
+  let trend2Upper = [];
+  let trend1Lower = [];
+  let trend2Lower = [];
+
+  const dataSet = [];
+
+  for (let i = 1; i < 100; i++) {
+    dataSet.push(dataFromLocalStorage[dataFromLocalStorage.length - i]);
   }
-};
 
-let config = {
-  responsive: true,
-  editable: true,
-};
+  dataSet.forEach((element) => {
+    x_values.push(element.x_value);
+    trends_1.push(element.trend_1);
+    totals_1.push(element.total_1);
+    trends_2.push(element.trend_2);
+    totals_2.push(element.total_2);
+    trend1Upper.push(element.trend_1 + 20);
+    trend1Lower.push(element.trend_1 - 20);
+    trend2Upper.push(element.trend_2 + 5);
+    trend2Lower.push(element.trend_2 - 5);
+  });
 
-class Iot extends Component {
-  state = {
-    data: {
-      trend_1: NaN,
-      total_1: NaN,
-      trend_2: NaN,
-      total_2: NaN,
-      x_value: NaN,
+  let layout = {
+    title: "Random Number Streams",
+    yaxis: {
+      title: "Value",
+      range: [900, 1150],
+      titlefont: {
+        family: "Arial, sans-serif",
+        size: 18,
+        color: "black",
+      },
     },
-    mqttClient: new MQTTApi(),
+    xaxis: {
+      title: "Random Number ID",
+      titlefont: {
+        family: "Arial, sans-serif",
+        size: 18,
+        color: "black",
+      },
+    },
   };
 
-  trend1 = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[0]],
+  let config = {
+    responsive: true,
+    editable: true,
+  };
+
+  const trend1 = {
+    x: [...x_values],
+    y: [...trends_1],
     mode: "lines",
     name: "Trend 1",
     line: {
@@ -67,9 +81,9 @@ class Iot extends Component {
     },
   };
 
-  total1 = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[1]],
+  const total1 = {
+    x: [...x_values],
+    y: [...totals_1],
     mode: "lines",
     name: "Channel 1",
     line: {
@@ -78,19 +92,20 @@ class Iot extends Component {
       width: "5",
     },
   };
-  
-  trend1UpperBoundary = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[0] + 20],
+
+  const trend1UpperBoundary = {
+    x: [...x_values],
+    y: [...trend1Upper],
     mode: "lines",
     name: "Trend 1 Upper Bound",
     line: {
       color: "rgb(55,128,191)",
     },
   };
-  trend1LowerBoundary = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[0] - 20],
+
+  const trend1LowerBoundary = {
+    x: [...x_values],
+    y: [...trend1Lower],
     mode: "lines",
     fill: "tonexty",
     name: "Trend 1 Lower Bound",
@@ -98,10 +113,10 @@ class Iot extends Component {
       color: "rgb(55,128,191)",
     },
   };
-  
-  trend2 = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[2]],
+
+  const trend2 = {
+    x: [...x_values],
+    y: [...trends_2],
     name: "Trend 2",
     mode: "lines",
     line: {
@@ -110,9 +125,9 @@ class Iot extends Component {
     },
   };
 
-  total2 = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[3]],
+  const total2 = {
+    x: [...x_values],
+    y: [...totals_2],
     mode: "lines",
     name: "Channel 2",
     line: {
@@ -122,9 +137,9 @@ class Iot extends Component {
     },
   };
 
-  trend2UpperBoundary = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[2] + 5],
+  const trend2UpperBoundary = {
+    x: [...x_values],
+    y: [...trend2Upper],
     mode: "lines",
     name: "Trend 2 Upper Bound",
     line: {
@@ -132,9 +147,9 @@ class Iot extends Component {
     },
   };
 
-  trend2LowerBoundary = {
-    x: [getData(this.state.data)[4]],
-    y: [getData(this.state.data)[2] - 5],
+  const trend2LowerBoundary = {
+    x: [...x_values],
+    y: [...trend2Lower],
     mode: "lines",
     fill: "tonexty",
     name: "Trend 2 Lower Bound",
@@ -143,21 +158,57 @@ class Iot extends Component {
     },
   };
 
-  plotData = [
-    this.trend1,
-    this.total1,
-    this.trend2,
-    this.total2,
-    this.trend1UpperBoundary,
-    this.trend1LowerBoundary,
-    this.trend2UpperBoundary,
-    this.trend2LowerBoundary,
+  const plotData = [
+    trend1,
+    total1,
+    trend2,
+    total2,
+    trend1UpperBoundary,
+    trend1LowerBoundary,
+    trend2UpperBoundary,
+    trend2LowerBoundary,
   ];
 
+  return [plotData, layout, config];
+};
+
+class Iot extends Component {
+  state = {
+    data: dataFromLocalStorage[dataFromLocalStorage.length - 1],
+    mqttClient: new MQTTApi(),
+    db: new DatabaseApi("json-database"),
+    clicked: false,
+  };
+
+  toggleClicked = () => {
+    if (!this.state.clicked) {
+      alert("Process is being controlled");
+    } else {
+      alert("process is NOT being controlled ");
+    }
+    this.setState({ clicked: !this.state.clicked });
+  };
+
+  uploadSMAData = async () => {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL_DEV}/jobs/SMA`,
+      {
+        headers: new Headers({
+          "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
+        }),
+        method: "POST",
+        body: JSON.stringify(dataFromLocalStorage),
+      }
+    );
+    console.log(response);
+  };
+
   componentDidMount() {
+    this.uploadSMAData();
+
     this.state.mqttClient.onConnect(() => {
       this.state.mqttClient.subscribeClient("pump/pressure", () => {
-        plotly.plot("plot", this.plotData, layout, config);
+        plotly.plot("plot", ...constructInitialPlot(dataFromLocalStorage));
       });
     });
 
@@ -165,54 +216,58 @@ class Iot extends Component {
       try {
         let data = JSON.parse(message.toString());
         this.setState({ data });
+        console.log(data);
+        this.state.db.createResource(data);
       } catch (e) {
         console.log(e);
       }
 
       check(
         this.state.mqttClient.client,
-        this.state.data["trend_1"],
-        this.state.data["total_1"],
-        this.state.data["trend_2"],
-        this.state.data["total_2"]
+        this.state.data.trend_1,
+        this.state.data.total_1,
+        this.state.data.trend_2,
+        this.state.data.total_2,
+        this.state.clicked
       );
 
       console.log("Message Arrived: " + message.toString());
       console.log("Topic:     " + topic);
+      //this.state.db.viewDatabase().then((val) => console.log(val));
 
       let dataMatrix = [
-        getData(this.state.data)[0],
-        getData(this.state.data)[1],
-        getData(this.state.data)[2],
-        getData(this.state.data)[3],
-        getData(this.state.data)[0] + 20,
-        getData(this.state.data)[0] - 20,
-        getData(this.state.data)[2] + 5,
-        getData(this.state.data)[2] - 5,
+        this.state.data.trend_1,
+        this.state.data.total_1,
+        this.state.data.trend_2,
+        this.state.data.total_2,
+        this.state.data.trend_1 + 20,
+        this.state.data.trend_1 - 20,
+        this.state.data.trend_2 + 5,
+        this.state.data.trend_2 - 5,
       ];
 
       plotly.extendTraces(
         "plot",
         {
           y: [
-            [getData(this.state.data)[0]],
-            [getData(this.state.data)[1]],
-            [getData(this.state.data)[2]],
-            [getData(this.state.data)[3]],
-            [getData(this.state.data)[0] + 20],
-            [getData(this.state.data)[0] - 20],
-            [getData(this.state.data)[2] + 5],
-            [getData(this.state.data)[2] - 5],
+            [this.state.data.trend_1],
+            [this.state.data.total_1],
+            [this.state.data.trend_2],
+            [this.state.data.total_2],
+            [this.state.data.trend_1 + 20],
+            [this.state.data.trend_1 - 20],
+            [this.state.data.trend_2 + 5],
+            [this.state.data.trend_2 - 5],
           ],
           x: [
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
-            [getData(this.state.data)[4]],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
+            [this.state.data.x_value],
           ],
         },
         [0, 1, 2, 3, 4, 5, 6, 7]
@@ -234,7 +289,17 @@ class Iot extends Component {
     });
   }
   render() {
-    return <div id="plot"></div>;
+    return (
+      <>
+        <div id="plot"></div>
+        <PrimaryBtn style={PrimaryBtnStyles} onClick={this.selectSMA}>
+          Calculate SMA
+        </PrimaryBtn>
+        <PrimaryBtn style={PrimaryBtnStyles} onClick={this.toggleClicked}>
+          Control Process
+        </PrimaryBtn>
+      </>
+    );
   }
 }
 
