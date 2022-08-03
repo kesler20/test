@@ -1,74 +1,57 @@
 import React, { Component } from "react";
-import MQTTApi, { check } from "../mqttProtocol";
-import DatabaseApi from "./redisDatabase";
+import MQTTApi, { check } from "../APIs/mqttProtocol";
+import DatabaseApi from "../APIs/redisDatabase";
 import { PrimaryBtn } from "../components/StyledElemnts";
-import { AiFillCaretUp, AiFillCaretDown } from "react-icons/ai";
-
-const PrimaryBtnStyles = {
-  margin: 25,
-  width: 160,
-  height: 60,
-  fontSize: "1.2rem",
-  borderRadius: 20,
-};
-
-const IncreaseBtnStyles = {
-  margin: 25,
-  width: 50,
-  height: 50,
-  borderRadius: "50%",
-};
+import { Switch, Slider, Grid, Card } from "@material-ui/core";
 
 const plotly = window.Plotly;
 
 let dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
 if (dataFromLocalStorage === null) {
-  dataFromLocalStorage = []
+  dataFromLocalStorage = [];
 }
 
 let smaData = [];
 let cleanSMA = [];
 
-const uploadSMAData = async () => {
-  let smaFromStorage = [];
+// const uploadSMAData = async () => {
+//   let smaFromStorage = [];
 
-  if (smaFromStorage.length > 0) return smaFromStorage;
-  const response = await fetch(
-    `${process.env.REACT_APP_BACKEND_URL_DEV}/jobs/SMA`,
-    {
-      headers: new Headers({
-        "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-      }),
-      method: "POST",
-      body: JSON.stringify(dataFromLocalStorage),
-    }
-  );
-  response.json().then((res) => {
-    smaData.push(JSON.parse(res["job completed"]));
-    for (let i = 0; i < 100; i++) {
-      smaData[0][`SMA${i}`].x = [];
-      smaData[0][`SMA${i}`].y = [];
-      Object.keys(smaData[0][`SMA${i}`]).forEach((key) => {
-        smaData[0][`SMA${i}`].x.push(key-20);
-        smaData[0][`SMA${i}`].y.push(smaData[0][`SMA${i}`][key]);
-      });
-      let val = {
-        x: smaData[0][`SMA${i}`].x,
-        y: smaData[0][`SMA${i}`].y,
-        mode: "lines",
-        name: `SMA${i}`,
-        line: {
-          dash: "dot",
-        },
-      };
-      cleanSMA.push(val);
-    }
-  });
-};
+//   if (smaFromStorage.length > 0) return smaFromStorage;
+//   const response = await fetch(
+//     `${process.env.REACT_APP_BACKEND_URL_DEV}/jobs/SMA`,
+//     {
+//       headers: new Headers({
+//         "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
+//       }),
+//       method: "POST",
+//       body: JSON.stringify(dataFromLocalStorage),
+//     }
+//   );
+//   response.json().then((res) => {
+//     smaData.push(JSON.parse(res["job completed"]));
+//     for (let i = 0; i < 100; i++) {
+//       smaData[0][`SMA${i}`].x = [];
+//       smaData[0][`SMA${i}`].y = [];
+//       Object.keys(smaData[0][`SMA${i}`]).forEach((key) => {
+//         smaData[0][`SMA${i}`].x.push(key - 20);
+//         smaData[0][`SMA${i}`].y.push(smaData[0][`SMA${i}`][key]);
+//       });
+//       let val = {
+//         x: smaData[0][`SMA${i}`].x,
+//         y: smaData[0][`SMA${i}`].y,
+//         mode: "lines",
+//         name: `SMA${i}`,
+//         line: {
+//           dash: "dot",
+//         },
+//       };
+//       cleanSMA.push(val);
+//     }
+//   });
+// };
 
-uploadSMAData();
-
-const constructInitialPlot = (dataFromLocalStorage, sma) => {
+const constructInitialPlot = (dataFromLocalStorage) => {
   let x_values = [];
   let trends_1 = [];
   let totals_1 = [];
@@ -85,8 +68,7 @@ const constructInitialPlot = (dataFromLocalStorage, sma) => {
     for (let i = 1; i < 100; i++) {
       dataSet.push(dataFromLocalStorage[dataFromLocalStorage.length - i]);
     }
-  
-  
+
     dataSet.forEach((element) => {
       x_values.push(element.x_value);
       trends_1.push(element.trend_1);
@@ -98,8 +80,8 @@ const constructInitialPlot = (dataFromLocalStorage, sma) => {
       trend2Upper.push(element.trend_2 + 5);
       trend2Lower.push(element.trend_2 - 5);
     });
-  } catch(e) {
-    console.log(e)
+  } catch (e) {
+    console.log(e);
   }
 
   let layout = {
@@ -199,7 +181,6 @@ const constructInitialPlot = (dataFromLocalStorage, sma) => {
     x: [...x_values],
     y: [...trend2Upper],
     mode: "lines",
-    name: "Trend 2 Upper Bound",
     line: {
       color: "rgb(254,92,92)",
     },
@@ -227,8 +208,6 @@ const constructInitialPlot = (dataFromLocalStorage, sma) => {
     trend2LowerBoundary,
     //cleanSMA[sma],
   ];
-  console.log(cleanSMA);
-  console.log(plotData);
 
   return [plotData, layout, config];
 };
@@ -238,8 +217,11 @@ class Iot extends Component {
     data: dataFromLocalStorage[dataFromLocalStorage.length - 1],
     mqttClient: new MQTTApi(),
     db: new DatabaseApi("json-database"),
-    clicked: false,
-    sma: 0,
+    channels: [
+      { controlled: false, smoothing: { value: 0, visibility: false } },
+      { controlled: false, smoothing: { value: 0, visibility: false } },
+      { controlled: false, smoothing: { value: 0, visibility: false } },
+    ],
   };
 
   toggleClicked = () => {
@@ -350,18 +332,23 @@ class Iot extends Component {
     return (
       <>
         <div id="plot"></div>
-        <PrimaryBtn style={PrimaryBtnStyles} onClick={this.selectSMA}>
-          Calculate SMA
-        </PrimaryBtn>
-        <PrimaryBtn style={PrimaryBtnStyles} onClick={this.toggleClicked}>
-          Control Process
-        </PrimaryBtn>
-        {/* <PrimaryBtn style={IncreaseBtnStyles} onClick={this.increaseSMA}>
-          <AiFillCaretUp />
-        </PrimaryBtn>
-        <PrimaryBtn style={IncreaseBtnStyles}onClick={this.decreaseSMA}>
-          <AiFillCaretDown />
-        </PrimaryBtn> */}
+        {this.state.channels.map((channel) => {
+          return (
+            <Grid>
+              <Switch {...this.toggleClicked} defaultChecked onClick={this.toggleClicked}/>
+              <Slider
+                style={{ width: "30%", margin: "10px"}}
+                aria-label="Small steps"
+                defaultValue={20}
+                step={10}
+                marks
+                min={0}
+                max={100}
+                valueLabelDisplay="auto"
+              />
+            </Grid>
+          );
+        })}
       </>
     );
   }

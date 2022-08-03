@@ -1,4 +1,3 @@
-const fs = require("fs");
 
 export default class DatabaseApi {
   constructor(fileName) {

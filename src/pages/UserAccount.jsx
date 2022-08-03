@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Grid, Cards } from "../components/StyledElemnts";
-import "../components/UserAccount.css";
+import './UserAccount.css'
 
 let initialFiles = [];
 

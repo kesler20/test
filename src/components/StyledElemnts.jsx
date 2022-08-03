@@ -8,10 +8,12 @@ export const Cards = styled.div`
   font-family: 'Lobster Two', cursive;
 `;
 export const Grid = styled.div`
-  padding: 4rem 0rem;
-  display: flex;
-  justify-content: flex-start;
+  display: grid;
+  justify-content: center;
   align-items: center;
+  padding : 4px;
+  height : 100%;
+  grid-template-columns: repeat(2, 1fr);
   svg {
     font-size: 2rem;
   }
