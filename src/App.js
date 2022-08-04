@@ -15,11 +15,6 @@ function App() {
   //This useEffect stores current user's username and JSON web token to local storage
   //the username and jwtToken are used for API fetches for authentication
   useEffect(() => {
-    Auth.currentCredentials().then((info) => {
-      const cognitoIdentityId = info.identityId;
-      console.log(cognitoIdentityId);
-    });
-
     Auth.currentUserInfo().then((user) => {
       localStorage.setItem("username", user.username);
       console.log("username set");
@@ -34,8 +29,8 @@ function App() {
   const signOut = async () => {
     try {
       await Auth.signOut();
-    } catch (error) {
-      console.log("error signing out: ", error);
+    } catch (e) {
+      console.log(e)
     }
   };
 

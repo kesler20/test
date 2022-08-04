@@ -13,8 +13,8 @@ The data can be passed as a collection of objects of the following form
         dash: "dot",
       },
     };
-
 */
+
 export default class PlotlyInterface {
   constructor(canvasID, plotTitle, yTicks, xTicks) {
     this.canvasID = canvasID;
@@ -42,21 +42,15 @@ export default class PlotlyInterface {
         },
       },
     };
-  
+
     this.config = {
       responsive: true,
       editable: true,
     };
   }
 
-  constructInitialPlot() {
-    const plotData = [];
-    console.log('new plot created')
+  constructInitialPlot(plotData) {
     this.plotly.newPlot(this.canvasID, plotData, this.layout, this.config);
-  }
-
-  loadData(plotData) {
-    this.plotly.update(this.canvasID, plotData, this.layout, this.config);
   }
 
   updateInitialPlot(newDataY, newDataX) {
@@ -67,7 +61,7 @@ export default class PlotlyInterface {
     where N is the size of the outer array
     
     */
-   console.log(`updating initial plot X:${newDataX} Y:${newDataY}`)
+
     const traceIDs = [];
     for (let i = 0; i < newDataY.length; i++) {
       traceIDs.push(i);
@@ -81,13 +75,16 @@ export default class PlotlyInterface {
       traceIDs
     );
 
-    let dataMatrix = []
-    newDataY.map(val => {
-        dataMatrix.push(val[0]) 
-    })
+    console.log(newDataX)
+    console.log(newDataY)
 
-    if (this.newData) {
-      this.plotly.relayout("plot", {
+    let dataMatrix = [];
+    newDataY.forEach((val) => {
+      dataMatrix.push(val[0]);
+    });
+
+    if (newDataY.length > 0) {
+      this.plotly.relayout(this.canvasID, {
         yaxis: {
           range: [Math.min(...dataMatrix) - 50, Math.max(...dataMatrix) + 50],
         },

@@ -10,12 +10,10 @@ export default class DatabaseApi {
       if (existingResources === null) {
         existingResources = []
       }
-      console.log(existingResources)
       let updatedResources = [...existingResources, resource];
       updatedResources = JSON.stringify(updatedResources);
   
       localStorage.setItem(`${this.fileName}`, updatedResources);
-      //console.log(`resource : ${updatedResources} created successfully✅`);
     }
   
     viewDatabase = async () => {
@@ -23,8 +21,7 @@ export default class DatabaseApi {
     };
   
     getResource = (resourceName) => {
-      let resource = require(`${this.fileName}`);
-      console.log(resource);
+      let resource =  JSON.parse(localStorage.getItem(`${this.fileName}`));
       return resource.filter((item) => item.name === resourceName);
     };
   }

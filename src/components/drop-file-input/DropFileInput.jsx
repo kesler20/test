@@ -45,7 +45,9 @@ const DropFileInput = (props) => {
         body: formData,
       }
     );
-    console.log(response);
+    response.json().then(res => {
+      console.log(res)
+    });
   }
 
   const handleSubmit = (e) => {

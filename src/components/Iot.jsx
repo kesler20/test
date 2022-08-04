@@ -1,86 +1,57 @@
+import { convertUnixEpochTimeSToDate, range } from "../APIs/otherScripts";
 import React, { useEffect, useState } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
 
-// TODO: check if getting data by topic is something that the database api can do
+// get only the last 30 data points from local storage
 const getDataFromLocalStorage = (topic) => {
   let dataFromLocalStorage = JSON.parse(
     localStorage.getItem(`/${topic}/json-database`)
   );
   if (dataFromLocalStorage === null) {
-    dataFromLocalStorage = [];
+    return [];
   }
+
+  dataFromLocalStorage = range(dataFromLocalStorage, 40);
   return dataFromLocalStorage;
 };
 
-// store abnd get the newe data from the iot
-// construct the newDayta array from all the channels
-
-// there should be onkly one plot and one source of updating it
-// the channels will take care of passing the data to it
-
-// TODO: change variables names to make it channel agnostic
-const constructChannelPlot = (data, channelID) => {
-  // include a filter for the data in order to select  the right channel
-  // TODO: in the future try to broadcast only one data stream to only one channel
-
-  const total_1 = [];
-  const trend_1 = [];
+const constructChannelPlot = (data, boundValues) => {
+  const total = [];
+  const trend = [];
   const x_values = [];
+  let upperBound = [];
+  let lowerBound = [];
 
   data.forEach((val) => {
-    total_1.push(val[`total_${channelID}`]);
-    trend_1.push(val[`trend_${channelID}`]);
-    x_values.push(val.x_value);
-  });
-
-  let color;
-  let lineStyle;
-  if (channelID === 1) {
-    lineStyle = {
-      color: "blue",
-      dash: "solid",
-      width: "5",
-    };
-    color = "rgb(55,128,191)";
-  } else if (channelID === 2) {
-    lineStyle = {
-      color: "red",
-      dash: "solid",
-      width: "5",
-    };
-    color = "rgb(254,92,92)";
-  } else {
-    lineStyle = {
-      dash: "solid",
-      width: "5",
-    };
-    color = "rgb(254,92,92)";
-  }
-
-  let upperBound = [];
-  trend_1.forEach((val) => {
-    upperBound.push(val + 20);
-  });
-
-  let lowerBound = [];
-  trend_1.forEach((val) => {
-    upperBound.push(val - 20);
+    total.push(val.total_1);
+    trend.push(val.trend_1);
+    upperBound.push(val.trend_1 + boundValues);
+    lowerBound.push(val.trend_1 - boundValues);
+    let x = convertUnixEpochTimeSToDate(val.x_value);
+    x_values.push(x);
   });
 
   const total1 = {
     x: [...x_values],
-    y: [...total_1],
+    y: [...total],
     mode: "lines",
     name: "Channel 1",
-    line: lineStyle,
+    line: {
+      color: "blue",
+      dash: "solid",
+      width: "5",
+    },
   };
   const trend1 = {
     x: [...x_values],
-    y: [...trend_1],
+    y: [...trend],
     mode: "lines",
     name: "Trend 1",
-    line: lineStyle,
+    line: {
+      color: "blue",
+      dash: "dot",
+    },
   };
   const trend1Upper = {
     x: [...x_values],
@@ -88,7 +59,7 @@ const constructChannelPlot = (data, channelID) => {
     mode: "lines",
     name: "Trend 1 Upper Bound",
     line: {
-      color: color,
+      color: "rgb(55,128,191)",
     },
   };
   const trend1Lower = {
@@ -98,23 +69,35 @@ const constructChannelPlot = (data, channelID) => {
     fill: "tonexty",
     name: "Trend 1 Lower Bound",
     line: {
-      color: color,
+      color: "rgb(55,128,191)",
     },
   };
   return [total1, trend1, trend1Upper, trend1Lower];
 };
 
+const updateChannelPlot = (data, boundValue) => {
+  const total = data[data.length - 1].total_1;
+  const trend = data[data.length - 1].trend_1;
+  let upperBound = data[data.length - 1].trend_1 + boundValue;
+  let lowerBound = data[data.length - 1].trend_1 - boundValue;
+
+  return {
+    y: [[total], [trend], [upperBound], [lowerBound]],
+    x: [
+      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
+      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
+      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
+      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
+    ],
+  };
+};
+
 const initialChannels = [
   {
     channelID: 1,
-    channelTopic: "pump/pressure",
+    readTopic: "pump/pressure",
+    writeTopic: "pump/control",
     controlled: true,
-    smoothing: { value: 0, visible: false },
-  },
-  {
-    channelID: 2,
-    channelTopic: "pump/pressure",
-    controlled: false,
     smoothing: { value: 0, visible: false },
   },
 ];
@@ -123,53 +106,32 @@ const plotly = new PlotlyInterface(
   "plot",
   "Random Number Streams",
   "Value",
-  "Random Number ID"
+  "Date Time"
 );
 
 const Iot = () => {
   const [plotlyInterface, setPlotlyInterface] = useState(plotly);
-
   const [channels, setChannels] = useState(initialChannels);
-  const [newDataFromChannels, setNewDataFromChannels] = useState([[], []]);
+  const [dataSet, setDataSet] = useState(
+    getDataFromLocalStorage("pump/pressure")
+  );
 
   useEffect(() => {
-    loadPlotData(getDataFromLocalStorage("pump/pressure"));
-  }, [getDataFromLocalStorage]);
+    plotlyInterface.constructInitialPlot(constructChannelPlot(dataSet, 5));
+  }, []);
 
   const handleChangeControl = (channelID) => {
     let currentChannels = channels;
-    let channelToUpdate = currentChannels[channelID];
+    let channelToUpdate = currentChannels[channelID - 1];
     channelToUpdate.controlled = !channelToUpdate.controlled;
     currentChannels[channelID] = channelToUpdate;
     setChannels(currentChannels);
+    console.log(channelToUpdate.controlled);
   };
 
-  // this will be called N times where N is the number of channels
-  // fill up the new data array with nans and the upper  and lower bounds
-  const handleNewData = (newData, channelID) => {
-    console.log(
-      "-----------------------------------------------------------------------------------"
-    );  
-    // update the respective databases
-    let data = [...newDataFromChannels, newData];
-    let dataY = [];
-    let dataX = [];
-    data.forEach((val) => {
-      dataY.push(val[`total_${channelID}`]);
-      dataX.push(val[`trend_${channelID}`]);
-    });
-    setNewDataFromChannels([dataY], [dataX]);
-    plotlyInterface.updateInitialPlot(...newDataFromChannels);
-  };
-
-  // this will be called N times where N is the number of channels
-  const loadPlotData = (dataFromChannels) => {
-    try {
-      plotlyInterface.loadData(constructChannelPlot(dataFromChannels));
-    } catch (e) {
-      console.log(e);
-      console.log(`the channel plot that was constructed ${dataFromChannels}`);
-    }
+  const handleDatabaseUpdate = () => {
+    let extendedTraces = updateChannelPlot(dataSet, 5);
+    plotlyInterface.updateInitialPlot(extendedTraces.y, extendedTraces.x);
   };
 
   return (
@@ -180,12 +142,11 @@ const Iot = () => {
           <Channel
             key={channel.channelID}
             id={channel.channelID}
-            topic={channel.channelTopic}
-            onChangeControlled={() => handleChangeControl(channel.channelID)}
+            readTopic={channel.readTopic}
+            writeTopic={channel.writeTopic}
+            onChangeControlled={(id) => handleChangeControl(id)}
             controlled={channel.controlled}
-            onNewData={(newData, channelID) =>
-              handleNewData(newData, channelID)
-            }
+            onUpdateDatabase={(id) => handleDatabaseUpdate(id)}
           />
         );
       })}
@@ -194,3 +155,16 @@ const Iot = () => {
 };
 
 export default Iot;
+
+//TODO: find a better way to get access of the data from the database which does not involve
+// calling the read from the database function within each function
+// this will be called N times where N is the number of channels
+// find whether your default way of displaying the plot is good
+// make sure that when a channel stops sending data that you can recreate a new plot from scratch
+// if the plot has not being updated yet use the previous value as default
+// store the previous value within the state of the channel
+//TODO: make the constructCHannelPlot function moire channel agnostic
+// TODO: make the update plot function channel agnostic
+//TODO: give the user the capacity to decide the time to live of their data and when it needs to
+// be backed up on AWS 
+// TODO: find a better way to convert the x values to time stamps

@@ -20,6 +20,9 @@ const UserAccount = () => {
   }, []);
 
   const getUserFiles = async () => {
+    if (files) {
+      setFiles(localStorage.getItem('userFiles'))
+    }
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/READ`,
       {
@@ -29,7 +32,6 @@ const UserAccount = () => {
         method: "GET",
       }
     );
-    console.log(response);
     response.json().then((res) => {
       setFiles(res["files found"]);
       localStorage.setItem("userFiles", res["files found"]);
@@ -37,14 +39,13 @@ const UserAccount = () => {
   };
   return (
     <div>
-      {/* <Grid>
+      <Grid>
         {files.map((file) => {
           return (
             <Cards key={files.indexOf(file)}>{JSON.stringify(file)}</Cards>
           );
         })}
-      </Grid> */}
-      <div className="card">Card Content</div>
+      </Grid>
     </div>
   );
 };

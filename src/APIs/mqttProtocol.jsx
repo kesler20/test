@@ -2,16 +2,16 @@ import { connect } from "mqtt";
 var CryptoJS = require("crypto-js");
 
 class UserDataEncriptor {
-  sign = function (key, msg) {
+  sign = function(key, msg) {
     const hash = CryptoJS.HmacSHA256(msg, key);
     return hash.toString(CryptoJS.enc.Hex);
   };
 
-  sha256 = function (msg) {
+  sha256 = function(msg) {
     const hash = CryptoJS.SHA256(msg);
     return hash.toString(CryptoJS.enc.Hex);
   };
-  getSignatureKey = function (key, dateStamp, regionName, serviceName) {
+  getSignatureKey = function(key, dateStamp, regionName, serviceName) {
     const kDate = CryptoJS.HmacSHA256(dateStamp, "AWS4" + key);
     const kRegion = CryptoJS.HmacSHA256(regionName, kDate);
     const kService = CryptoJS.HmacSHA256(serviceName, kRegion);
@@ -22,7 +22,9 @@ class UserDataEncriptor {
 
 export default class MQTTApi {
   constructor() {
-    this.clientId = Math.random().toString(36).substring(7);
+    this.clientId = Math.random()
+      .toString(36)
+      .substring(7);
     this.client = this.connectClient();
   }
 
@@ -65,19 +67,16 @@ export default class MQTTApi {
   subscribeClient = (topic, callBack) => {
     this.client.subscribe(topic, (err) => {
       if (err) return;
-      console.log(
-        `Subscribed to ${topic} listening to upcoming messages 👂🎶...`
-      );
       callBack();
     });
   };
 
   onConnect = (callBack) => {
-    this.client.on('connect', () => {
+    this.client.on("connect", () => {
       console.log("Connected!");
-      callBack()
-    })
-  }
+      callBack();
+    });
+  };
 
   connectClient = () => {
     return connect(this.getEndpoint(), this.clientId);
@@ -85,27 +84,31 @@ export default class MQTTApi {
 }
 
 // now channel 1 and two are both controlled 20
-export const check = (client, t1a, y1a, clicked,topic) => {
-  let x1;
-  let x2;
-  if (t1a > y1a + 20) {
-    x1 = -1;
-  } else if (t1a < y1a - 20) {
-    x1 = 1;
+export const check = (client, t1a, y1a, clicked, topic) => {
+  let x = 1;
+  if (t1a > y1a + 5) {
+    x = -1;
+  } else if (t1a < y1a - 5) {
+    x = 1;
   } else {
-    x1 = 0;
+    x = 0;
   }
 
-  let payload = { control1: [x1], control2: [x2] };
-  if (!clicked) {
-    console.log("process control has being stopped");
-    payload = { control1: [0], control2: [0] };
+  let payload = { control1: [x] };
+  // avoid to use type coercion
+  if (clicked === false) {
+    console.log("process control has being stopped ❌");
+    payload = { control1: [0]  };
+  } else {
+    console.log("process is being controlled ✅")
+    console.log(payload)
   }
   let payloadText = JSON.stringify(payload);
 
   client.publish(topic, payloadText, { qos: 0 }, (error) => {
     if (error) {
       console.log("Publish error: ", error);
+    } else {
     }
   });
 };

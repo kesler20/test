@@ -3,54 +3,54 @@ import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
 import { Switch, Slider } from "@material-ui/core";
 
-
-
-const Channel = ({ id, controlled, topic, onChangeControlled, onNewData }) => {
+const Channel = ({
+  id,
+  controlled,
+  readTopic,
+  writeTopic,
+  onUpdateDatabase,
+  onChangeControlled
+}) => {
 
   // Could all of these be props?
   const [mqttClient, setMqttClient] = useState(new MQTTApi());
-  const [db, setDb] = useState(new DatabaseApi(`/${topic}/json-database`));
+  const [db, setDb] = useState(new DatabaseApi(`/${readTopic}/json-database`));
+  const [lastTrace, setLastTrace] = useState([]);
 
   useEffect(() => {
     mqttClient.onConnect(() => {
-      mqttClient.subscribeClient(`${topic}`, () => {
-        console.log(`channel ${id} subscribed to topic : ${topic}`)
+      mqttClient.subscribeClient(`${readTopic}`, () => {
+        console.log(`channel ${id} subscribed to topic : ${readTopic} 👂🎶...`);
+        console.log(`channel ${id} and controls topic : ${writeTopic} 🖊️`);
       });
       mqttClient.client.on("message", (topic, message) => {
-        let data = { x_values : [NaN], total_1 : [NaN], trend_1 : [NaN]}
+        let data = { x_values: [0], total_1: [0], trend_1: [0] };
         try {
           data = JSON.parse(message.toString());
-          console.log(data);
           db.createResource(data);
+          setLastTrace(data)
+          onUpdateDatabase();
         } catch (e) {
           console.log(e);
         }
-
-        onNewData(data, id)
 
         check(
           mqttClient.client,
           data.trend_1,
           data.total_1,
           controlled,
-          "pump/control"
+          writeTopic
         );
 
         console.log("Message Arrived: " + message.toString());
         console.log("Topic:     " + topic);
-
       });
     }, []);
   });
 
-  //TODO: replace the x values toi remove weird rendering 
   return (
     <div>
-      <Switch
-        {...controlled}
-        defaultChecked
-        onClick={onChangeControlled}
-      />
+      <Switch {...controlled} defaultChecked onClick={() => onChangeControlled(id)} />
       <Slider
         style={{ width: "30%", margin: "10px" }}
         aria-label="Small steps"
