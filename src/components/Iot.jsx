@@ -1,4 +1,4 @@
-import { convertUnixEpochTimeSToDate, range } from "../APIs/otherScripts";
+import { range } from "../APIs/otherScripts";
 import React, { useEffect, useState } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
@@ -28,7 +28,7 @@ const constructChannelPlot = (data, boundValues) => {
     trend.push(val.trend_1);
     upperBound.push(val.trend_1 + boundValues);
     lowerBound.push(val.trend_1 - boundValues);
-    let x = convertUnixEpochTimeSToDate(val.x_value);
+    let x = val.x_value;
     x_values.push(x);
   });
 
@@ -84,10 +84,10 @@ const updateChannelPlot = (data, boundValue) => {
   return {
     y: [[total], [trend], [upperBound], [lowerBound]],
     x: [
-      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
-      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
-      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
-      [convertUnixEpochTimeSToDate(data[data.length - 1].x_value)],
+      [data[data.length - 1].x_value],
+      [data[data.length - 1].x_value],
+      [data[data.length - 1].x_value],
+      [data[data.length - 1].x_value],
     ],
   };
 };

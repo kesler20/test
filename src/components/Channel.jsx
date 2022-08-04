@@ -2,16 +2,15 @@ import React, { useState, useEffect } from "react";
 import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
 import { Switch, Slider } from "@material-ui/core";
-
+import { convertUnixEpochTimeSToDate } from "../APIs/otherScripts";
 const Channel = ({
   id,
   controlled,
   readTopic,
   writeTopic,
   onUpdateDatabase,
-  onChangeControlled
+  onChangeControlled,
 }) => {
-
   // Could all of these be props?
   const [mqttClient, setMqttClient] = useState(new MQTTApi());
   const [db, setDb] = useState(new DatabaseApi(`/${readTopic}/json-database`));
@@ -24,11 +23,14 @@ const Channel = ({
         console.log(`channel ${id} and controls topic : ${writeTopic} 🖊️`);
       });
       mqttClient.client.on("message", (topic, message) => {
-        let data = { x_values: [0], total_1: [0], trend_1: [0] };
+        let data = { x_value: [0], total_1: [0], trend_1: [0] };
         try {
           data = JSON.parse(message.toString());
+          let { x_value } = data;
+          const unix_x_value = convertUnixEpochTimeSToDate(x_value);
+          data.x_value = unix_x_value;
           db.createResource(data);
-          setLastTrace(data)
+          setLastTrace(data);
           onUpdateDatabase();
         } catch (e) {
           console.log(e);
@@ -50,7 +52,11 @@ const Channel = ({
 
   return (
     <div>
-      <Switch {...controlled} defaultChecked onClick={() => onChangeControlled(id)} />
+      <Switch
+        {...controlled}
+        defaultChecked
+        onClick={() => onChangeControlled(id)}
+      />
       <Slider
         style={{ width: "30%", margin: "10px" }}
         aria-label="Small steps"
