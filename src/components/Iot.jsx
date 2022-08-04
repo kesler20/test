@@ -1,339 +1,196 @@
-import React, { Component } from "react";
-import MQTTApi, { check } from "../APIs/mqttProtocol";
-import DatabaseApi from "../APIs/redisDatabase";
-import { PrimaryBtn } from "../components/StyledElemnts";
+import React, { useEffect, useState } from "react";
+import Channel from "./Channel";
+import PlotlyInterface from "../APIs/PlotlyInterface";
 
-const plotly = window.Plotly;
-
-let dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
-if (dataFromLocalStorage === null) {
-  dataFromLocalStorage = [];
-}
-
-let smaData = [];
-let cleanSMA = [];
-
-// const uploadSMAData = async () => {
-//   let smaFromStorage = [];
-
-//   if (smaFromStorage.length > 0) return smaFromStorage;
-//   const response = await fetch(
-//     `${process.env.REACT_APP_BACKEND_URL_DEV}/jobs/SMA`,
-//     {
-//       headers: new Headers({
-//         "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-//       }),
-//       method: "POST",
-//       body: JSON.stringify(dataFromLocalStorage),
-//     }
-//   );
-//   response.json().then((res) => {
-//     smaData.push(JSON.parse(res["job completed"]));
-//     for (let i = 0; i < 100; i++) {
-//       smaData[0][`SMA${i}`].x = [];
-//       smaData[0][`SMA${i}`].y = [];
-//       Object.keys(smaData[0][`SMA${i}`]).forEach((key) => {
-//         smaData[0][`SMA${i}`].x.push(key - 20);
-//         smaData[0][`SMA${i}`].y.push(smaData[0][`SMA${i}`][key]);
-//       });
-//       let val = {
-//         x: smaData[0][`SMA${i}`].x,
-//         y: smaData[0][`SMA${i}`].y,
-//         mode: "lines",
-//         name: `SMA${i}`,
-//         line: {
-//           dash: "dot",
-//         },
-//       };
-//       cleanSMA.push(val);
-//     }
-//   });
-// };
-
-const constructInitialPlot = (dataFromLocalStorage) => {
-  let x_values = [];
-  let trends_1 = [];
-  let totals_1 = [];
-  let trends_2 = [];
-  let totals_2 = [];
-  let trend1Upper = [];
-  let trend2Upper = [];
-  let trend1Lower = [];
-  let trend2Lower = [];
-
-  const dataSet = [];
-
-  try {
-    for (let i = 1; i < 100; i++) {
-      dataSet.push(dataFromLocalStorage[dataFromLocalStorage.length - i]);
-    }
-
-    dataSet.forEach((element) => {
-      x_values.push(element.x_value);
-      trends_1.push(element.trend_1);
-      totals_1.push(element.total_1);
-      trends_2.push(element.trend_2);
-      totals_2.push(element.total_2);
-      trend1Upper.push(element.trend_1 + 20);
-      trend1Lower.push(element.trend_1 - 20);
-      trend2Upper.push(element.trend_2 + 5);
-      trend2Lower.push(element.trend_2 - 5);
-    });
-  } catch (e) {
-    console.log(e);
+// TODO: check if getting data by topic is something that the database api can do
+const getDataFromLocalStorage = (topic) => {
+  let dataFromLocalStorage = JSON.parse(
+    localStorage.getItem(`/${topic}/json-database`)
+  );
+  if (dataFromLocalStorage === null) {
+    dataFromLocalStorage = [];
   }
+  return dataFromLocalStorage;
+};
 
-  let layout = {
-    title: "Random Number Streams",
-    yaxis: {
-      title: "Value",
-      range: [900, 1150],
-      titlefont: {
-        family: "Arial, sans-serif",
-        size: 18,
-        color: "black",
-      },
-    },
-    xaxis: {
-      title: "Random Number ID",
-      titlefont: {
-        family: "Arial, sans-serif",
-        size: 18,
-        color: "black",
-      },
-    },
-  };
+// store abnd get the newe data from the iot
+// construct the newDayta array from all the channels
 
-  let config = {
-    responsive: true,
-    editable: true,
-  };
+// there should be onkly one plot and one source of updating it
+// the channels will take care of passing the data to it
 
-  const trend1 = {
-    x: [...x_values],
-    y: [...trends_1],
-    mode: "lines",
-    name: "Trend 1",
-    line: {
-      color: "blue",
-      dash: "dot",
-    },
-  };
+// TODO: change variables names to make it channel agnostic
+const constructChannelPlot = (data, channelID) => {
+  // include a filter for the data in order to select  the right channel
+  // TODO: in the future try to broadcast only one data stream to only one channel
 
-  const total1 = {
-    x: [...x_values],
-    y: [...totals_1],
-    mode: "lines",
-    name: "Channel 1",
-    line: {
+  const total_1 = [];
+  const trend_1 = [];
+  const x_values = [];
+
+  data.forEach((val) => {
+    total_1.push(val[`total_${channelID}`]);
+    trend_1.push(val[`trend_${channelID}`]);
+    x_values.push(val.x_value);
+  });
+
+  let color;
+  let lineStyle;
+  if (channelID === 1) {
+    lineStyle = {
       color: "blue",
       dash: "solid",
       width: "5",
-    },
-  };
+    };
+    color = "rgb(55,128,191)";
+  } else if (channelID === 2) {
+    lineStyle = {
+      color: "red",
+      dash: "solid",
+      width: "5",
+    };
+    color = "rgb(254,92,92)";
+  } else {
+    lineStyle = {
+      dash: "solid",
+      width: "5",
+    };
+    color = "rgb(254,92,92)";
+  }
 
-  const trend1UpperBoundary = {
+  let upperBound = [];
+  trend_1.forEach((val) => {
+    upperBound.push(val + 20);
+  });
+
+  let lowerBound = [];
+  trend_1.forEach((val) => {
+    upperBound.push(val - 20);
+  });
+
+  const total1 = {
     x: [...x_values],
-    y: [...trend1Upper],
+    y: [...total_1],
+    mode: "lines",
+    name: "Channel 1",
+    line: lineStyle,
+  };
+  const trend1 = {
+    x: [...x_values],
+    y: [...trend_1],
+    mode: "lines",
+    name: "Trend 1",
+    line: lineStyle,
+  };
+  const trend1Upper = {
+    x: [...x_values],
+    y: [...upperBound],
     mode: "lines",
     name: "Trend 1 Upper Bound",
     line: {
-      color: "rgb(55,128,191)",
+      color: color,
     },
   };
-
-  const trend1LowerBoundary = {
+  const trend1Lower = {
     x: [...x_values],
-    y: [...trend1Lower],
+    y: [...lowerBound],
     mode: "lines",
     fill: "tonexty",
     name: "Trend 1 Lower Bound",
     line: {
-      color: "rgb(55,128,191)",
+      color: color,
     },
   };
-
-  const trend2 = {
-    x: [...x_values],
-    y: [...trends_2],
-    name: "Trend 2",
-    mode: "lines",
-    line: {
-      color: "red",
-      dash: "dot",
-    },
-  };
-
-  const total2 = {
-    x: [...x_values],
-    y: [...totals_2],
-    mode: "lines",
-    name: "Channel 2",
-    line: {
-      color: "red",
-      dash: "solid",
-      width: "5",
-    },
-  };
-
-  const trend2UpperBoundary = {
-    x: [...x_values],
-    y: [...trend2Upper],
-    mode: "lines",
-    line: {
-      color: "rgb(254,92,92)",
-    },
-  };
-
-  const trend2LowerBoundary = {
-    x: [...x_values],
-    y: [...trend2Lower],
-    mode: "lines",
-    fill: "tonexty",
-    name: "Trend 2 Lower Bound",
-    line: {
-      color: "rgb(254,92,92)",
-    },
-  };
-
-  const plotData = [
-    trend1,
-    total1,
-    trend2,
-    total2,
-    trend1UpperBoundary,
-    trend1LowerBoundary,
-    trend2UpperBoundary,
-    trend2LowerBoundary,
-    //cleanSMA[sma],
-  ];
-
-  return [plotData, layout, config];
+  return [total1, trend1, trend1Upper, trend1Lower];
 };
 
-class Iot extends Component {
-  state = {
-    data: dataFromLocalStorage[dataFromLocalStorage.length - 1],
-    mqttClient: new MQTTApi(),
-    db: new DatabaseApi("json-database"),
-    channels: [
-      { controlled: false, smoothing: { value: 0, visibility: false } },
-      { controlled: false, smoothing: { value: 0, visibility: false } },
-      { controlled: false, smoothing: { value: 0, visibility: false } },
-    ],
+const initialChannels = [
+  {
+    channelID: 1,
+    channelTopic: "pump/pressure",
+    controlled: true,
+    smoothing: { value: 0, visible: false },
+  },
+  {
+    channelID: 2,
+    channelTopic: "pump/pressure",
+    controlled: false,
+    smoothing: { value: 0, visible: false },
+  },
+];
+
+const plotly = new PlotlyInterface(
+  "plot",
+  "Random Number Streams",
+  "Value",
+  "Random Number ID"
+);
+
+const Iot = () => {
+  const [plotlyInterface, setPlotlyInterface] = useState(plotly);
+
+  const [channels, setChannels] = useState(initialChannels);
+  const [newDataFromChannels, setNewDataFromChannels] = useState([[], []]);
+
+  useEffect(() => {
+    loadPlotData(getDataFromLocalStorage("pump/pressure"));
+  }, [getDataFromLocalStorage]);
+
+  const handleChangeControl = (channelID) => {
+    let currentChannels = channels;
+    let channelToUpdate = currentChannels[channelID];
+    channelToUpdate.controlled = !channelToUpdate.controlled;
+    currentChannels[channelID] = channelToUpdate;
+    setChannels(currentChannels);
   };
 
-  toggleClicked = () => {
-    if (!this.state.clicked) {
-      alert("Process is being controlled");
-    } else {
-      alert("process is NOT being controlled ");
+  // this will be called N times where N is the number of channels
+  // fill up the new data array with nans and the upper  and lower bounds
+  const handleNewData = (newData, channelID) => {
+    console.log(
+      "-----------------------------------------------------------------------------------"
+    );  
+    // update the respective databases
+    let data = [...newDataFromChannels, newData];
+    let dataY = [];
+    let dataX = [];
+    data.forEach((val) => {
+      dataY.push(val[`total_${channelID}`]);
+      dataX.push(val[`trend_${channelID}`]);
+    });
+    setNewDataFromChannels([dataY], [dataX]);
+    plotlyInterface.updateInitialPlot(...newDataFromChannels);
+  };
+
+  // this will be called N times where N is the number of channels
+  const loadPlotData = (dataFromChannels) => {
+    try {
+      plotlyInterface.loadData(constructChannelPlot(dataFromChannels));
+    } catch (e) {
+      console.log(e);
+      console.log(`the channel plot that was constructed ${dataFromChannels}`);
     }
-    this.setState({ clicked: !this.state.clicked });
   };
 
-  // increaseSMA = () => {
-  //   this.setState({ sma: this.state.sma + 1 });
-  //   plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
-  // };
-  // decreaseSMA = () => {
-  //   this.setState({ sma: this.state.sma - 1 });
-  //   plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
-  // };
-
-  componentDidMount() {
-    this.state.mqttClient.onConnect(() => {
-      this.state.mqttClient.subscribeClient("pump/pressure", () => {
-        plotly.plot(
-          "plot",
-          ...constructInitialPlot(dataFromLocalStorage, this.state.sma)
+  return (
+    <>
+      <div id="plot"></div>
+      {channels.map((channel) => {
+        return (
+          <Channel
+            key={channel.channelID}
+            id={channel.channelID}
+            topic={channel.channelTopic}
+            onChangeControlled={() => handleChangeControl(channel.channelID)}
+            controlled={channel.controlled}
+            onNewData={(newData, channelID) =>
+              handleNewData(newData, channelID)
+            }
+          />
         );
-      });
-    });
-
-    this.state.mqttClient.client.on("message", (topic, message) => {
-      try {
-        let data = JSON.parse(message.toString());
-        this.setState({ data });
-        console.log(data);
-        this.state.db.createResource(data);
-      } catch (e) {
-        console.log(e);
-      }
-
-      check(
-        this.state.mqttClient.client,
-        this.state.data.trend_1,
-        this.state.data.total_1,
-        this.state.data.trend_2,
-        this.state.data.total_2,
-        this.state.clicked
-      );
-
-      console.log("Message Arrived: " + message.toString());
-      console.log("Topic:     " + topic);
-      //this.state.db.viewDatabase().then((val) => console.log(val));
-
-      let dataMatrix = [
-        this.state.data.trend_1,
-        this.state.data.total_1,
-        this.state.data.trend_2,
-        this.state.data.total_2,
-        this.state.data.trend_1 + 20,
-        this.state.data.trend_1 - 20,
-        this.state.data.trend_2 + 5,
-        this.state.data.trend_2 - 5,
-      ];
-
-      plotly.extendTraces(
-        "plot",
-        {
-          y: [
-            [this.state.data.trend_1],
-            [this.state.data.total_1],
-            [this.state.data.trend_2],
-            [this.state.data.total_2],
-            [this.state.data.trend_1 + 20],
-            [this.state.data.trend_1 - 20],
-            [this.state.data.trend_2 + 5],
-            [this.state.data.trend_2 - 5],
-          ],
-          x: [
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-            [this.state.data.x_value],
-          ],
-        },
-        [0, 1, 2, 3, 4, 5, 6, 7]
-      );
-
-      if (this.state.data) {
-        console.log(
-          `resizing ${[
-            Math.min(...dataMatrix) - 50,
-            Math.max(...dataMatrix) + 50,
-          ]}`
-        );
-        plotly.relayout("plot", {
-          yaxis: {
-            range: [Math.min(...dataMatrix) - 50, Math.max(...dataMatrix) + 50],
-          },
-        });
-      }
-    });
-  }
-  render() {
-    return (
-      <>
-        <div id="plot"></div>
-      </>
-    );
-  }
-}
+      })}
+    </>
+  );
+};
 
 export default Iot;

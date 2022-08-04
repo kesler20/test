@@ -84,7 +84,8 @@ export default class MQTTApi {
   };
 }
 
-export const check = (client, t1a, y1a, t2a, y2a, clicked) => {
+// now channel 1 and two are both controlled 20
+export const check = (client, t1a, y1a, clicked,topic) => {
   let x1;
   let x2;
   if (t1a > y1a + 20) {
@@ -95,14 +96,6 @@ export const check = (client, t1a, y1a, t2a, y2a, clicked) => {
     x1 = 0;
   }
 
-  if (t2a > y2a + 5) {
-    x2 = -1;
-  } else if (t2a < y2a - 5) {
-    x2 = 1;
-  } else {
-    x2 = 0;
-  }
-
   let payload = { control1: [x1], control2: [x2] };
   if (!clicked) {
     console.log("process control has being stopped");
@@ -110,7 +103,7 @@ export const check = (client, t1a, y1a, t2a, y2a, clicked) => {
   }
   let payloadText = JSON.stringify(payload);
 
-  client.publish("pump/control", payloadText, { qos: 0 }, (error) => {
+  client.publish(topic, payloadText, { qos: 0 }, (error) => {
     if (error) {
       console.log("Publish error: ", error);
     }

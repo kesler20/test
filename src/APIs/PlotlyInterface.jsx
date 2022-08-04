@@ -15,18 +15,14 @@ The data can be passed as a collection of objects of the following form
     };
 
 */
-class PlotlyInterface {
-  constructor(canvasID, data, plotTitle, yTicks, xTicks) {
+export default class PlotlyInterface {
+  constructor(canvasID, plotTitle, yTicks, xTicks) {
     this.canvasID = canvasID;
     this.plotly = window.Plotly;
-    this.data = data;
     this.plotTitle = plotTitle;
     this.yTicks = yTicks;
     this.xTicks = xTicks;
-  }
-
-  constructInitialPlot() {
-    const layout = {
+    this.layout = {
       title: this.plotTitle,
       yaxis: {
         title: this.yTickss,
@@ -46,17 +42,24 @@ class PlotlyInterface {
         },
       },
     };
-
-    const config = {
+  
+    this.config = {
       responsive: true,
       editable: true,
     };
-
-    const plotData = [...this.data];
-    this.plotly.plot(this.canvasID, plotData, layout, config);
   }
 
-  updateInitialPlot(newData) {
+  constructInitialPlot() {
+    const plotData = [];
+    console.log('new plot created')
+    this.plotly.newPlot(this.canvasID, plotData, this.layout, this.config);
+  }
+
+  loadData(plotData) {
+    this.plotly.update(this.canvasID, plotData, this.layout, this.config);
+  }
+
+  updateInitialPlot(newDataY, newDataX) {
     /*
     new Data is an object with a y and an x property which are array of arrays
 
@@ -64,21 +67,22 @@ class PlotlyInterface {
     where N is the size of the outer array
     
     */
+   console.log(`updating initial plot X:${newDataX} Y:${newDataY}`)
     const traceIDs = [];
-    for (let i = 0; i < newData.y.length; i++) {
+    for (let i = 0; i < newDataY.length; i++) {
       traceIDs.push(i);
     }
     this.plotly.extendTraces(
       this.canvasID,
       {
-        y: [...newData.y],
-        x: [...newData.x],
+        y: [...newDataY],
+        x: [...newDataX],
       },
       traceIDs
     );
 
     let dataMatrix = []
-    newData.y.map(val => {
+    newDataY.map(val => {
         dataMatrix.push(val[0]) 
     })
 
