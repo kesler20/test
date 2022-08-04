@@ -15,7 +15,6 @@ The data can be passed as a collection of objects of the following form
     };
 
 */
-
 class PlotlyInterface {
   constructor(canvasID, data, plotTitle, yTicks, xTicks) {
     this.canvasID = canvasID;
@@ -59,10 +58,10 @@ class PlotlyInterface {
 
   updateInitialPlot(newData) {
     /*
-    new Data is an array of arrays
+    new Data is an object with a y and an x property which are array of arrays
 
     [[trace1],[trace2],[trace3]...[traceN]]
-    where N is the size of the array
+    where N is the size of the outer array
     
     */
     const traceIDs = [];

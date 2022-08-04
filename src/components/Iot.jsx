@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
 import { PrimaryBtn } from "../components/StyledElemnts";
-import { Switch, Slider, Grid, Card } from "@material-ui/core";
 
 const plotly = window.Plotly;
 
@@ -332,23 +331,6 @@ class Iot extends Component {
     return (
       <>
         <div id="plot"></div>
-        {this.state.channels.map((channel) => {
-          return (
-            <Grid>
-              <Switch {...this.toggleClicked} defaultChecked onClick={this.toggleClicked}/>
-              <Slider
-                style={{ width: "30%", margin: "10px"}}
-                aria-label="Small steps"
-                defaultValue={20}
-                step={10}
-                marks
-                min={0}
-                max={100}
-                valueLabelDisplay="auto"
-              />
-            </Grid>
-          );
-        })}
       </>
     );
   }
