@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
 import { PrimaryBtn } from "../components/StyledElemnts";
-
+import { Switch, Slider } from "@material-ui/core";
 const plotly = window.Plotly;
 
 let dataFromLocalStorage = JSON.parse(localStorage.getItem("json-database"));
@@ -232,6 +232,10 @@ class Iot extends Component {
     this.setState({ clicked: !this.state.clicked });
   };
 
+  changeControlled = () => {
+    console.log('press')
+  }
+
   // increaseSMA = () => {
   //   this.setState({ sma: this.state.sma + 1 });
   //   plotly.newPlot("plot", ...constructInitialPlot(dataFromLocalStorage, this.state.sma));
@@ -331,6 +335,17 @@ class Iot extends Component {
     return (
       <>
         <div id="plot"></div>
+        <Switch {...this.changeControlled} defaultChecked onClick={this.changeControlled} />
+        <Slider
+          style={{ width: "30%", margin: "10px" }}
+          aria-label="Small steps"
+          defaultValue={20}
+          step={10}
+          marks
+          min={0}
+          max={100}
+          valueLabelDisplay="auto"
+        />
       </>
     );
   }
