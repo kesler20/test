@@ -3,15 +3,17 @@ import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
 import { Switch, Slider } from "@material-ui/core";
 import { convertUnixEpochTimeSToDate } from "../APIs/otherScripts";
-const Channel = ({
-  id,
-  controlled,
-  readTopic,
-  writeTopic,
-  onUpdateDatabase,
-  onChangeControlled,
-}) => {
-  // Could all of these be props?
+
+const Channel = (props) => {
+  const {
+    id,
+    controlled,
+    readTopic,
+    writeTopic,
+    onUpdateDatabase,
+    onChangeControlled,
+  } = props;
+
   const [mqttClient, setMqttClient] = useState(new MQTTApi());
   const [db, setDb] = useState(new DatabaseApi(`/${readTopic}/json-database`));
   const [lastTrace, setLastTrace] = useState([]);
@@ -29,34 +31,36 @@ const Channel = ({
           let { x_value } = data;
           const unix_x_value = convertUnixEpochTimeSToDate(x_value);
           data.x_value = unix_x_value;
+          console.log("the following data will be stored", data);
           db.createResource(data);
-          setLastTrace(data);
           onUpdateDatabase();
         } catch (e) {
           console.log(e);
         }
 
-        check(
-          mqttClient.client,
-          data.trend_1,
-          data.total_1,
-          controlled,
-          writeTopic
-        );
+        try {
+          check(
+            mqttClient.client,
+            data.trend_1,
+            data.total_1,
+            JSON.parse(localStorage.getItem(`channel ${id} control state`))[
+              "msg"
+            ],
+            writeTopic
+          );
+        } catch (e) {
+          console.log(e);
+        }
 
-        console.log("Message Arrived: " + message.toString());
-        console.log("Topic:     " + topic);
+        // console.log("Message Arrived: " + message.toString());
+        // console.log("Topic:     " + topic);
       });
     }, []);
   });
 
   return (
     <div>
-      <Switch
-        {...controlled}
-        defaultChecked
-        onClick={() => onChangeControlled(id)}
-      />
+      <Switch {...lastTrace} defaultChecked onClick={() => onChangeControlled(id)} />
       <Slider
         style={{ width: "30%", margin: "10px" }}
         aria-label="Small steps"

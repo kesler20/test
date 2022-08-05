@@ -1,5 +1,5 @@
 import { range } from "../APIs/otherScripts";
-import React, { useEffect, useState } from "react";
+import React, { Component } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
 
@@ -12,11 +12,11 @@ const getDataFromLocalStorage = (topic) => {
     return [];
   }
 
-  dataFromLocalStorage = range(dataFromLocalStorage, 40);
+  dataFromLocalStorage = range(dataFromLocalStorage, 30);
   return dataFromLocalStorage;
 };
 
-const constructChannelPlot = (data, boundValues) => {
+const constructChannelPlot = (data, boundValues, channelID, visibility) => {
   const total = [];
   const trend = [];
   const x_values = [];
@@ -58,6 +58,8 @@ const constructChannelPlot = (data, boundValues) => {
     y: [...upperBound],
     mode: "lines",
     name: "Trend 1 Upper Bound",
+    visible: visibility,
+    showlegend: false,
     line: {
       color: "rgb(55,128,191)",
     },
@@ -66,6 +68,8 @@ const constructChannelPlot = (data, boundValues) => {
     x: [...x_values],
     y: [...lowerBound],
     mode: "lines",
+    visible: visibility,
+    showlegend: false,
     fill: "tonexty",
     name: "Trend 1 Lower Bound",
     line: {
@@ -92,67 +96,103 @@ const updateChannelPlot = (data, boundValue) => {
   };
 };
 
-const initialChannels = [
-  {
-    channelID: 1,
-    readTopic: "pump/pressure",
-    writeTopic: "pump/control",
-    controlled: true,
-    smoothing: { value: 0, visible: false },
-  },
-];
-
-const plotly = new PlotlyInterface(
-  "plot",
-  "Random Number Streams",
-  "Value",
-  "Date Time"
-);
-
-const Iot = () => {
-  const [plotlyInterface, setPlotlyInterface] = useState(plotly);
-  const [channels, setChannels] = useState(initialChannels);
-  const [dataSet, setDataSet] = useState(
-    getDataFromLocalStorage("pump/pressure")
-  );
-
-  useEffect(() => {
-    plotlyInterface.constructInitialPlot(constructChannelPlot(dataSet, 5));
-  }, []);
-
-  const handleChangeControl = (channelID) => {
-    let currentChannels = channels;
-    let channelToUpdate = currentChannels[channelID - 1];
-    channelToUpdate.controlled = !channelToUpdate.controlled;
-    currentChannels[channelID] = channelToUpdate;
-    setChannels(currentChannels);
-    console.log(channelToUpdate.controlled);
+class Iot extends Component {
+  state = {
+    plotlyInterface: new PlotlyInterface(
+      "plot",
+      "Random Number Streams",
+      "Value",
+      "Date Time"
+    ),
+    channels: [
+      {
+        channelID: 1,
+        readTopic: "pump/pressure",
+        writeTopic: "pump/control",
+        controlled: true,
+        smoothing: { value: 0, visible: false },
+      },
+    ],
+    dataSet: getDataFromLocalStorage("pump/pressure"),
+    cnt: 0,
   };
 
-  const handleDatabaseUpdate = () => {
-    let extendedTraces = updateChannelPlot(dataSet, 5);
-    plotlyInterface.updateInitialPlot(extendedTraces.y, extendedTraces.x);
+  componentDidMount() {
+    this.state.plotlyInterface.constructInitialPlot(
+      constructChannelPlot(
+        this.state.dataSet,
+        5,
+        1,
+        this.state.channels[0].controlled
+      )
+    );
+
+    localStorage.setItem(
+      `channel ${1} control state`,
+      JSON.stringify({ msg: true })
+    );
+  }
+
+  handleChangeControl = (channelID) => {
+    const channels = this.state.channels;
+    const { controlled } = channels[channelID - 1];
+    console.log("system changed to ", !controlled);
+    this.state.plotlyInterface.constructInitialPlot(
+      constructChannelPlot(this.state.dataSet, 5, channelID, !controlled)
+    );
+
+    localStorage.setItem(
+      `channel ${channelID} control state`,
+      JSON.stringify({ msg: !controlled })
+    );
+
+    channels[channelID - 1].controlled = !controlled;
+    this.setState({ channels });
   };
 
-  return (
-    <>
-      <div id="plot"></div>
-      {channels.map((channel) => {
-        return (
-          <Channel
-            key={channel.channelID}
-            id={channel.channelID}
-            readTopic={channel.readTopic}
-            writeTopic={channel.writeTopic}
-            onChangeControlled={(id) => handleChangeControl(id)}
-            controlled={channel.controlled}
-            onUpdateDatabase={(id) => handleDatabaseUpdate(id)}
-          />
-        );
-      })}
-    </>
-  );
-};
+  handleDatabaseUpdate = () => {
+    this.setState({ dataSet: getDataFromLocalStorage("pump/pressure") });
+    let extendedTraces = updateChannelPlot(this.state.dataSet, 5);
+
+    this.state.plotlyInterface.updateInitialPlot(
+      extendedTraces.y,
+      extendedTraces.x
+    );
+
+    // refresh the plot
+    if (this.state.cnt >= 5) {
+      const { controlled } = this.state.channels[0];
+      this.state.plotlyInterface.constructInitialPlot(
+        constructChannelPlot(this.state.dataSet, 5, 0, controlled)
+      );
+      this.setState({ cnt: 0 });
+    } else {
+      let count = 1 + this.state.cnt;
+      this.setState({ cnt: count });
+    }
+  };
+
+  render() {
+    return (
+      <>
+        <div id="plot"></div>
+        {this.state.channels.map((channel) => {
+          return (
+            <Channel
+              key={channel.channelID}
+              id={channel.channelID}
+              readTopic={channel.readTopic}
+              writeTopic={channel.writeTopic}
+              onChangeControlled={(id) => this.handleChangeControl(id)}
+              controlled={channel.controlled}
+              onUpdateDatabase={() => this.handleDatabaseUpdate()}
+            />
+          );
+        })}
+      </>
+    );
+  }
+}
 
 export default Iot;
 
@@ -166,5 +206,6 @@ export default Iot;
 //TODO: make the constructCHannelPlot function moire channel agnostic
 // TODO: make the update plot function channel agnostic
 //TODO: give the user the capacity to decide the time to live of their data and when it needs to
-// be backed up on AWS 
+// be backed up on AWS
 // TODO: find a better way to convert the x values to time stamps
+// TODO: might use continuous error bars instead of the upper and lower bound https://plotly.com/javascript/continuous-error-bars/

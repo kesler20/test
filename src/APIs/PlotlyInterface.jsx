@@ -75,9 +75,6 @@ export default class PlotlyInterface {
       traceIDs
     );
 
-    console.log(newDataX)
-    console.log(newDataY)
-
     let dataMatrix = [];
     newDataY.forEach((val) => {
       dataMatrix.push(val[0]);
