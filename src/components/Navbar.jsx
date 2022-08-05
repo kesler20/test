@@ -23,6 +23,7 @@ const Navbar = () => {
           <Link to={"./"}>IoT</Link>
           <Link to={"./userUpload"}>Upload Files</Link>
           <Link to={"./userAccount"}>Account</Link>
+          <Link to={"./test"}>test</Link>
         </SideBar>
       );
     } else {

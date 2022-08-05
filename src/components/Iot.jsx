@@ -110,6 +110,7 @@ class Iot extends Component {
         readTopic: "pump/pressure",
         writeTopic: "pump/control",
         controlled: true,
+        errorBound: 5,
         smoothing: { value: 0, visible: false },
       },
     ],
@@ -129,7 +130,11 @@ class Iot extends Component {
 
     localStorage.setItem(
       `channel ${1} control state`,
-      JSON.stringify({ msg: true })
+      JSON.stringify({
+        controlStatus: true,
+        controlSeverity: 1,
+        target: `${this.state.channels[0].errorBound}`,
+      })
     );
   }
 
@@ -138,21 +143,57 @@ class Iot extends Component {
     const { controlled } = channels[channelID - 1];
     console.log("system changed to ", !controlled);
     this.state.plotlyInterface.constructInitialPlot(
-      constructChannelPlot(this.state.dataSet, 5, channelID, !controlled)
+      constructChannelPlot(
+        this.state.dataSet,
+        this.state.channels[0].errorBound,
+        channelID,
+        !controlled
+      )
     );
 
     localStorage.setItem(
       `channel ${channelID} control state`,
-      JSON.stringify({ msg: !controlled })
+      JSON.stringify({
+        controlStatus: true,
+        controlSeverity: 1,
+        target: `${this.state.channels[0].errorBound}`,
+      })
     );
 
     channels[channelID - 1].controlled = !controlled;
     this.setState({ channels });
   };
 
+  handleChangeErrorBound = (e) => {
+    this.state.plotlyInterface.constructInitialPlot(
+      constructChannelPlot(
+        this.state.dataSet,
+        parseInt(e.target.innerText),
+        1,
+        this.state.channels[0].controlled
+      )
+    );
+
+    let { channels } = this.state;
+    channels[0].errorBound = parseInt(e.target.innerText);
+    this.setState({ channels });
+
+    localStorage.setItem(
+      `channel 1 control state`,
+      JSON.stringify({
+        controlStatus: true,
+        controlSeverity: 1,
+        target: `${this.state.channels[0].errorBound}`,
+      })
+    );
+  };
+
   handleDatabaseUpdate = () => {
     this.setState({ dataSet: getDataFromLocalStorage("pump/pressure") });
-    let extendedTraces = updateChannelPlot(this.state.dataSet, 5);
+    let extendedTraces = updateChannelPlot(
+      this.state.dataSet,
+      this.state.channels[0].errorBound
+    );
 
     this.state.plotlyInterface.updateInitialPlot(
       extendedTraces.y,
@@ -163,7 +204,12 @@ class Iot extends Component {
     if (this.state.cnt >= 5) {
       const { controlled } = this.state.channels[0];
       this.state.plotlyInterface.constructInitialPlot(
-        constructChannelPlot(this.state.dataSet, 5, 0, controlled)
+        constructChannelPlot(
+          this.state.dataSet,
+          this.state.channels[0].errorBound,
+          0,
+          controlled
+        )
       );
       this.setState({ cnt: 0 });
     } else {
@@ -184,8 +230,8 @@ class Iot extends Component {
               readTopic={channel.readTopic}
               writeTopic={channel.writeTopic}
               onChangeControlled={(id) => this.handleChangeControl(id)}
-              controlled={channel.controlled}
               onUpdateDatabase={() => this.handleDatabaseUpdate()}
+              onChangeErrorBound={(e) => this.handleChangeErrorBound(e)}
             />
           );
         })}

@@ -1,0 +1,121 @@
+.value {
+  font-family: "Work Sans", sans-serif;
+  fill: #fc5a96;
+  font-size: 30px;
+}
+
+.knob {
+    position: absolute;
+    z-index: 100;
+}
+
+.outer {
+  background-color: white;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px solid #c9c9c9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner {
+  /* ff 3.6+ */
+  background: -moz-radial-gradient(
+    circle at 27% 28%,
+    rgba(0, 255, 235, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+
+  /* safari 5.1+,chrome 10+ */
+  background: -webkit-radial-gradient(
+    circle at 27% 28%,
+    rgba(0, 255, 235, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+
+  /* opera 11.10+ */
+  background: -o-radial-gradient(
+    circle at 27% 28%,
+    rgba(0, 255, 235, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+
+  /* ie 10+ */
+  background: -ms-radial-gradient(
+    circle at 27% 28%,
+    rgba(0, 255, 235, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+
+  /* global 92%+ browsers support */
+  background: radial-gradient(
+    circle at 27% 28%,
+    rgba(0, 255, 235, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  box-shadow: 10px 10px 10px #bebebe;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner li {
+  left: -20%;
+  color: #e9dae6;
+  position: absolute;
+  transform-origin: 70px;
+  transform: rotate(calc(360deg / 6 * var(--i)));
+}
+
+#powerBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  transform: translateY(200%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  /* global 92%+ browsers support */
+  background: radial-gradient(
+    circle at 27% 28%,
+    rgba(0, 255, 235, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+}
+
+#powerBtn.power-off {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+  transform: translateY(200%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: gray;
+  /* ff 3.6+ */
+  background: -moz-radial-gradient(
+    circle at 27% 28%,
+    rgba(128, 121, 217, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+  /* global 92%+ browsers support */
+  background: radial-gradient(
+    circle at 27% 28%,
+    rgba(128, 121, 217, 1) 0%,
+    rgba(7, 58, 187, 1) 100%
+  );
+}
+
+#powerBtn:hover {
+  box-shadow: 2px 2px 8px grey;
+}

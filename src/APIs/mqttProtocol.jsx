@@ -84,19 +84,21 @@ export default class MQTTApi {
 }
 
 // now channel 1 and two are both controlled 20
-export const check = (client, t1a, y1a, clicked, topic) => {
-  let x = 1;
-  if (t1a > y1a + 5) {
-    x = -1;
-  } else if (t1a < y1a - 5) {
-    x = 1;
+export const check = (client, t1a, y1a, controlStatus, topic, controlSeverity, target) => {
+  
+  let bound = parseInt(target)
+  let x = controlSeverity;
+  if (t1a > y1a + bound) {
+    x = -controlSeverity;
+  } else if (t1a < y1a - bound) {
+    x = controlSeverity;
   } else {
     x = 0;
   }
 
   let payload = { control1: [x] };
   // avoid to use type coercion
-  if (clicked === false) {
+  if (controlStatus === false) {
     console.log("process control has being stopped ❌");
     payload = { control1: [0]  };
   } else {

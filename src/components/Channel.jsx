@@ -7,11 +7,11 @@ import { convertUnixEpochTimeSToDate } from "../APIs/otherScripts";
 const Channel = (props) => {
   const {
     id,
-    controlled,
     readTopic,
     writeTopic,
     onUpdateDatabase,
     onChangeControlled,
+    onChangeErrorBound
   } = props;
 
   const [mqttClient, setMqttClient] = useState(new MQTTApi());
@@ -38,15 +38,18 @@ const Channel = (props) => {
           console.log(e);
         }
 
+        const { controlStatus, controlSeverity, target } = JSON.parse(
+          localStorage.getItem(`channel ${id} control state`)
+        );
         try {
           check(
             mqttClient.client,
             data.trend_1,
             data.total_1,
-            JSON.parse(localStorage.getItem(`channel ${id} control state`))[
-              "msg"
-            ],
-            writeTopic
+            controlStatus,
+            writeTopic,
+            controlSeverity,
+            target
           );
         } catch (e) {
           console.log(e);
@@ -60,16 +63,21 @@ const Channel = (props) => {
 
   return (
     <div>
-      <Switch {...lastTrace} defaultChecked onClick={() => onChangeControlled(id)} />
+      <Switch
+        {...lastTrace}
+        defaultChecked
+        onClick={() => onChangeControlled(id)}
+      />
       <Slider
-        style={{ width: "30%", margin: "10px" }}
+        style={{ width: "20%", margin: "10px" }}
         aria-label="Small steps"
-        defaultValue={20}
+        defaultValue={5}
         step={10}
         marks
         min={0}
-        max={100}
+        max={50}
         valueLabelDisplay="auto"
+        onChange={(e) => onChangeErrorBound(e)}
       />
     </div>
   );
