@@ -9,6 +9,8 @@ const paperStyles = {
   alignItems: "center",
   width: "400px",
   height: "300px",
+  marginTop: "10px",
+  backgroundColor: "#1b2444",
 };
 
 const subPaperStyles = {
@@ -18,17 +20,35 @@ const subPaperStyles = {
   alignItems: "center",
 };
 
-const ChannelCommand = () => {
+const ChannelCommand = ({
+  onKnobValueChange,
+  onControlBtnClicked,
+  onSliderChange,
+}) => {
   const [lastTrace, setLastTrace] = useState([0]);
   return (
     <Paper elevation={3} style={paperStyles}>
-      <Paper style={{ width : '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', height : '70%'}}>
-        <Knobs />
+      <Paper
+        style={{
+          width: "90%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "70%",
+          backgroundColor: "#161d33",
+        }}
+      >
+        <Knobs onValueChange={(value) => onKnobValueChange(value)} />
       </Paper>
       <div style={subPaperStyles}>
-        <Switch {...lastTrace} defaultChecked />
+        <Switch
+          {...lastTrace}
+          defaultChecked
+          onClick={onControlBtnClicked}
+          //   style={{ color: "#27bb27", backgroundColor: '#27bb27' }}
+        />
         <Slider
-          style={{ width: "20%", margin: "10px" }}
+          style={{ width: "20%", margin: "10px", color: "#27bb27" }}
           aria-label="Small steps"
           defaultValue={5}
           step={10}
@@ -36,8 +56,13 @@ const ChannelCommand = () => {
           min={0}
           max={50}
           valueLabelDisplay="auto"
+          onChange={(e) => onSliderChange(e)}
         />
-        <PrimaryBtn style={{ width: '100px', height : '38px', borderRadius: '10px'}}>Start</PrimaryBtn>
+        <PrimaryBtn
+          style={{ width: "100px", height: "38px", borderRadius: "10px" }}
+        >
+          Start
+        </PrimaryBtn>
       </div>
     </Paper>
   );

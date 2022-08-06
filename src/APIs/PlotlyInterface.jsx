@@ -24,13 +24,17 @@ export default class PlotlyInterface {
     this.xTicks = xTicks;
     this.layout = {
       title: this.plotTitle,
+      font: {color: "#76889a"},
+      paper_bgcolor: "#1b2444", 
+      plot_bgcolor: "#1b2444",
       yaxis: {
         title: this.yTickss,
         range: [900, 1150],
+        gridcolor:'#525f89',
         titlefont: {
           family: "Arial, sans-serif",
           size: 18,
-          color: "black",
+          color: "#76889a",
         },
       },
       xaxis: {
@@ -38,7 +42,7 @@ export default class PlotlyInterface {
         titlefont: {
           family: "Arial, sans-serif",
           size: 18,
-          color: "black",
+          color: "#76889a",
         },
       },
     };

@@ -11,7 +11,7 @@ const Upload = () => {
     <div className="uploadPage">
       <div className="uploadPage-body">
         <div className="box">
-          <h2 className="header">React drop files input</h2>
+          <h2 className="header">Drop your files below</h2>
           <DropFileInput onFileChange={(files) => onFileChange(files)} />
         </div>
       </div>

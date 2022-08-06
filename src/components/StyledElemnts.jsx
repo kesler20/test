@@ -11,8 +11,8 @@ export const Grid = styled.div`
   display: grid;
   justify-content: center;
   align-items: center;
-  padding : 4px;
-  height : 100%;
+  padding: 4px;
+  height: 100%;
   grid-template-columns: repeat(2, 1fr);
   svg {
     font-size: 2rem;
@@ -78,10 +78,39 @@ export const DangerBtn = styled.button`
 `;
 
 export const PrimaryBtn = styled.button`
-  background: linear-gradient(
-    90deg,
+  /* ff 3.6+ */
+  background: -moz-radial-gradient(
+    circle at 36% 39%,
     rgba(76, 175, 80, 1) 0%,
-    rgba(49, 220, 255, 1) 100%
+    rgba(25, 133, 90, 1) 100%
+  );
+
+  /* safari 5.1+,chrome 10+ */
+  background: -webkit-radial-gradient(
+    circle at 36% 39%,
+    rgba(76, 175, 80, 1) 0%,
+    rgba(25, 133, 90, 1) 100%
+  );
+
+  /* opera 11.10+ */
+  background: -o-radial-gradient(
+    circle at 36% 39%,
+    rgba(76, 175, 80, 1) 0%,
+    rgba(25, 133, 90, 1) 100%
+  );
+
+  /* ie 10+ */
+  background: -ms-radial-gradient(
+    circle at 36% 39%,
+    rgba(76, 175, 80, 1) 0%,
+    rgba(25, 133, 90, 1) 100%
+  );
+
+  /* global 92%+ browsers support */
+  background: radial-gradient(
+    circle at 36% 39%,
+    rgba(76, 175, 80, 1) 0%,
+    rgba(25, 133, 90, 1) 100%
   );
   border: none;
   color: white;

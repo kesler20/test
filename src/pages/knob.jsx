@@ -3,7 +3,7 @@ import React from "react";
 import { Knob, Pointer, Value, Arc } from "rc-knob";
 import "./knob.css";
 
-const Knobs = () => {
+const Knobs = ({onValueChange}) => {
   const [powerOn, setPowerOn] = useState(true);
   const handlePowerBtn = (e) => {
     e.target.classList.toggle("power-off", powerOn);
@@ -27,7 +27,7 @@ const Knobs = () => {
           angleRange={280}
           min={0}
           max={5}
-          onChange={(value) => console.log(value)}
+          onChange={(value) => onValueChange(value)}
         >
           <Arc arcWidth={7} color="#FC5A96" radius={47.5} />
           <Pointer width={4} radius={40} type="circle" color="#ffff"/>

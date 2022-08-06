@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
-import { Switch, Slider } from "@material-ui/core";
 import { convertUnixEpochTimeSToDate } from "../APIs/otherScripts";
-
+import ChannelCommand from "./ChannelCommand";
 const Channel = (props) => {
   const {
     id,
@@ -11,12 +10,14 @@ const Channel = (props) => {
     writeTopic,
     onUpdateDatabase,
     onChangeControlled,
-    onChangeErrorBound
+    onChangeErrorBound,
+    handleControlSeverity
   } = props;
 
   const [mqttClient, setMqttClient] = useState(new MQTTApi());
   const [db, setDb] = useState(new DatabaseApi(`/${readTopic}/json-database`));
   const [lastTrace, setLastTrace] = useState([]);
+
 
   useEffect(() => {
     mqttClient.onConnect(() => {
@@ -63,21 +64,10 @@ const Channel = (props) => {
 
   return (
     <div>
-      <Switch
-        {...lastTrace}
-        defaultChecked
-        onClick={() => onChangeControlled(id)}
-      />
-      <Slider
-        style={{ width: "20%", margin: "10px" }}
-        aria-label="Small steps"
-        defaultValue={5}
-        step={10}
-        marks
-        min={0}
-        max={50}
-        valueLabelDisplay="auto"
-        onChange={(e) => onChangeErrorBound(e)}
+      < ChannelCommand 
+      onKnobValueChange={(value) => handleControlSeverity(value)}
+      onControlBtnClicked={() => onChangeControlled(id)}
+      onSliderChange={(e) => onChangeErrorBound(e)}
       />
     </div>
   );
