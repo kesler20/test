@@ -1,9 +1,12 @@
+import ThemeManager from "../utils/themeManager";
 import React, { useState } from "react";
-import styled from "styled-components";
-import { NavLink } from "react-router-dom";
 import { Tooltip, IconButton } from "@material-ui/core";
 import { BiNetworkChart } from "react-icons/bi";
-import { FaCloudUploadAlt } from "react-icons/fa"
+import { FaCloudUploadAlt } from "react-icons/fa";
+import { AiFillMessage } from "react-icons/ai";
+import Logo from "../Logo.ico";
+import { SideBar, Link } from "../components/StyledElemnts";
+
 const activeStyles = {
   backgroundColor: "#39424e",
   color: "rgb(39, 187, 39)",
@@ -19,6 +22,11 @@ const Navbar = () => {
   const [currentPage, setCurrentPage] = useState("iot");
   return (
     <SideBar>
+      <img
+        src={Logo}
+        alt="logo of the company"
+        style={{ width: "50px", margin: "20%" }}
+      ></img>
       <Link to={"./userAccount"}>
         <Tooltip title="User Account">
           <IconButton
@@ -78,27 +86,22 @@ const Navbar = () => {
           </IconButton>
         </Tooltip>
       </Link>
+
+      <Link to={"./feedback"}>
+        <Tooltip title="feedback">
+          <IconButton
+            onClick={() => setCurrentPage("feedback")}
+            className="icon"
+            style={currentPage === "feedback" ? activeStyles : inactiveStyles}
+          >
+            <AiFillMessage />
+          </IconButton>
+        </Tooltip>
+      </Link>
+
+      <ThemeManager />
     </SideBar>
   );
 };
-
-const Link = styled(NavLink)`
-  text-decoration: none;
-  outline: none;
-  margin: 10px;
-`;
-
-const SideBar = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 5rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  background-color: black;
-  flex-direction: column;
-`;
 
 export default Navbar;

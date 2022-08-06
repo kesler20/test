@@ -61,7 +61,7 @@ const ChannelCommand = ({
         <PrimaryBtn
           style={{ width: "100px", height: "38px", borderRadius: "10px" }}
         >
-          Start
+          smoothing
         </PrimaryBtn>
       </div>
     </Paper>

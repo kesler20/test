@@ -273,3 +273,4 @@ export default Iot;
 // be backed up on AWS
 // TODO: find a better way to convert the x values to time stamps
 // TODO: might use continuous error bars instead of the upper and lower bound https://plotly.com/javascript/continuous-error-bars/
+// TODO: remove all the inline stylings

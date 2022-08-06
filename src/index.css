@@ -22,7 +22,8 @@ body {
   overflow: hidden;
 }
 
-body.dark {
+body.light {
+  background-color: azure;
 }
 
 button {
@@ -51,81 +52,6 @@ button {
   justify-content: center;
   align-items: center;
 }
-
-/*---------------------------------------------------COMPONENTS-----------------------------------------------------------------------------------------*/
-/* to facilitate transition into react, most of your css code should be here*/
-
-.btn {
-  height: 64px;
-  width: 245px;
-  padding: 2px;
-  border: 1px solid #3d94e0;
-  font-size: 24px;
-  font-weight: 400;
-  font-family: var(--primary-font-family);
-  border-radius: 10px;
-  color: #3d94e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-}
-
-.btn:hover {
-  border: 3px solid #3d94e0;
-  background-color: white;
-  color: #3d94e0;
-}
-
-.button {
-  height: 64px;
-  width: 245px;
-  padding: 2px;
-  font-size: 24px;
-  font-weight: 400;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  font-weight: 500;
-}
-.button:hover {
-  box-shadow: 1px 1px 1px 10px rgb(245, 255, 229);
-}
-
-.card {
-  border: solid 1px rgb(221, 220, 220);
-  border-radius: 15px;
-  width: 250px;
-  height: 350px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  word-break: break-word;
-  padding: 15px;
-  font-family: var(--another-font-family);
-  font-weight: 400;
-  font-size: 25px;
-  color: #202124;
-}
-
-.card:hover {
-  box-shadow: 2px 1px 4px grey;
-  transform: skewY(2deg);
-}
-
-.icon:hover {
-  border-radius: 30%;
-  color: white;
-  background-color: rgb(39, 187, 39);
-}
-
-/* -------------------------- SPECIFIC ----------------------*/
-/* no more specific then 0,1,0
 
 
 /* --------------------------------------------------------------- Media Queries -----------------------------------------------*/

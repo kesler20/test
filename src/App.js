@@ -1,5 +1,4 @@
 import { React, useEffect, useState } from "react";
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Amplify, Auth } from "aws-amplify";
 import awsExports from "./aws-exports"; //Some tutorials suggest awsconfig instead

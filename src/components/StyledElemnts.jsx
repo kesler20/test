@@ -1,5 +1,24 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
+export const Link = styled(NavLink)`
+  text-decoration: none;
+  outline: none;
+  margin: 10px;
+`;
+
+export const SideBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  background-color: black;
+  flex-direction: column;
+`;
 
 export const Cards = styled.div`
   text-decoration: none;
@@ -7,6 +26,7 @@ export const Cards = styled.div`
   font-weight400;
   font-family: 'Lobster Two', cursive;
 `;
+
 export const Grid = styled.div`
   display: grid;
   justify-content: center;
@@ -78,34 +98,6 @@ export const DangerBtn = styled.button`
 `;
 
 export const PrimaryBtn = styled.button`
-  /* ff 3.6+ */
-  background: -moz-radial-gradient(
-    circle at 36% 39%,
-    rgba(76, 175, 80, 1) 0%,
-    rgba(25, 133, 90, 1) 100%
-  );
-
-  /* safari 5.1+,chrome 10+ */
-  background: -webkit-radial-gradient(
-    circle at 36% 39%,
-    rgba(76, 175, 80, 1) 0%,
-    rgba(25, 133, 90, 1) 100%
-  );
-
-  /* opera 11.10+ */
-  background: -o-radial-gradient(
-    circle at 36% 39%,
-    rgba(76, 175, 80, 1) 0%,
-    rgba(25, 133, 90, 1) 100%
-  );
-
-  /* ie 10+ */
-  background: -ms-radial-gradient(
-    circle at 36% 39%,
-    rgba(76, 175, 80, 1) 0%,
-    rgba(25, 133, 90, 1) 100%
-  );
-
   /* global 92%+ browsers support */
   background: radial-gradient(
     circle at 36% 39%,
