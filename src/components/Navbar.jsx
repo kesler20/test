@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Tooltip, IconButton } from "@material-ui/core";
 import { BiNetworkChart } from "react-icons/bi";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { AiFillMessage } from "react-icons/ai";
+import { MdDashboard } from "react-icons/md";
 import Logo from "../Logo.ico";
 import { SideBar, Link } from "../components/StyledElemnts";
 
@@ -63,18 +63,6 @@ const Navbar = () => {
         </Tooltip>
       </Link>
 
-      <Link to={"./test"}>
-        <Tooltip title="test">
-          <IconButton
-            onClick={() => setCurrentPage("test")}
-            className="icon"
-            style={currentPage === "test" ? activeStyles : inactiveStyles}
-          >
-            <i className="fa fa-upload"></i>
-          </IconButton>
-        </Tooltip>
-      </Link>
-
       <Link to={"./dashboard"}>
         <Tooltip title="dashboard">
           <IconButton
@@ -82,24 +70,10 @@ const Navbar = () => {
             className="icon"
             style={currentPage === "dashboard" ? activeStyles : inactiveStyles}
           >
-            <i className="fa fa-chart-pie"></i>
+            <MdDashboard />
           </IconButton>
         </Tooltip>
       </Link>
-
-      <Link to={"./feedback"}>
-        <Tooltip title="feedback">
-          <IconButton
-            onClick={() => setCurrentPage("feedback")}
-            className="icon"
-            style={currentPage === "feedback" ? activeStyles : inactiveStyles}
-          >
-            <AiFillMessage />
-          </IconButton>
-        </Tooltip>
-      </Link>
-
-      <ThemeManager />
     </SideBar>
   );
 };

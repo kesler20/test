@@ -19,7 +19,6 @@ body {
   background-color: #161d33;
   margin: 2% 5%;
   max-height: 50vh;
-  overflow: hidden;
 }
 
 body.light {
@@ -29,6 +28,7 @@ body.light {
 button {
   text-decoration: none;
 }
+
 
 /*---------------------------------------------------Structural Styling-----------------------------------------------------------------------------------------*/
 /*include all the styles which affect the order in which components are laid*/

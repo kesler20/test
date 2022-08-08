@@ -24,6 +24,7 @@ export const Cards = styled.div`
   text-decoration: none;
   font-size:1.5rem;
   font-weight400;
+  
   font-family: 'Lobster Two', cursive;
 `;
 
