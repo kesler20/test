@@ -7,33 +7,17 @@ import {
   UserClientCard,
 } from "../components/UserAccountCardComponents";
 import LabTabs from "../components/UserAccountNavigation";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import { deepOrange, deepPurple } from "@mui/material/colors";
+import LetterAvatars from "../components/LetterAvatar";
 
-let initialFiles = [];
-let username = localStorage.getItem('username')
-const LetterAvatars = () => {
-  return (
-    <Stack direction="row" spacing={2} style={{ marginLeft: "1480px" }}>
-      <Avatar sx={{ bgcolor: deepOrange[500] }}>{username[0]}</Avatar>
-    </Stack>
-  );
-};
-
-try {
-  initialFiles = JSON.parse(localStorage.getItem("userFiles"));
-  console.log("user files from local storage", initialFiles);
-} catch (e) {
-  console.log(e);
-}
+let username = localStorage.getItem("username");
 
 const UserAccount = () => {
-  const [files, setFiles] = useState(initialFiles);
-  const [clients, setClients] = useState([{ clientID : 'TFF-1'}])
+  const [files, setFiles] = useState([]);
+  const [clients, setClients] = useState([]);
 
   useEffect(() => {
     getUserFiles();
+    getUserClients()
   }, []);
 
   const deleteFile = async ({ filename }) => {
@@ -72,6 +56,25 @@ const UserAccount = () => {
         setFiles(res["files found"]);
         localStorage.setItem("userFiles", JSON.stringify(res["files found"]));
       });
+    } else {
+      try {
+        setFiles(JSON.parse(localStorage.getItem("userFiles")));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  const createClient = () => {};
+  const deleteClient = () => {};
+
+  const getUserClients = () => {
+    try {
+      clients.push(JSON.parse(localStorage.getItem("client-info")))
+      setClients(clients);
+      console.log(clients)
+    } catch (e) {
+      console.log(e);
     }
   };
   return (
@@ -103,7 +106,7 @@ const UserAccount = () => {
           }}
         />
         <h2 style={{ color: "white", marginLeft: "15px" }}>{username}</h2>
-        <LetterAvatars />
+        <LetterAvatars username={username}/>
       </div>
       <LabTabs
         userFilesPanels={
@@ -125,3 +128,19 @@ const UserAccount = () => {
 };
 
 export default UserAccount;
+
+// TODO: run this to start the local storage
+//localStorage.setItem(
+//   "client-info",
+//   JSON.stringify({
+//     channelID: 0,
+//     readTopic: "pump/pressure",
+//     writeTopic: "pump/control",
+//     controlled: true,
+//     errorBound: 5,
+//     smoothing: { value: 0, visible: false },
+//     controlIntensity: 1,
+//     online: true,
+//     clientID: "TFF-1"
+//   })
+// );

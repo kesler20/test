@@ -30,9 +30,9 @@ const Channel = (props) => {
         let data = { x_value: [0], total_1: [0], trend_1: [0] };
         try {
           data = JSON.parse(message.toString());
-          let { x_value } = data;
-          const unix_x_value = convertUnixEpochTimeSToDate(x_value);
-          data.x_value = unix_x_value;
+          // let { x_value } = data;
+          // const unix_x_value = convertUnixEpochTimeSToDate(x_value);
+          // data.x_value = unix_x_value;
           console.log("the following data will be stored", data);
           db.createResource(data);
           onUpdateDatabase();

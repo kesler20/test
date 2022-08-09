@@ -4,6 +4,15 @@ import React, { Component } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
 
+// this pure function returns 3 colors given the channelID
+// returns -> total color , trend color, boundary color
+const plotColorPalette = (channelID) => {
+  if (channelID === 0) return ["green", "yellow", "#79eec9"];
+  if (channelID === 1) return ["rgb(255, 0, 76)", "white", "#f6aac6"];
+  if (channelID === 2) return ["green", "yellow", "#79eec9"];
+  return ["green", "yellow", "#79eec9"];
+};
+
 // get only the last 30 data points from local storage
 const getDataFromLocalStorage = (topic) => {
   let dataFromLocalStorage = JSON.parse(
@@ -50,10 +59,10 @@ const constructChannelPlot = (
     x: [...x_values],
     y: [...total],
     mode: "lines",
-    name: "Channel 1",
+    name: `Channel ${channelID}`,
     visible: channelVisibility,
     line: {
-      color: "green",
+      color: plotColorPalette(channelID)[0],
       dash: "solid",
       width: "5",
     },
@@ -63,9 +72,9 @@ const constructChannelPlot = (
     y: [...trend],
     mode: "lines",
     visible: channelVisibility,
-    name: "Trend 1",
+    name: `Trend ${channelID}`,
     line: {
-      color: "yellow",
+      color: plotColorPalette(channelID)[1],
       dash: "dot",
     },
   };
@@ -73,11 +82,11 @@ const constructChannelPlot = (
     x: [...x_values],
     y: [...upperBound],
     mode: "lines",
-    name: "Trend 1 Upper Bound",
+    name: `Trend ${channelID} Upper Bound`,
     visible: visibility,
     showlegend: false,
     line: {
-      color: "#79eec9",
+      color: plotColorPalette(channelID)[2],
     },
   };
   const trend1Lower = {
@@ -87,9 +96,9 @@ const constructChannelPlot = (
     visible: visibility,
     showlegend: false,
     fill: "tonexty",
-    name: "Trend 1 Lower Bound",
+    name: `Trend ${channelID} Lower Bound`,
     line: {
-      color: "#79eec9",
+      color: plotColorPalette(channelID)[2],
     },
   };
   return [total1, trend1, trend1Upper, trend1Lower];
@@ -119,6 +128,8 @@ const updateChannelPlot = (data, boundValue, channelID) => {
   };
 };
 
+const channels = JSON.parse(localStorage.getItem('channels-info'))
+console.log(channels)
 const initialClients = [
   {
     channelID: 0,
@@ -262,20 +273,43 @@ class Iot extends Component {
   };
 
   handleRemoveChannel = (channelID) => {
-    this.handleChangeControl(channelID);
+    // change visibility and control status
     const { channels } = this.state;
     channels[channelID].online = !channels[channelID].online;
+    channels[channelID].controlled = !channels[channelID].controlled;
     this.setState({ channels });
 
-    this.state.plotlyInterface.constructInitialPlot(
-      constructChannelPlot(
-        this.state.dataSet[channelID],
-        this.state.channels[channelID].errorBound,
-        channelID,
-        this.state.channels[channelID].controlled,
-        this.state.channels[channelID].online
-      )
-    );
+
+    // construct the plot again
+    let dataSet = [];
+    let plotData = [];
+    this.state.channels.forEach((channel) => {
+      dataSet.push(getDataFromLocalStorage(channel.readTopic));
+
+      plotData.push(
+        ...constructChannelPlot(
+          getDataFromLocalStorage(channel.readTopic),
+          channel.errorBound,
+          channel.channelID,
+          channel.controlled,
+          channel.online
+        )
+      );
+
+      localStorage.setItem(
+        `channel ${channel.channelID} control state`,
+        JSON.stringify({
+          controlStatus: channel.controlled,
+          controlIntensity: channel.controlIntensity,
+          target: `${channel.errorBound}`,
+        })
+      );
+    });
+
+    console.log(plotData);
+    this.setState({ dataSet });
+
+    this.state.plotlyInterface.constructInitialPlot(plotData);
   };
 
   handleDatabaseUpdate = () => {
@@ -331,7 +365,7 @@ class Iot extends Component {
       }
     });
     this.setState({ cnt });
-    console.log(this.state.cnt)
+    console.log(this.state.cnt);
     if (refresh === true) {
       this.state.plotlyInterface.constructInitialPlot(plotData);
     }
@@ -347,7 +381,7 @@ class Iot extends Component {
             arrows: false,
             pagination: false,
             drag: "free",
-            gap: "50px",
+            gap: "0rem",
           }}
         >
           {this.state.channels.map((channel) => {
