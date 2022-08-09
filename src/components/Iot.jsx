@@ -12,6 +12,9 @@ const getDataFromLocalStorage = (topic) => {
   if (dataFromLocalStorage === null) {
     return [];
   }
+  if (dataFromLocalStorage === undefined) {
+    return [];
+  }
 
   dataFromLocalStorage = range(dataFromLocalStorage, 30);
   return dataFromLocalStorage;
@@ -95,8 +98,9 @@ const constructChannelPlot = (
 const updateChannelPlot = (data, boundValue, channelID) => {
   let y = [];
   let x = [];
-  let dataParams = [`total_${channelID}`, `trend_${channelID}`];
+  let dataParams = [`total_${channelID + 1}`, `trend_${channelID + 1}`];
 
+  if (data[data.length - 1] === undefined) return { y: [], x: [] };
   if (data[data.length - 1][dataParams[0]] === undefined)
     return { y: [], x: [] };
 
@@ -147,7 +151,7 @@ class Iot extends Component {
       "Date Time"
     ),
     channels: initialClients,
-    dataSet: [],
+    dataSet: [], // array with the same lenght of the number of channels there should be a symmetry between channel id and index of global infos
     cnt: [], // array with the same length of the number of channels
   };
 
@@ -198,7 +202,7 @@ class Iot extends Component {
 
     this.state.plotlyInterface.constructInitialPlot(
       constructChannelPlot(
-        this.state.dataSet,
+        this.state.dataSet[channelID],
         this.state.channels[channelID].errorBound,
         channelID,
         !controlled,
@@ -239,7 +243,7 @@ class Iot extends Component {
 
     this.state.plotlyInterface.constructInitialPlot(
       constructChannelPlot(
-        this.state.dataSet,
+        this.state.dataSet[channelID],
         this.state.channels[channelID].errorBound,
         channelID,
         this.state.channels[0].controlled,
@@ -265,7 +269,7 @@ class Iot extends Component {
 
     this.state.plotlyInterface.constructInitialPlot(
       constructChannelPlot(
-        this.state.dataSet,
+        this.state.dataSet[channelID],
         this.state.channels[channelID].errorBound,
         channelID,
         this.state.channels[channelID].controlled,
@@ -275,67 +279,62 @@ class Iot extends Component {
   };
 
   handleDatabaseUpdate = () => {
+    // HANDLE DATASET
     let dataSet = [];
     this.state.channels.forEach((channel) => {
       dataSet.push(getDataFromLocalStorage(channel.readTopic));
     });
     this.setState({ dataSet });
 
-    const plotData = [];
-    let refresh = false;
+    // HANDLE EXTENDED TRACE
     let extendedTraces = [];
-
     this.state.channels.forEach((channel) => {
-      // get all the extended traces from each channel
       extendedTraces.push(
         updateChannelPlot(
-          this.state.dataSet,
+          this.state.dataSet[channel.channelID],
           channel.errorBound,
           channel.channelID
         )
       );
+    });
 
-      // get all the plot data from all the channels
-      // refresh the plot if there is more than 6 data points
-      if (this.state.cnt[channel.channelID] >= 6) {
+    let extendedTrace = { y: [], x: [] };
+    extendedTraces.forEach((val) => {
+      extendedTrace.y.push(...val.y);
+      extendedTrace.x.push(...val.x);
+    });
+
+    this.state.plotlyInterface.updateInitialPlot(
+      extendedTrace.y,
+      extendedTrace.x
+    );
+
+    // HANDLE REFRESH PLOT
+    let refresh = false;
+    let plotData = [];
+    let { cnt } = this.state;
+    this.state.channels.forEach((channel) => {
+      if (this.state.cnt[channel.channelID] >= 5) {
+        refresh = true;
         plotData.push(
           ...constructChannelPlot(
-            this.state.dataSet,
+            this.state.dataSet[channel.channelID],
             channel.errorBound,
             channel.channelID,
             channel.controlled,
             channel.online
           )
         );
-        let { cnt } = this.state;
         cnt[channel.channelID] = 0;
-        this.setState({ cnt });
-        refresh = true;
-        
       } else {
-        let { cnt } = this.state;
         cnt[channel.channelID]++;
-
-        this.setState({ cnt });
-      }
-
-      let extendedTrace = { y: [], x: [] };
-      extendedTraces.forEach((trace) => {
-        extendedTrace.y.push(trace.y);
-        extendedTrace.x.push(trace.x);
-      });
-
-      this.state.plotlyInterface.updateInitialPlot(
-        extendedTrace.y,
-        extendedTrace.x
-      );
-
-      if (refresh === true) {
-        this.state.plotlyInterface.constructInitialPlot(plotData);
       }
     });
-
-    console.log("this is the count", this.state.cnt);
+    this.setState({ cnt });
+    console.log(this.state.cnt)
+    if (refresh === true) {
+      this.state.plotlyInterface.constructInitialPlot(plotData);
+    }
   };
 
   render() {
@@ -396,3 +395,4 @@ export default Iot;
 // TODO: remove all the inline stylings
 //TODO: when the component mounts load all the channel info to storage so that it can also be read by the user account page
 //TODO: let dataParams = [`total_${channelID + 1}`, `trend_${channelID + 1}`]; CHANGE THIS LINE WHEN YOU WILL CHANGE THE BACKEND
+// TODO: break the update database function into three smaller functions
