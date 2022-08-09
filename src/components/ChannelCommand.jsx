@@ -24,11 +24,12 @@ const ChannelCommand = ({
   onKnobValueChange,
   onControlBtnClicked,
   onSliderChange,
-  handlePowerBtnClicked
+  handlePowerBtnClicked,
 }) => {
   const [lastTrace, setLastTrace] = useState([0]);
   return (
     <Paper elevation={3} style={paperStyles}>
+      <p style={{ color: "#76889a" }}>TFF-1</p>
       <Paper
         style={{
           width: "90%",
@@ -39,11 +40,13 @@ const ChannelCommand = ({
           backgroundColor: "#161d33",
         }}
       >
-        <Knobs onValueChange={(value) => onKnobValueChange(value)} onPowerBtnClicked={handlePowerBtnClicked} />
+        <Knobs
+          onValueChange={(value) => onKnobValueChange(value)}
+          onPowerBtnClicked={handlePowerBtnClicked}
+        />
       </Paper>
       <div style={subPaperStyles}>
         <Switch
-          {...lastTrace}
           defaultChecked
           onClick={onControlBtnClicked}
           //   style={{ color: "#27bb27", backgroundColor: '#27bb27' }}

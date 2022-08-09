@@ -11,7 +11,7 @@ const Channel = (props) => {
     onUpdateDatabase,
     onChangeControlled,
     onChangeErrorBound,
-    handleControlSeverity,
+    handleControlIntensity,
     onViewOff
   } = props;
 
@@ -40,7 +40,7 @@ const Channel = (props) => {
           console.log(e);
         }
 
-        const { controlStatus, controlSeverity, target } = JSON.parse(
+        const { controlStatus, controlIntensity, target } = JSON.parse(
           localStorage.getItem(`channel ${id} control state`)
         );
         try {
@@ -50,7 +50,7 @@ const Channel = (props) => {
             data.total_1,
             controlStatus,
             writeTopic,
-            controlSeverity,
+            controlIntensity,
             target
           );
         } catch (e) {
@@ -66,9 +66,9 @@ const Channel = (props) => {
   return (
     <div>
       < ChannelCommand 
-      onKnobValueChange={(value) => handleControlSeverity(value)}
+      onKnobValueChange={(value) => handleControlIntensity(value,id)}
       onControlBtnClicked={() => onChangeControlled(id)}
-      onSliderChange={(e) => onChangeErrorBound(e)}
+      onSliderChange={(e) => onChangeErrorBound(e,id)}
       handlePowerBtnClicked={() => onViewOff(id)}
       />
     </div>

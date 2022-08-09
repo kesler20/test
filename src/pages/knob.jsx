@@ -13,12 +13,12 @@ const Knobs = ({ onValueChange, onPowerBtnClicked }) => {
   return (
     <div className="outer">
       <div className="inner">
-        <li style={{ "--i": 1 }}></li>
-        <li style={{ "--i": 2 }}></li>
-        <li style={{ "--i": 3 }}></li>
-        <li style={{ "--i": 4 }}></li>
-        <li style={{ "--i": 5 }}></li>
-        <li style={{ "--i": 6 }}></li>
+        <div className="circular-dot" style={{ "--i": 1 }}></div>
+        <div className="circular-dot" style={{ "--i": 2 }}></div>
+        <div className="circular-dot" style={{ "--i": 3 }}></div>
+        <div className="circular-dot" style={{ "--i": 4 }}></div>
+        <div className="circular-dot" style={{ "--i": 5 }}></div>
+        <div className="circular-dot" style={{ "--i": 6 }}></div>
         <div id="powerBtn" onClick={handlePowerBtn}>
           <i className="fa fa-power-off"></i>
         </div>

@@ -12,11 +12,11 @@ import Stack from "@mui/material/Stack";
 import { deepOrange, deepPurple } from "@mui/material/colors";
 
 let initialFiles = [];
-
+let username = localStorage.getItem('username')
 const LetterAvatars = () => {
   return (
     <Stack direction="row" spacing={2} style={{ marginLeft: "1480px" }}>
-      <Avatar sx={{ bgcolor: deepOrange[500] }}>K</Avatar>
+      <Avatar sx={{ bgcolor: deepOrange[500] }}>{username[0]}</Avatar>
     </Stack>
   );
 };
@@ -102,7 +102,7 @@ const UserAccount = () => {
             alignItems: "center",
           }}
         />
-        <h2 style={{ color: "white", marginLeft: "15px" }}>Kesler20</h2>
+        <h2 style={{ color: "white", marginLeft: "15px" }}>{username}</h2>
         <LetterAvatars />
       </div>
       <LabTabs

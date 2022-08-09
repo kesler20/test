@@ -1,3 +1,4 @@
+import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { range } from "../APIs/otherScripts";
 import React, { Component } from "react";
 import Channel from "./Channel";
@@ -104,6 +105,28 @@ const updateChannelPlot = (data, boundValue) => {
   };
 };
 
+const initialClients = [
+  {
+    channelID: 0,
+    readTopic: "pump/pressure",
+    writeTopic: "pump/control",
+    controlled: true,
+    errorBound: 5,
+    smoothing: { value: 0, visible: false },
+    controlIntensity: 1,
+    online: true,
+  },
+  {
+    channelID: 1,
+    readTopic: "pump/temperature",
+    writeTopic: "heater/control",
+    controlled: true,
+    errorBound: 5,
+    smoothing: { value: 0, visible: false },
+    controlIntensity: 1,
+    online: true,
+  },
+]
 class Iot extends Component {
   state = {
     plotlyInterface: new PlotlyInterface(
@@ -112,53 +135,98 @@ class Iot extends Component {
       "Value",
       "Date Time"
     ),
-    channels: [
-      {
-        channelID: 1,
-        readTopic: "pump/pressure",
-        writeTopic: "pump/control",
-        controlled: true,
-        errorBound: 5,
-        smoothing: { value: 0, visible: false },
-        online: true,
-      },
-    ],
-    dataSet: getDataFromLocalStorage("pump/pressure"),
-    cnt: 0,
-    controlSeverity: 1,
+    channels: initialClients,
+    dataSet: [],
+    cnt: [], // array with the same length of the number of channels
   };
 
   componentDidMount() {
+    let { dataSet } = this.state;
+    let { cnt } = this.state;
+
+    this.state.channels.forEach((channel) => {
+      dataSet.push(getDataFromLocalStorage(channel.readTopic));
+
+      this.state.plotlyInterface.constructInitialPlot(
+        constructChannelPlot(
+          getDataFromLocalStorage(channel.readTopic),
+          channel.errorBound,
+          channel.channelID,
+          channel.controlled,
+          channel.online
+        )
+      );
+
+      localStorage.setItem(
+        `channel ${channel.channelID} control state`,
+        JSON.stringify({
+          controlStatus: channel.controlled,
+          controlIntensity: channel.controlIntensity,
+          target: `${channel.errorBound}`,
+        })
+      );
+
+      cnt.push(0);
+    });
+    this.setState({ cnt });
+    this.setState({ dataSet });
+  }
+
+  handleChangeControl = (channelID) => {
+    // update the state of the system
+    const channels = this.state.channels;
+    const { controlled } = channels[channelID];
+    channels[channelID].controlled = !controlled;
+    this.setState({ channels });
+    console.log("system changed to ", !controlled);
+
     this.state.plotlyInterface.constructInitialPlot(
       constructChannelPlot(
         this.state.dataSet,
-        5,
-        1,
-        this.state.channels[0].controlled,
-        this.state.channels[0].online
+        this.state.channels[channelID].errorBound,
+        channelID,
+        !controlled,
+        this.state.channels[channelID].online
       )
     );
 
     localStorage.setItem(
-      `channel ${1} control state`,
+      `channel ${channelID} control state`,
       JSON.stringify({
-        controlStatus: true,
-        controlSeverity: this.state.controlSeverity,
-        target: `${this.state.channels[0].errorBound}`,
+        controlStatus: !controlled,
+        controlIntensity: this.state.channels[channelID].controlIntensity,
+        target: `${this.state.channels[channelID].errorBound}`,
       })
     );
-  }
+  };
 
-  handleChangeControl = (channelID) => {
-    const channels = this.state.channels;
-    const { controlled } = channels[channelID - 1];
-    console.log("system changed to ", !controlled);
+  changeControlIntensity = (val, channelID) => {
+    const { channels } = this.state;
+    channels[channelID].controlIntensity = val;
+
+    this.setState({ channels });
+
+    localStorage.setItem(
+      `channel ${channelID} control state`,
+      JSON.stringify({
+        controlStatus: this.state.channels[channelID].controlled,
+        controlIntensity: this.state.channels[channelID].controlIntensity,
+        target: `${this.state.channels[channelID].errorBound}`,
+      })
+    );
+  };
+
+  handleChangeErrorBound = (e, channelID) => {
+    let { channels } = this.state;
+    channels[channelID].errorBound = parseInt(e.target.innerText);
+    this.setState({ channels });
+
     this.state.plotlyInterface.constructInitialPlot(
       constructChannelPlot(
         this.state.dataSet,
-        this.state.channels[0].errorBound,
+        this.state.channels[channelID].errorBound,
         channelID,
-        !controlled,
+        this.state.channels[0].controlled,
         this.state.channels[0].online
       )
     );
@@ -166,122 +234,103 @@ class Iot extends Component {
     localStorage.setItem(
       `channel ${channelID} control state`,
       JSON.stringify({
-        controlStatus: true,
-        controlSeverity: this.state.controlSeverity,
-        target: `${this.state.channels[0].errorBound}`,
-      })
-    );
-
-    channels[channelID - 1].controlled = !controlled;
-    this.setState({ channels });
-  };
-
-  changeControlSeverity = (val) => {
-    localStorage.setItem(
-      `channel 1 control state`,
-      JSON.stringify({
-        controlStatus: true,
-        controlSeverity: val,
-        target: `${this.state.channels[0].errorBound}`,
-      })
-    );
-
-    this.setState({ controlSeverity: val });
-  };
-
-  handleChangeErrorBound = (e) => {
-    this.state.plotlyInterface.constructInitialPlot(
-      constructChannelPlot(
-        this.state.dataSet,
-        parseInt(e.target.innerText),
-        1,
-        this.state.channels[0].controlled,
-        this.state.channels[0].online
-      )
-    );
-
-    let { channels } = this.state;
-    channels[0].errorBound = parseInt(e.target.innerText);
-    this.setState({ channels });
-
-    localStorage.setItem(
-      `channel 1 control state`,
-      JSON.stringify({
-        controlStatus: true,
-        controlSeverity: this.state.controlSeverity,
-        target: `${this.state.channels[0].errorBound}`,
+        controlStatus: this.state.channels[channelID].controlled,
+        controlIntensity: this.state.channels[channelID].controlIntensity,
+        target: `${this.state.channels[channelID].errorBound}`,
       })
     );
   };
 
-  handleRemoveChannel = (ID) => {
-    this.handleChangeControl(ID);
+  handleRemoveChannel = (channelID) => {
+    this.handleChangeControl(channelID);
     const { channels } = this.state;
-    channels[0].online = !channels[0].online;
+    channels[channelID].online = !channels[channelID].online;
     this.setState({ channels });
+
     this.state.plotlyInterface.constructInitialPlot(
       constructChannelPlot(
         this.state.dataSet,
-        this.state.channels[0].errorBound,
-        0,
-        this.state.channels[0].controlled,
-        this.state.channels[0].online
+        this.state.channels[channelID].errorBound,
+        channelID,
+        this.state.channels[channelID].controlled,
+        this.state.channels[channelID].online
       )
     );
   };
 
   handleDatabaseUpdate = () => {
     this.setState({ dataSet: getDataFromLocalStorage("pump/pressure") });
-    let extendedTraces = updateChannelPlot(
-      this.state.dataSet,
-      this.state.channels[0].errorBound
-    );
 
-    this.state.plotlyInterface.updateInitialPlot(
-      extendedTraces.y,
-      extendedTraces.x
-    );
-
-    // refresh the plot
-    if (this.state.cnt >= 5) {
-      const { controlled } = this.state.channels[0];
-      this.state.plotlyInterface.constructInitialPlot(
-        constructChannelPlot(
-          this.state.dataSet,
-          this.state.channels[0].errorBound,
-          0,
-          controlled,
-          this.state.channels[0].online
-        )
+    this.state.channels.forEach((channel) => {
+      let extendedTraces = updateChannelPlot(
+        this.state.dataSet,
+        channel.errorBound
       );
-      this.setState({ cnt: 0 });
-    } else {
-      let count = 1 + this.state.cnt;
-      this.setState({ cnt: count });
-    }
+
+      this.state.plotlyInterface.updateInitialPlot(
+        extendedTraces.y,
+        extendedTraces.x
+      );
+
+      // refresh the plot
+      if (this.state.cnt >= 5) {
+        const { controlled } = channel;
+        this.state.plotlyInterface.constructInitialPlot(
+          constructChannelPlot(
+            this.state.dataSet,
+            channel.errorBound,
+            channel.channelID,
+            controlled,
+            channel.online
+          )
+        );
+        let { cnt } = this.state;
+        cnt[channel.channelID] = 0;
+        this.setState({ cnt });
+      } else {
+        let { cnt } = this.state;
+        cnt[channel.channelID]++;
+
+        this.setState({ cnt });
+      }
+    });
   };
 
   render() {
     return (
       <>
         <div id="plot"></div>
-        <div style={{ display: "flex" }}>
+        <Splide
+          options={{
+            perPage: 4,
+            arrows: false,
+            pagination: false,
+            drag: "free",
+            gap: "50px",
+          }}
+        >
           {this.state.channels.map((channel) => {
             return (
-              <Channel
-                key={channel.channelID}
-                id={channel.channelID}
-                readTopic={channel.readTopic}
-                writeTopic={channel.writeTopic}
-                onChangeControlled={(id) => this.handleChangeControl(id)}
-                onUpdateDatabase={() => this.handleDatabaseUpdate()}
-                onChangeErrorBound={(e) => this.handleChangeErrorBound(e)}
-                handleControlSeverity={(v) => this.changeControlSeverity(v)}
-                onViewOff={(id) => this.handleRemoveChannel(id)}
-              />
+              <SplideSlide key={channel.channelID}>
+                <Channel
+                  key={channel.channelID}
+                  id={channel.channelID}
+                  readTopic={channel.readTopic}
+                  writeTopic={channel.writeTopic}
+                  onChangeControlled={(id) => this.handleChangeControl(id)}
+                  onUpdateDatabase={() => this.handleDatabaseUpdate()}
+                  onChangeErrorBound={(e, id) =>
+                    this.handleChangeErrorBound(e, id)
+                  }
+                  handleControlIntensity={(v, id) =>
+                    this.changeControlIntensity(v, id)
+                  }
+                  onViewOff={(id) => this.handleRemoveChannel(id)}
+                />
+              </SplideSlide>
             );
           })}
-        </div>
+        </Splide>
       </>
     );
   }
@@ -303,3 +352,4 @@ export default Iot;
 // TODO: find a better way to convert the x values to time stamps
 // TODO: might use continuous error bars instead of the upper and lower bound https://plotly.com/javascript/continuous-error-bars/
 // TODO: remove all the inline stylings
+//TODO: when the component mounts load all the channel info to storage so that it can also be read by the user account page
