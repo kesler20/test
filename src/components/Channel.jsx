@@ -11,7 +11,8 @@ const Channel = (props) => {
     onUpdateDatabase,
     onChangeControlled,
     onChangeErrorBound,
-    handleControlSeverity
+    handleControlSeverity,
+    onViewOff
   } = props;
 
   const [mqttClient, setMqttClient] = useState(new MQTTApi());
@@ -68,6 +69,7 @@ const Channel = (props) => {
       onKnobValueChange={(value) => handleControlSeverity(value)}
       onControlBtnClicked={() => onChangeControlled(id)}
       onSliderChange={(e) => onChangeErrorBound(e)}
+      handlePowerBtnClicked={() => onViewOff(id)}
       />
     </div>
   );

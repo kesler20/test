@@ -23,7 +23,7 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
           arrows: false,
           pagination: false,
           drag: "free",
-          gap: "430px",
+          gap: "530px",
         }}
       >
         {files.map((file) => {

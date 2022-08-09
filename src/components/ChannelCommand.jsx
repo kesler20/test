@@ -24,6 +24,7 @@ const ChannelCommand = ({
   onKnobValueChange,
   onControlBtnClicked,
   onSliderChange,
+  handlePowerBtnClicked
 }) => {
   const [lastTrace, setLastTrace] = useState([0]);
   return (
@@ -38,7 +39,7 @@ const ChannelCommand = ({
           backgroundColor: "#161d33",
         }}
       >
-        <Knobs onValueChange={(value) => onKnobValueChange(value)} />
+        <Knobs onValueChange={(value) => onKnobValueChange(value)} onPowerBtnClicked={handlePowerBtnClicked} />
       </Paper>
       <div style={subPaperStyles}>
         <Switch

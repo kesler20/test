@@ -16,7 +16,13 @@ const getDataFromLocalStorage = (topic) => {
   return dataFromLocalStorage;
 };
 
-const constructChannelPlot = (data, boundValues, channelID, visibility) => {
+const constructChannelPlot = (
+  data,
+  boundValues,
+  channelID,
+  visibility,
+  channelVisibility
+) => {
   const total = [];
   const trend = [];
   const x_values = [];
@@ -37,6 +43,7 @@ const constructChannelPlot = (data, boundValues, channelID, visibility) => {
     y: [...total],
     mode: "lines",
     name: "Channel 1",
+    visible: channelVisibility,
     line: {
       color: "green",
       dash: "solid",
@@ -47,6 +54,7 @@ const constructChannelPlot = (data, boundValues, channelID, visibility) => {
     x: [...x_values],
     y: [...trend],
     mode: "lines",
+    visible: channelVisibility,
     name: "Trend 1",
     line: {
       color: "yellow",
@@ -112,11 +120,12 @@ class Iot extends Component {
         controlled: true,
         errorBound: 5,
         smoothing: { value: 0, visible: false },
+        online: true,
       },
     ],
     dataSet: getDataFromLocalStorage("pump/pressure"),
     cnt: 0,
-    controlSeverity : 1
+    controlSeverity: 1,
   };
 
   componentDidMount() {
@@ -125,7 +134,8 @@ class Iot extends Component {
         this.state.dataSet,
         5,
         1,
-        this.state.channels[0].controlled
+        this.state.channels[0].controlled,
+        this.state.channels[0].online
       )
     );
 
@@ -148,7 +158,8 @@ class Iot extends Component {
         this.state.dataSet,
         this.state.channels[0].errorBound,
         channelID,
-        !controlled
+        !controlled,
+        this.state.channels[0].online
       )
     );
 
@@ -166,7 +177,6 @@ class Iot extends Component {
   };
 
   changeControlSeverity = (val) => {
-
     localStorage.setItem(
       `channel 1 control state`,
       JSON.stringify({
@@ -174,10 +184,10 @@ class Iot extends Component {
         controlSeverity: val,
         target: `${this.state.channels[0].errorBound}`,
       })
-    );    
+    );
 
-    this.setState( { controlSeverity : val})
-  }
+    this.setState({ controlSeverity: val });
+  };
 
   handleChangeErrorBound = (e) => {
     this.state.plotlyInterface.constructInitialPlot(
@@ -185,7 +195,8 @@ class Iot extends Component {
         this.state.dataSet,
         parseInt(e.target.innerText),
         1,
-        this.state.channels[0].controlled
+        this.state.channels[0].controlled,
+        this.state.channels[0].online
       )
     );
 
@@ -200,6 +211,22 @@ class Iot extends Component {
         controlSeverity: this.state.controlSeverity,
         target: `${this.state.channels[0].errorBound}`,
       })
+    );
+  };
+
+  handleRemoveChannel = (ID) => {
+    this.handleChangeControl(ID);
+    const { channels } = this.state;
+    channels[0].online = !channels[0].online;
+    this.setState({ channels });
+    this.state.plotlyInterface.constructInitialPlot(
+      constructChannelPlot(
+        this.state.dataSet,
+        this.state.channels[0].errorBound,
+        0,
+        this.state.channels[0].controlled,
+        this.state.channels[0].online
+      )
     );
   };
 
@@ -223,7 +250,8 @@ class Iot extends Component {
           this.state.dataSet,
           this.state.channels[0].errorBound,
           0,
-          controlled
+          controlled,
+          this.state.channels[0].online
         )
       );
       this.setState({ cnt: 0 });
@@ -248,7 +276,8 @@ class Iot extends Component {
                 onChangeControlled={(id) => this.handleChangeControl(id)}
                 onUpdateDatabase={() => this.handleDatabaseUpdate()}
                 onChangeErrorBound={(e) => this.handleChangeErrorBound(e)}
-                handleControlSeverity={(v) => this.changeControlSeverity(v) }
+                handleControlSeverity={(v) => this.changeControlSeverity(v)}
+                onViewOff={(id) => this.handleRemoveChannel(id)}
               />
             );
           })}
