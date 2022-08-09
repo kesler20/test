@@ -24,6 +24,11 @@ const constructChannelPlot = (
   visibility,
   channelVisibility
 ) => {
+  let dataParams = [`total_${channelID + 1}`, `trend_${channelID + 1}`];
+
+  if (data.length === 0) return [];
+  if (data[data.length - 1][dataParams[0]] === undefined) return [];
+
   const total = [];
   const trend = [];
   const x_values = [];
@@ -31,12 +36,11 @@ const constructChannelPlot = (
   let lowerBound = [];
 
   data.forEach((val) => {
-    total.push(val.total_1);
-    trend.push(val.trend_1);
-    upperBound.push(val.trend_1 + boundValues);
-    lowerBound.push(val.trend_1 - boundValues);
-    let x = val.x_value;
-    x_values.push(x);
+    total.push(val[dataParams[0]]);
+    trend.push(val[dataParams[1]]);
+    upperBound.push(val[dataParams[1]] + boundValues);
+    lowerBound.push(val[dataParams[1]] - boundValues);
+    x_values.push(val.x_value);
   });
 
   const total1 = {
@@ -88,20 +92,26 @@ const constructChannelPlot = (
   return [total1, trend1, trend1Upper, trend1Lower];
 };
 
-const updateChannelPlot = (data, boundValue) => {
-  const total = data[data.length - 1].total_1;
-  const trend = data[data.length - 1].trend_1;
-  let upperBound = data[data.length - 1].trend_1 + boundValue;
-  let lowerBound = data[data.length - 1].trend_1 - boundValue;
+const updateChannelPlot = (data, boundValue, channelID) => {
+  let y = [];
+  let x = [];
+  let dataParams = [`total_${channelID}`, `trend_${channelID}`];
+
+  if (data[data.length - 1][dataParams[0]] === undefined)
+    return { y: [], x: [] };
+
+  y.push([data[data.length - 1][dataParams[0]]]);
+  y.push([data[data.length - 1][dataParams[1]]]);
+  y.push([data[data.length - 1][dataParams[1]] + boundValue]);
+  y.push([data[data.length - 1][dataParams[1]] - boundValue]);
+  // x array must be of the same length of the y array
+  y.forEach((val) => {
+    x.push([data[data.length - 1].x_value]);
+  });
 
   return {
-    y: [[total], [trend], [upperBound], [lowerBound]],
-    x: [
-      [data[data.length - 1].x_value],
-      [data[data.length - 1].x_value],
-      [data[data.length - 1].x_value],
-      [data[data.length - 1].x_value],
-    ],
+    y: y,
+    x: x,
   };
 };
 
@@ -126,7 +136,8 @@ const initialClients = [
     controlIntensity: 1,
     online: true,
   },
-]
+];
+
 class Iot extends Component {
   state = {
     plotlyInterface: new PlotlyInterface(
@@ -141,14 +152,15 @@ class Iot extends Component {
   };
 
   componentDidMount() {
-    let { dataSet } = this.state;
+    let dataSet = [];
     let { cnt } = this.state;
+    let plotData = [];
 
     this.state.channels.forEach((channel) => {
       dataSet.push(getDataFromLocalStorage(channel.readTopic));
 
-      this.state.plotlyInterface.constructInitialPlot(
-        constructChannelPlot(
+      plotData.push(
+        ...constructChannelPlot(
           getDataFromLocalStorage(channel.readTopic),
           channel.errorBound,
           channel.channelID,
@@ -168,13 +180,17 @@ class Iot extends Component {
 
       cnt.push(0);
     });
+
+    console.log(plotData);
     this.setState({ cnt });
     this.setState({ dataSet });
+
+    this.state.plotlyInterface.constructInitialPlot(plotData);
   }
 
   handleChangeControl = (channelID) => {
     // update the state of the system
-    const channels = this.state.channels;
+    const { channels } = this.state;
     const { controlled } = channels[channelID];
     channels[channelID].controlled = !controlled;
     this.setState({ channels });
@@ -259,41 +275,67 @@ class Iot extends Component {
   };
 
   handleDatabaseUpdate = () => {
-    this.setState({ dataSet: getDataFromLocalStorage("pump/pressure") });
+    let dataSet = [];
+    this.state.channels.forEach((channel) => {
+      dataSet.push(getDataFromLocalStorage(channel.readTopic));
+    });
+    this.setState({ dataSet });
+
+    const plotData = [];
+    let refresh = false;
+    let extendedTraces = [];
 
     this.state.channels.forEach((channel) => {
-      let extendedTraces = updateChannelPlot(
-        this.state.dataSet,
-        channel.errorBound
+      // get all the extended traces from each channel
+      extendedTraces.push(
+        updateChannelPlot(
+          this.state.dataSet,
+          channel.errorBound,
+          channel.channelID
+        )
       );
 
-      this.state.plotlyInterface.updateInitialPlot(
-        extendedTraces.y,
-        extendedTraces.x
-      );
-
-      // refresh the plot
-      if (this.state.cnt >= 5) {
-        const { controlled } = channel;
-        this.state.plotlyInterface.constructInitialPlot(
-          constructChannelPlot(
+      // get all the plot data from all the channels
+      // refresh the plot if there is more than 6 data points
+      if (this.state.cnt[channel.channelID] >= 6) {
+        plotData.push(
+          ...constructChannelPlot(
             this.state.dataSet,
             channel.errorBound,
             channel.channelID,
-            controlled,
+            channel.controlled,
             channel.online
           )
         );
         let { cnt } = this.state;
         cnt[channel.channelID] = 0;
         this.setState({ cnt });
+        refresh = true;
+        
       } else {
         let { cnt } = this.state;
         cnt[channel.channelID]++;
 
         this.setState({ cnt });
       }
+
+      let extendedTrace = { y: [], x: [] };
+      extendedTraces.forEach((trace) => {
+        extendedTrace.y.push(trace.y);
+        extendedTrace.x.push(trace.x);
+      });
+
+      this.state.plotlyInterface.updateInitialPlot(
+        extendedTrace.y,
+        extendedTrace.x
+      );
+
+      if (refresh === true) {
+        this.state.plotlyInterface.constructInitialPlot(plotData);
+      }
     });
+
+    console.log("this is the count", this.state.cnt);
   };
 
   render() {
@@ -353,3 +395,4 @@ export default Iot;
 // TODO: might use continuous error bars instead of the upper and lower bound https://plotly.com/javascript/continuous-error-bars/
 // TODO: remove all the inline stylings
 //TODO: when the component mounts load all the channel info to storage so that it can also be read by the user account page
+//TODO: let dataParams = [`total_${channelID + 1}`, `trend_${channelID + 1}`]; CHANGE THIS LINE WHEN YOU WILL CHANGE THE BACKEND

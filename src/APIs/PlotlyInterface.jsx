@@ -70,6 +70,9 @@ export default class PlotlyInterface {
     for (let i = 0; i < newDataY.length; i++) {
       traceIDs.push(i);
     }
+
+    console.log('y',[...newDataY])
+    console.log('x',[...newDataX])
     this.plotly.extendTraces(
       this.canvasID,
       {
