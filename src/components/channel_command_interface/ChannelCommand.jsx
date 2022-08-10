@@ -1,60 +1,29 @@
 import React, { useState } from "react";
 import { Slider, Switch, Paper } from "@material-ui/core";
 import Knobs from "./knob/knob";
-import { PrimaryBtn } from "../StyledElemnts";
-
-const paperStyles = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-evenly",
-  alignItems: "center",
-  width: "400px",
-  height: "300px",
-  marginTop: "10px",
-  backgroundColor: "#1b2444",
-};
-
-const subPaperStyles = {
-  display: "flex",
-  justifyContent: "space-around",
-  width: "100%",
-  alignItems: "center",
-};
+import "./ChannelCommand.css";
 
 const ChannelCommand = ({
   onKnobValueChange,
   onControlBtnClicked,
   onSliderChange,
   handlePowerBtnClicked,
-  channelName
+  channelName,
 }) => {
   const [lastTrace, setLastTrace] = useState([0]);
   return (
-    <Paper elevation={3} style={paperStyles}>
-      <p style={{ color: "#76889a" }}>{channelName}</p>
-      <Paper
-        style={{
-          width: "90%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "70%",
-          backgroundColor: "#161d33",
-        }}
-      >
+    <Paper elevation={3} id="channel-command__outer">
+      <p className="channel-command__name">{channelName}</p>
+      <Paper className="channel-command__inner">
         <Knobs
           onValueChange={(value) => onKnobValueChange(value)}
           onPowerBtnClicked={handlePowerBtnClicked}
         />
       </Paper>
-      <div style={subPaperStyles}>
-        <Switch
-          defaultChecked
-          onClick={onControlBtnClicked}
-          //   style={{ color: "#27bb27", backgroundColor: '#27bb27' }}
-        />
+      <div className="channel-command__inner__controls">
+        <Switch defaultChecked onClick={onControlBtnClicked} />
         <Slider
-          style={{ width: "20%", margin: "10px", color: "#27bb27" }}
+          className="channel-command__slider"
           aria-label="Small steps"
           defaultValue={5}
           step={10}
@@ -64,11 +33,7 @@ const ChannelCommand = ({
           valueLabelDisplay="auto"
           onChange={(e) => onSliderChange(e)}
         />
-        <PrimaryBtn
-          style={{ width: "100px", height: "38px", borderRadius: "10px" }}
-        >
-          smoothing
-        </PrimaryBtn>
+        <div className="channel-command__btn">smoothing</div>
       </div>
     </Paper>
   );

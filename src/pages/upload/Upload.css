@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap");
 
-:root {
+.upload-page {
     --body-bg: #161d33;
     --box-bg: #24315a;
     --input-bg: #f5f8ff;
@@ -10,13 +10,7 @@
     --box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-
-.uploadPage-body {
+.upload-page__body {
     width: 100%;
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
@@ -30,14 +24,14 @@
 
 }
 
-.box {
+.upload-page__body__box {
     background-color: var(--box-bg);
     padding: 30px;
     border-radius: 20px;
     box-shadow: var(--box-shadow);
 }
 
-.header {
+.upload-page__body__box__header {
     margin-bottom: 30px;
     text-align: center;
     color: var(--txt-second-color);

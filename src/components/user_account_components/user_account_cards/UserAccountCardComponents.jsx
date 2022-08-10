@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
-import { Button, Select, FormControl, MenuItem, InputLabel } from "@material-ui/core";
+import {
+  Button,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
+} from "@material-ui/core";
 import { Card } from "react-bootstrap";
 import CustomPaginationActionsTable from "../table_user_data/TabularUserFiles";
-
+import "./UserAccountCardComponents.css";
 // let object = {
 //     name: 'Jack',
 //     age: 25
@@ -52,70 +58,51 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
         {files.map((file) => {
           return (
             <SplideSlide key={files.indexOf(file)}>
-              <Card
-                className="angry-grid"
-                style={{
-                  width: "500px",
-                  boxShadow: "3px 2px 15px rgb(12, 12, 12)",
-                }}
-                key={files.indexOf(file)}
-              >
-                <div id="item-0" style={{ color: "white" }}>
+              <Card className="angry-grid" key={files.indexOf(file)}>
+                <div id="item-0" className="user-card__header">
                   <p>filename</p>
                   <hr />
                 </div>
-                <p id="item-1" style={{ color: "#767c76" }}>
+                <p id="item-1" className="user-card__body">
                   {file.filename}
                 </p>
-                <div id="item-2" style={{ display: "flex" }}>
+                <div id="item-2" className="user-card__buttons">
                   <Button
+                    className="user-card__buttons__btn"
                     onClick={() => setViewContent(!viewContent)}
                     variant="outlined"
                     color="success"
-                    style={{
-                      margin: 8,
-                      backgroundColor: "#161d33",
-                      color: "#767c76",
-                    }}
                   >
                     Read
                   </Button>
                   <Button
+                    className="user-card__buttons__btn"
                     variant="outlined"
                     color="success"
-                    style={{
-                      margin: 8,
-                      backgroundColor: "#161d33",
-                      color: "#767c76",
-                    }}
                   >
                     Update
                   </Button>
                   <Button
+                    className="user-card__buttons__btn"
                     onClick={() => onDeleteFile(file)}
                     variant="outlined"
                     color="error"
-                    style={{
-                      margin: 8,
-                      backgroundColor: "#161d33",
-                      color: "#767c76",
-                    }}
                   >
                     Delete
                   </Button>
                 </div>
-                <div id="item-3">
-                  <p style={{ color: "white" }}>file size</p>
+                <div id="item-3" className="user-card__header">
+                  <p>file size</p>
                   <hr />
                 </div>
-                <p id="item-4" style={{ color: "#767c76" }}>
+                <p id="item-4" className="user-card__body">
                   254 MB
                 </p>
-                <div id="item-5">
-                  <p style={{ color: "white" }}>format</p>
+                <div id="item-5" className="user-card__header">
+                  <p>format</p>
                   <hr />
                 </div>
-                <p id="item-6" style={{ color: "#767c76" }}>
+                <p id="item-6" className="user-card__body">
                   tabular
                 </p>
               </Card>
@@ -130,7 +117,7 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
 
 export const UserClientCard = ({ clients, onDeleteClient }) => {
   const [connected, setConnected] = useState(false);
-  const [age, setAge] = useState('');
+  const [age, setAge] = useState("");
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -150,68 +137,58 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
         {clients.map((client) => {
           return (
             <SplideSlide key={clients.indexOf(client)}>
-              <Card
-                className="angry-grid"
-                style={{
-                  width: "550px",
-                  boxShadow: "3px 2px 15px rgb(12, 12, 12)",
-                }}
-                key={clients.indexOf(client)}
-              >
-                <div id="item-0" style={{ color: "white" }}>
+              <Card className="angry-grid" key={clients.indexOf(client)}>
+                <div id="item-0" className="user-card__header">
                   <p>client ID</p>
                   <hr />
                 </div>
-                <p id="item-1" style={{ color: "#767c76" }}>
+                <p id="item-1" className="user-card__body">
                   {client.clientID}
                 </p>
-                <div id="item-2" style={{ display: "flex" }}>
+                <div id="item-2" className="user-card__buttons">
                   <Button
+                    className="user-card__buttons__btn"
                     onClick={() => setConnected(!connected)}
                     variant="outlined"
                     color="success"
-                    style={{
-                      margin: 8,
-                      backgroundColor: "#161d33",
-                      color: "#767c76",
-                    }}
                   >
                     {connected === false ? "Switch on" : "Switch off"}
                   </Button>
                   <Button
+                    className="user-card__buttons__btn"
                     onClick={() => onDeleteClient(client)}
                     variant="outlined"
                     color="error"
-                    style={{
-                      margin: 8,
-                      backgroundColor: "#161d33",
-                      color: "#767c76",
-                    }}
                   >
                     Delete
                   </Button>
                 </div>
                 <div id="item-3">
-                  <p style={{ color: "white" }}>status</p>
+                  <p className="user-card__header">status</p>
                   <hr />
                 </div>
-                <p id="item-4" style={{ color: "#767c76" }}>
+                <p id="item-4" className="user-card__body">
                   {connected === false ? "online ✅" : "offline ❌"}
                 </p>
                 <div id="item-5">
-                  <p style={{ color: "white" }}>topic</p>
+                  <p className="user-card__header">topic</p>
                   <hr />
                 </div>
-                <div id="item-6" style={{ color: "#767c76" }}>
+                <div id="item-6" className="user-card__body">
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label" style={{ color: 'white'}}>DATA</InputLabel>
+                    <InputLabel
+                      className="user-card__header"
+                      id="demo-simple-select-label"
+                    >
+                      DATA
+                    </InputLabel>
                     <Select
+                      className="user-card__header"
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
                       value={age}
                       label="Age"
                       onChange={handleChange}
-                      style={{ color: 'white'}}
                     >
                       <MenuItem value={10}>DATA/pressure</MenuItem>
                       <MenuItem value={20}>DATA/temperature</MenuItem>

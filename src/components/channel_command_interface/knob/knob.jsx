@@ -11,8 +11,8 @@ const Knobs = ({ onValueChange, onPowerBtnClicked }) => {
     onPowerBtnClicked();
   };
   return (
-    <div className="outer">
-      <div className="inner">
+    <div className="knob__outer">
+      <div className="knob__inner">
         <div className="circular-dot" style={{ "--i": 1 }}></div>
         <div className="circular-dot" style={{ "--i": 2 }}></div>
         <div className="circular-dot" style={{ "--i": 3 }}></div>
@@ -23,7 +23,7 @@ const Knobs = ({ onValueChange, onPowerBtnClicked }) => {
           <i className="fa fa-power-off"></i>
         </div>
         <Knob
-          className="knob"
+          className="knob__slider"
           size={100}
           angleOffset={220}
           angleRange={280}
@@ -33,7 +33,7 @@ const Knobs = ({ onValueChange, onPowerBtnClicked }) => {
         >
           <Arc arcWidth={7} color="#FC5A96" radius={47.5} />
           <Pointer width={4} radius={40} type="circle" color="#ffff" />
-          <Value marginBottom={40} className="value" />
+          <Value marginBottom={40} className="knob__slider__value" />
         </Knob>
       </div>
     </div>

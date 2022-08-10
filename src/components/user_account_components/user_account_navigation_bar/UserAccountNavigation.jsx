@@ -4,7 +4,7 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-
+import "./UserAccountNavigation.css";
 export default function LabTabs({
   userFilesPanels,
   userClientPanels,
@@ -17,7 +17,10 @@ export default function LabTabs({
   };
 
   return (
-    <Box sx={{ width: "100%", typography: "body1" }}>
+    <Box
+      sx={{ width: "100%", typography: "body1" }}
+      id="user-account-navigation"
+    >
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
@@ -26,31 +29,19 @@ export default function LabTabs({
             indicatorColor="secondary"
           >
             <Tab
+              className="user-account-navigation__tabs"
               label="User Files"
               value="1"
-              style={{
-                marginRight: "10px",
-                marginLeft: "10px",
-                color: "#707772",
-              }}
             />
             <Tab
+              className="user-account-navigation__tabs"
               label="User Clients"
               value="2"
-              style={{
-                marginRight: "10px",
-                marginLeft: "10px",
-                color: "#707772",
-              }}
             />
             <Tab
+              className="user-account-navigation__tabs"
               label="User Dashboards"
               value="3"
-              style={{
-                marginRight: "10px",
-                marginLeft: "10px",
-                color: "#707772",
-              }}
             />
           </TabList>
         </Box>

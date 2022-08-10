@@ -3,35 +3,49 @@ import { Tooltip, IconButton } from "@material-ui/core";
 import { BiNetworkChart } from "react-icons/bi";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
+import "./Navbar.css";
 import Logo from "../assets/Logo.ico";
-import { SideBar, Link } from "../StyledElemnts";
+import { NavLink } from "react-router-dom";
+import styled from "styled-components";
 
-const activeStyles = {
-  backgroundColor: "#39424e",
-  color: "rgb(39, 187, 39)",
-  boxShadow: "2px 2px 40px rgb(16,136,36)",
-};
+export const Link = styled(NavLink)`
+  text-decoration: none;
+  outline: none;
+  margin: 10px;
+`;
 
-const inactiveStyles = {
-  color: "rgb(39, 187, 39)",
-  boxShadow: "2px 2px 40px rgb(16,136,36)",
-};
+export const SideBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  background-color: black;
+  flex-direction: column;
+`;
 
 const Navbar = () => {
   const [currentPage, setCurrentPage] = useState("iot");
   return (
     <SideBar>
       <img
+        className="navbar__site-logo"
         src={Logo}
         alt="logo of the company"
-        style={{ width: "50px", margin: "20%" }}
       ></img>
+
       <Link to={"./userAccount"}>
         <Tooltip title="User Account">
           <IconButton
             onClick={() => setCurrentPage("account")}
-            className="icon"
-            style={currentPage === "account" ? activeStyles : inactiveStyles}
+            className={
+              currentPage === "account"
+                ? "icon " + "navbar__navigation-link--active"
+                : "icon " + "navbar__navigation-link--inactive"
+            }
           >
             <i className="fa fa-user"></i>
           </IconButton>
@@ -42,10 +56,13 @@ const Navbar = () => {
         <Tooltip title="Real Time Analysis">
           <IconButton
             onClick={() => setCurrentPage("iot")}
-            className="icon"
-            style={currentPage === "iot" ? activeStyles : inactiveStyles}
+            className={
+              currentPage === "iot"
+                ? "icon " + "navbar__navigation-link--active"
+                : "icon " + "navbar__navigation-link--inactive"
+            }
           >
-            <BiNetworkChart />
+            <BiNetworkChart className="navbar__navigation-link__icon" />
           </IconButton>
         </Tooltip>
       </Link>
@@ -54,10 +71,13 @@ const Navbar = () => {
         <Tooltip title="Upload Files">
           <IconButton
             onClick={() => setCurrentPage("upload")}
-            className="icon"
-            style={currentPage === "upload" ? activeStyles : inactiveStyles}
+            className={
+              currentPage === "upload"
+                ? "icon " + "navbar__navigation-link--active"
+                : "icon " + "navbar__navigation-link--inactive"
+            }
           >
-            <FaCloudUploadAlt />
+            <FaCloudUploadAlt className="navbar__navigation-link__icon" />
           </IconButton>
         </Tooltip>
       </Link>
@@ -66,10 +86,13 @@ const Navbar = () => {
         <Tooltip title="dashboard">
           <IconButton
             onClick={() => setCurrentPage("dashboard")}
-            className="icon"
-            style={currentPage === "dashboard" ? activeStyles : inactiveStyles}
+            className={
+              currentPage === "dashboard"
+                ? "icon " + "navbar__navigation-link--active"
+                : "icon " + "navbar__navigation-link--inactive"
+            }
           >
-            <MdDashboard />
+            <MdDashboard className="navbar__navigation-link__icon" />
           </IconButton>
         </Tooltip>
       </Link>

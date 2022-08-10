@@ -9,6 +9,8 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+import "./TabularUserFiles.css";
+
 import {
   Paper,
   TableCell,
@@ -42,7 +44,7 @@ function TablePaginationActions(props) {
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <IconButton
-        style={{ color: "white" }}
+        className="user-file__table__content"
         onClick={handleFirstPageButtonClick}
         disabled={page === 0}
         aria-label="first page"
@@ -50,7 +52,7 @@ function TablePaginationActions(props) {
         {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
       <IconButton
-        style={{ color: "white" }}
+        className="user-file__table__content"
         onClick={handleBackButtonClick}
         disabled={page === 0}
         aria-label="previous page"
@@ -62,7 +64,7 @@ function TablePaginationActions(props) {
         )}
       </IconButton>
       <IconButton
-        style={{ color: "white" }}
+        className="user-file__table__content"
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
@@ -74,7 +76,7 @@ function TablePaginationActions(props) {
         )}
       </IconButton>
       <IconButton
-        style={{ color: "white" }}
+        className="user-file__table__content"
         onClick={handleLastPageButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="last page"
@@ -130,42 +132,46 @@ export default function CustomPaginationActionsTable() {
   };
 
   return (
-    <TableContainer
-      component={Paper}
-      style={{
-        color: "white",
-        marginTop : "15px",
-        background: "#24315a",
-        boxShadow: "3px 2px 15px rgb(12, 12, 12)",
-      }}
-    >
+    <TableContainer id="user-file__table__container" component={Paper}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <TableCell style={{ color: "white" }}>
+            <TableCell className="user-file__table__content">
               Dessert (100g serving)
             </TableCell>
-            <TableCell style={{ color: "white" }} align="right">
+            <TableCell className="user-file__table__content" align="right">
               Carbs&nbsp;(g)
             </TableCell>
-            <TableCell style={{ color: "white" }} align="right">
+            <TableCell className="user-file__table__content" align="right">
               Protein&nbsp;(g)
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody style={{ color: "white" }}>
+        <TableBody className="user-file__table__content">
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row) => (
             <TableRow key={row.name}>
-              <TableCell style={{ color: "white" }} component="th" scope="row">
+              <TableCell
+                className="user-file__table__content"
+                component="th"
+                scope="row"
+              >
                 {row.name}
               </TableCell>
-              <TableCell style={{ color: "white", width: 160 }} align="right">
+              <TableCell
+                className="user-file__table__content"
+                style={{ width: 160 }}
+                align="right"
+              >
                 {row.calories}
               </TableCell>
-              <TableCell style={{ color: "white", width: 160 }} align="right">
+              <TableCell
+                className="user-file__table__content"
+                style={{ width: 160 }}
+                align="right"
+              >
                 {row.fat}
               </TableCell>
             </TableRow>
@@ -179,7 +185,7 @@ export default function CustomPaginationActionsTable() {
         <TableFooter>
           <TableRow>
             <TablePagination
-              style={{ color: "#27bb27" }}
+              className="user-file__table__pagination"
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
               colSpan={3}
               count={rows.length}

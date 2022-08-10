@@ -1,15 +1,15 @@
-.value {
+.knob__slider__value {
   font-family: "Work Sans", sans-serif;
   fill: #fc5a96;
   font-size: 30px;
 }
 
-.knob {
+.knob__slider {
   position: absolute;
   z-index: 100;
 }
 
-.outer {
+.knob__outer {
   background-color: white;
   width: 160px;
   height: 160px;
@@ -20,7 +20,7 @@
   align-items: center;
 }
 
-.inner {
+.knob__inner {
   /* ff 3.6+ */
   background: -moz-radial-gradient(
     circle at 24% 34%,

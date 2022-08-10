@@ -1,18 +1,9 @@
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { PrimaryBtn } from "../StyledElemnts";
-import "./drop-file-input.css";
+import "./DropFileInput.css";
 
 import { ImageConfig } from "../../config/ImageConfig";
 import uploadImg from "../assets/cloud-upload-regular-240.png";
-
-const PrimaryBtnStyles = {
-  marginTop: 25,
-  width: 160,
-  height: 60,
-  fontSize: "1.2rem",
-  borderRadius: 20,
-};
 
 const DropFileInput = (props) => {
   const wrapperRef = useRef(null);
@@ -107,9 +98,12 @@ const DropFileInput = (props) => {
           ))}
         </div>
       ) : null}
-      <PrimaryBtn style={PrimaryBtnStyles} onClick={(e) => handleSubmit(e)}>
+      <div
+        className="drop-file-input__submit-btn"
+        onClick={(e) => handleSubmit(e)}
+      >
         Submit
-      </PrimaryBtn>
+      </div>
     </form>
   );
 };

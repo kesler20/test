@@ -65,8 +65,8 @@ const UserAccount = () => {
     }
   };
 
-  const createClient = () => {};
-  const deleteClient = () => {};
+  // const createClient = () => {};
+  // const deleteClient = () => {};
 
   const getUserClients = () => {
     try {
@@ -110,35 +110,12 @@ const UserAccount = () => {
   };
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          backgroundColor: "#24315a",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          width: "100%",
-          height: "60px",
-          borderRadius: "20px",
-          margin: "10px",
-        }}
-      >
-        <i
-          className="fa fa-check"
-          style={{
-            backgroundColor: "#27bb27",
-            borderRadius: "50%",
-            marginLeft: "10px",
-            color: "white",
-            height: "30px",
-            width: "30px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        />
-        <h2 style={{ color: "white", marginLeft: "15px" }}>{username}</h2>
+      <div className="user-account__header">
+        {/* <i className="user-account__header__verified fa fa-check" /> */}
+        <h2 className="user-account__header__username">{username}</h2>
         <LetterAvatars username={username} />
       </div>
+
       <LabTabs
         userFilesPanels={
           <UserFilesCard
