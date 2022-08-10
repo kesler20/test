@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Slider, Switch, Paper } from "@material-ui/core";
-import Knobs from "../pages/knob";
-import { PrimaryBtn } from "./StyledElemnts";
+import Knobs from "./knob/knob";
+import { PrimaryBtn } from "../StyledElemnts";
+
 const paperStyles = {
   display: "flex",
   flexDirection: "column",
@@ -25,11 +26,12 @@ const ChannelCommand = ({
   onControlBtnClicked,
   onSliderChange,
   handlePowerBtnClicked,
+  channelName
 }) => {
   const [lastTrace, setLastTrace] = useState([0]);
   return (
     <Paper elevation={3} style={paperStyles}>
-      <p style={{ color: "#76889a" }}>TFF-1</p>
+      <p style={{ color: "#76889a" }}>{channelName}</p>
       <Paper
         style={{
           width: "90%",

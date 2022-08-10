@@ -4,7 +4,7 @@ import { PrimaryBtn } from "../StyledElemnts";
 import "./drop-file-input.css";
 
 import { ImageConfig } from "../../config/ImageConfig";
-import uploadImg from "../../assets/cloud-upload-regular-240.png";
+import uploadImg from "../assets/cloud-upload-regular-240.png";
 
 const PrimaryBtnStyles = {
   marginTop: 25,
@@ -45,10 +45,10 @@ const DropFileInput = (props) => {
         body: formData,
       }
     );
-    response.json().then(res => {
-      console.log(res)
+    response.json().then((res) => {
+      console.log(res);
     });
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ const DropFileInput = (props) => {
     fileList.forEach((file) => {
       formData.append("user_files", file);
       console.log("added a csv file 📁", file);
-      uploadData(formData)
+      uploadData(formData);
     });
   };
 
@@ -78,7 +78,7 @@ const DropFileInput = (props) => {
       >
         <div className="drop-file-input__label">
           <img src={uploadImg} alt="" />
-          <p >Drag & Drop your files here</p>
+          <p>Drag & Drop your files here</p>
         </div>
         <input type="file" value="" onChange={onFileDrop} />
       </div>

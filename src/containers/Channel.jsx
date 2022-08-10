@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import MQTTApi, { check } from "../APIs/mqttProtocol";
 import DatabaseApi from "../APIs/redisDatabase";
-import { convertUnixEpochTimeSToDate } from "../APIs/otherScripts";
-import ChannelCommand from "./ChannelCommand";
+import ChannelCommand from "../components/channel_command_interface/ChannelCommand";
+
 const Channel = (props) => {
   const {
     id,
@@ -12,13 +12,13 @@ const Channel = (props) => {
     onChangeControlled,
     onChangeErrorBound,
     handleControlIntensity,
-    onViewOff
+    onViewOff,
+    clientID
   } = props;
 
-  const [mqttClient, setMqttClient] = useState(new MQTTApi());
+  const [mqttClient, setMqttClient] = useState(new MQTTApi(clientID));
   const [db, setDb] = useState(new DatabaseApi(`/${readTopic}/json-database`));
   const [lastTrace, setLastTrace] = useState([]);
-
 
   useEffect(() => {
     mqttClient.onConnect(() => {
@@ -30,9 +30,6 @@ const Channel = (props) => {
         let data = { x_value: [0], total_1: [0], trend_1: [0] };
         try {
           data = JSON.parse(message.toString());
-          // let { x_value } = data;
-          // const unix_x_value = convertUnixEpochTimeSToDate(x_value);
-          // data.x_value = unix_x_value;
           console.log("the following data will be stored", data);
           db.createResource(data);
           onUpdateDatabase();
@@ -57,19 +54,18 @@ const Channel = (props) => {
           console.log(e);
         }
 
-        // console.log("Message Arrived: " + message.toString());
-        // console.log("Topic:     " + topic);
       });
     }, []);
   });
 
   return (
     <div>
-      < ChannelCommand 
-      onKnobValueChange={(value) => handleControlIntensity(value,id)}
-      onControlBtnClicked={() => onChangeControlled(id)}
-      onSliderChange={(e) => onChangeErrorBound(e,id)}
-      handlePowerBtnClicked={() => onViewOff(id)}
+      <ChannelCommand
+        onKnobValueChange={(value) => handleControlIntensity(value, id)}
+        onControlBtnClicked={() => onChangeControlled(id)}
+        onSliderChange={(e) => onChangeErrorBound(e, id)}
+        handlePowerBtnClicked={() => onViewOff(id)}
+        channelName={clientID}
       />
     </div>
   );

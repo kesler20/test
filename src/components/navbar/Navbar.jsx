@@ -1,11 +1,10 @@
-import ThemeManager from "../utils/themeManager";
 import React, { useState } from "react";
 import { Tooltip, IconButton } from "@material-ui/core";
 import { BiNetworkChart } from "react-icons/bi";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
-import Logo from "../Logo.ico";
-import { SideBar, Link } from "../components/StyledElemnts";
+import Logo from "../assets/Logo.ico";
+import { SideBar, Link } from "../StyledElemnts";
 
 const activeStyles = {
   backgroundColor: "#39424e",

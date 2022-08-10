@@ -5,9 +5,9 @@ import "./UserAccount.css";
 import {
   UserFilesCard,
   UserClientCard,
-} from "../components/UserAccountCardComponents";
-import LabTabs from "../components/UserAccountNavigation";
-import LetterAvatars from "../components/LetterAvatar";
+} from "../../components/user_account_components/user_account_cards/UserAccountCardComponents";
+import LabTabs from "../../components/user_account_components/user_account_navigation_bar/UserAccountNavigation";
+import LetterAvatars from "../../components/user_account_components/letter_avatar/LetterAvatar";
 
 let username = localStorage.getItem("username");
 
@@ -17,7 +17,7 @@ const UserAccount = () => {
 
   useEffect(() => {
     getUserFiles();
-    getUserClients()
+    getUserClients();
   }, []);
 
   const deleteFile = async ({ filename }) => {
@@ -42,6 +42,12 @@ const UserAccount = () => {
   };
 
   const getUserFiles = async () => {
+    try {
+      setFiles(JSON.parse(localStorage.getItem("userFiles")));
+    } catch (e) {
+      console.log(e);
+    }
+
     if (files.length === 0) {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/READ`,
@@ -56,12 +62,6 @@ const UserAccount = () => {
         setFiles(res["files found"]);
         localStorage.setItem("userFiles", JSON.stringify(res["files found"]));
       });
-    } else {
-      try {
-        setFiles(JSON.parse(localStorage.getItem("userFiles")));
-      } catch (e) {
-        console.log(e);
-      }
     }
   };
 
@@ -70,11 +70,42 @@ const UserAccount = () => {
 
   const getUserClients = () => {
     try {
-      clients.push(JSON.parse(localStorage.getItem("client-info")))
+      let clientsFromStorage = JSON.parse(localStorage.getItem("client-info"));
+      clientsFromStorage.forEach((client) => {
+        clients.push(client);
+      });
+
       setClients(clients);
-      console.log(clients)
+      console.log(clients);
     } catch (e) {
       console.log(e);
+      localStorage.setItem(
+        "client-info",
+        JSON.stringify([
+          {
+            channelID: 0,
+            readTopic: "pump/pressure",
+            writeTopic: "pump/control",
+            controlled: true,
+            errorBound: 5,
+            smoothing: { value: 0, visible: false },
+            controlIntensity: 1,
+            online: true,
+            clientID: "TFF-1",
+          },
+          {
+            channelID: 1,
+            readTopic: "pump/temperature",
+            writeTopic: "heater/control",
+            controlled: true,
+            errorBound: 5,
+            smoothing: { value: 0, visible: false },
+            controlIntensity: 1,
+            online: true,
+            clientID: "IVT-1",
+          },
+        ])
+      );
     }
   };
   return (
@@ -106,7 +137,7 @@ const UserAccount = () => {
           }}
         />
         <h2 style={{ color: "white", marginLeft: "15px" }}>{username}</h2>
-        <LetterAvatars username={username}/>
+        <LetterAvatars username={username} />
       </div>
       <LabTabs
         userFilesPanels={

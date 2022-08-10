@@ -21,10 +21,8 @@ class UserDataEncriptor {
 }
 
 export default class MQTTApi {
-  constructor() {
-    this.clientId = Math.random()
-      .toString(36)
-      .substring(7);
+  constructor(clientID) {
+    this.clientId = clientID
     this.client = this.connectClient();
   }
 

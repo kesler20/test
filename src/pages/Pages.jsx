@@ -1,9 +1,9 @@
 import React from "react";
-import Home from "./Home";
 import { Route, Routes } from "react-router-dom";
-import Upload from "./Upload";
-import UserAccount from "./UserAccount";
-import Dashboard from "./Dashboard";
+import Home from "./home/Home";
+import Upload from "./upload/Upload";
+import UserAccount from "./user_account/UserAccount";
+import Dashboard from "./dashboard/Dashboard";
 
 const Pages = () => {
   return (

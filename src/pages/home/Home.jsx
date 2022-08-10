@@ -1,5 +1,4 @@
-import Iot from "../components/Iot";
-
+import Iot from "../../containers/Iot";
 import React from "react";
 
 const Home = () => {

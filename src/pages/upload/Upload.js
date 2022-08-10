@@ -1,6 +1,5 @@
 import "./Upload.css";
-
-import DropFileInput from "../components/drop-file-input/DropFileInput";
+import DropFileInput from "../../components/drop_file_input/DropFileInput"
 
 const Upload = () => {
   const onFileChange = (files) => {

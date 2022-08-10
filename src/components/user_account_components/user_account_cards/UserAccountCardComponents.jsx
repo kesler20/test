@@ -3,7 +3,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { Button, Select, FormControl, MenuItem, InputLabel } from "@material-ui/core";
 import { Card } from "react-bootstrap";
-import CustomPaginationActionsTable from "../components/TabularUserFiles";
+import CustomPaginationActionsTable from "../table_user_data/TabularUserFiles";
 
 // let object = {
 //     name: 'Jack',
@@ -11,6 +11,29 @@ import CustomPaginationActionsTable from "../components/TabularUserFiles";
 //   };
 //   let keys = Object.keys(object)
 //   console.log(keys);
+
+// const initialClients = [
+//   {
+//     channelID: 0,
+//     readTopic: "pump/pressure",
+//     writeTopic: "pump/control",
+//     controlled: true,
+//     errorBound: 5,
+//     smoothing: { value: 0, visible: false },
+//     controlIntensity: 1,
+//     online: true,
+//   },
+//   {
+//     channelID: 1,
+//     readTopic: "pump/temperature",
+//     writeTopic: "heater/control",
+//     controlled: true,
+//     errorBound: 5,
+//     smoothing: { value: 0, visible: false },
+//     controlIntensity: 1,
+//     online: true,
+//   },
+// ];
 
 export const UserFilesCard = ({ files, onDeleteFile }) => {
   const [viewContent, setViewContent] = useState(false);
@@ -118,7 +141,7 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
       <Splide
         options={{
           perPage: 4,
-          arrows: false,
+          arrows: true,
           pagination: false,
           drag: "free",
           gap: "580px",
@@ -153,7 +176,7 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
                       color: "#767c76",
                     }}
                   >
-                    {connected == false ? "Switch on" : "Switch off"}
+                    {connected === false ? "Switch on" : "Switch off"}
                   </Button>
                   <Button
                     onClick={() => onDeleteClient(client)}
@@ -173,13 +196,13 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
                   <hr />
                 </div>
                 <p id="item-4" style={{ color: "#767c76" }}>
-                  {connected == false ? "online ✅" : "offline ❌"}
+                  {connected === false ? "online ✅" : "offline ❌"}
                 </p>
                 <div id="item-5">
                   <p style={{ color: "white" }}>topic</p>
                   <hr />
                 </div>
-                <p id="item-6" style={{ color: "#767c76" }}>
+                <div id="item-6" style={{ color: "#767c76" }}>
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label" style={{ color: 'white'}}>DATA</InputLabel>
                     <Select
@@ -195,7 +218,7 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
                       <MenuItem value={30}>DATA/concentration</MenuItem>
                     </Select>
                   </FormControl>
-                </p>
+                </div>
               </Card>
             </SplideSlide>
           );

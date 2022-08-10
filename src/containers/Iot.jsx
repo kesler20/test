@@ -128,30 +128,7 @@ const updateChannelPlot = (data, boundValue, channelID) => {
   };
 };
 
-const channels = JSON.parse(localStorage.getItem('channels-info'))
-console.log(channels)
-const initialClients = [
-  {
-    channelID: 0,
-    readTopic: "pump/pressure",
-    writeTopic: "pump/control",
-    controlled: true,
-    errorBound: 5,
-    smoothing: { value: 0, visible: false },
-    controlIntensity: 1,
-    online: true,
-  },
-  {
-    channelID: 1,
-    readTopic: "pump/temperature",
-    writeTopic: "heater/control",
-    controlled: true,
-    errorBound: 5,
-    smoothing: { value: 0, visible: false },
-    controlIntensity: 1,
-    online: true,
-  },
-];
+const initialClients = JSON.parse(localStorage.getItem('client-info'))
 
 class Iot extends Component {
   state = {
@@ -401,6 +378,7 @@ class Iot extends Component {
                     this.changeControlIntensity(v, id)
                   }
                   onViewOff={(id) => this.handleRemoveChannel(id)}
+                  clientID={channel.clientID}
                 />
               </SplideSlide>
             );
