@@ -4,17 +4,17 @@ import { BiNetworkChart } from "react-icons/bi";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import "./Navbar.css";
-import Logo from "../assets/Logo.ico";
+import Logo from "../../assets/Logo.ico";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
-export const Link = styled(NavLink)`
+const Link = styled(NavLink)`
   text-decoration: none;
   outline: none;
   margin: 10px;
 `;
 
-export const SideBar = styled.div`
+const SideBar = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -43,8 +43,8 @@ const Navbar = () => {
             onClick={() => setCurrentPage("account")}
             className={
               currentPage === "account"
-                ? "icon " + "navbar__navigation-link--active"
-                : "icon " + "navbar__navigation-link--inactive"
+                ? "icon navbar__navigation-link--active"
+                : "icon navbar__navigation-link--inactive"
             }
           >
             <i className="fa fa-user"></i>
@@ -58,8 +58,8 @@ const Navbar = () => {
             onClick={() => setCurrentPage("iot")}
             className={
               currentPage === "iot"
-                ? "icon " + "navbar__navigation-link--active"
-                : "icon " + "navbar__navigation-link--inactive"
+                ? "icon navbar__navigation-link--active"
+                : "icon navbar__navigation-link--inactive"
             }
           >
             <BiNetworkChart className="navbar__navigation-link__icon" />
@@ -73,8 +73,8 @@ const Navbar = () => {
             onClick={() => setCurrentPage("upload")}
             className={
               currentPage === "upload"
-                ? "icon " + "navbar__navigation-link--active"
-                : "icon " + "navbar__navigation-link--inactive"
+                ? "icon navbar__navigation-link--active"
+                : "icon navbar__navigation-link--inactive"
             }
           >
             <FaCloudUploadAlt className="navbar__navigation-link__icon" />
@@ -88,8 +88,8 @@ const Navbar = () => {
             onClick={() => setCurrentPage("dashboard")}
             className={
               currentPage === "dashboard"
-                ? "icon " + "navbar__navigation-link--active"
-                : "icon " + "navbar__navigation-link--inactive"
+                ? "icon navbar__navigation-link--active"
+                : "icon navbar__navigation-link--inactive"
             }
           >
             <MdDashboard className="navbar__navigation-link__icon" />

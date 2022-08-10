@@ -1,5 +1,5 @@
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { range } from "../APIs/otherScripts";
+import { range } from "../helpers/otherScripts";
 import React, { Component } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
@@ -128,7 +128,7 @@ const updateChannelPlot = (data, boundValue, channelID) => {
   };
 };
 
-const initialClients = JSON.parse(localStorage.getItem('client-info'))
+const initialClients = JSON.parse(localStorage.getItem("client-info"));
 
 class Iot extends Component {
   state = {
@@ -255,7 +255,6 @@ class Iot extends Component {
     channels[channelID].online = !channels[channelID].online;
     channels[channelID].controlled = !channels[channelID].controlled;
     this.setState({ channels });
-
 
     // construct the plot again
     let dataSet = [];

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Slider, Switch, Paper } from "@material-ui/core";
 import Knobs from "./knob/knob";
 import "./ChannelCommand.css";
@@ -10,7 +10,6 @@ const ChannelCommand = ({
   handlePowerBtnClicked,
   channelName,
 }) => {
-  const [lastTrace, setLastTrace] = useState([0]);
   return (
     <Paper elevation={3} id="channel-command__outer">
       <p className="channel-command__name">{channelName}</p>

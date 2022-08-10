@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import "./DropFileInput.css";
 
 import { ImageConfig } from "../../config/ImageConfig";
-import uploadImg from "../assets/cloud-upload-regular-240.png";
+import uploadImg from "../../assets/cloud-upload-regular-240.png";
 
 const DropFileInput = (props) => {
   const wrapperRef = useRef(null);
