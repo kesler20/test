@@ -1,0 +1,14 @@
+#user-file__table__container {
+  color: white;
+  margin-top: 15px;
+  background: #24315a;
+  box-shadow: 3px 2px 15px rgb(12, 12, 12);
+}
+#user-file__table__container .user-file__table__content {
+  color: white;
+}
+
+#user-file__table__container .user-file__table__pagination {
+  color: #27bb27;
+}
+

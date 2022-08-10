@@ -1,0 +1,18 @@
+img.navbar__site-logo {
+  width: 50px;
+  margin: 20%;
+}
+
+.navbar__navigation-link--active {
+  background-color: #39424e;
+  box-shadow: 2px 2px 40px rgb(16, 136, 36);
+}
+
+.navbar__navigation-link--inactive {
+  box-shadow: 2px 2px 40px rgb(16, 136, 36);
+}
+
+.icon .fa,
+.navbar__navigation-link__icon {
+  color: rgb(39, 187, 39);
+}
