@@ -1,0 +1,21 @@
+.navigation-bar {
+  width: 100%;
+  height: 60px;
+  background-color: azure;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 40px;
+  margin: 4% 0%;
+}
+
+.navigation-bar__btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navigation-bar__btn .navigation-bar__btn__icon {
+  margin: 3%;
+}

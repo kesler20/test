@@ -16,6 +16,15 @@
   width: 500px;
   height: 100%;
 }
+.angry-grid--client {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  box-shadow: 3px 2px 15px rgb(12, 12, 12);
+  gap: 0px;
+  width: 680px;
+  height: 100%;
+}
 
 #item-0 {
   grid-row-start: 1;
@@ -84,4 +93,8 @@
 .user-card__buttons .user-card__buttons__btn {
   background-color: #161d33;
   color: #767c76;
+}
+
+.user-card__body .user-card__header {
+  color: white;
 }

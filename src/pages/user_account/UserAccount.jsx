@@ -1,3 +1,4 @@
+import UserClientNavbar from "../../components/user_account_components/user_account_cards/user_client_CRUD_navbar/UserClientNavbar";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -14,31 +15,39 @@ let username = localStorage.getItem("username");
 const UserAccount = () => {
   const [files, setFiles] = useState([]);
   const [clients, setClients] = useState([]);
+  const [topics, setTopics] = useState([]);
 
   useEffect(() => {
     getUserFiles();
     getUserClients();
+    getUserTopics();
   }, []);
 
-  const deleteFile = async ({ filename }) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/DELETE`,
-      {
-        headers: new Headers({
-          "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-        }),
-        method: "POST",
-        body: filename,
-      }
-    );
+  const createTopic = (name) => {
+    let topicNames = JSON.parse(localStorage.getItem("user-topics"));
+    topicNames.push(name);
+    localStorage.setItem("user-topics", JSON.stringify(topicNames));
+    setTopics(topicNames.map((name) => name));
+    console.log("topic created  successfully ✅", name);
+  };
 
-    response.json().then((res) => {
-      setFiles(res["deleted file"]);
-      localStorage.setItem("userFiles", JSON.stringify(res["deleted file"]));
-    });
+  const getUserTopics = () => {
+    if (localStorage.getItem("user-topics") === null) {
+      localStorage.setItem(
+        "user-topics",
+        JSON.stringify(["concentration", "temperature", "pressure"])
+      );
+    }
 
-    setFiles(files.filter((file) => file.filename !== filename));
-    console.log(files);
+    setTopics(JSON.parse(localStorage.getItem("user-topics")));
+  };
+
+  const deleteTopic = (name) => {
+    let topicNames = JSON.parse(localStorage.getItem("user-topics"));
+    topicNames = topicNames.filter((topic) => topic !== name);
+    localStorage.setItem("user-topics", JSON.stringify(topicNames));
+    setTopics(topicNames.filter((topic) => topic !== name));
+    console.log("topic created  successfully ✅", name);
   };
 
   const getUserFiles = async () => {
@@ -65,20 +74,37 @@ const UserAccount = () => {
     }
   };
 
-  // const createClient = () => {};
-  // const deleteClient = () => {};
+  const deleteFile = async ({ filename }) => {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL_DEV}/userFiles/DELETE`,
+      {
+        headers: new Headers({
+          "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
+        }),
+        method: "POST",
+        body: filename,
+      }
+    );
+
+    response.json().then((res) => {
+      setFiles(res["deleted file"]);
+      localStorage.setItem("userFiles", JSON.stringify(res["deleted file"]));
+    });
+
+    setFiles(files.filter((file) => file.filename !== filename));
+    console.log(files);
+  };
+
+  const createClient = (client) => {
+    let clients = JSON.parse(localStorage.getItem("client-info"));
+    clients.push(client);
+    localStorage.setItem("client-info", JSON.stringify(clients));
+    setClients(clients.map((client) => client));
+    console.log("client created  successfully ✅", client);
+  };
 
   const getUserClients = () => {
-    try {
-      let clientsFromStorage = JSON.parse(localStorage.getItem("client-info"));
-      clientsFromStorage.forEach((client) => {
-        clients.push(client);
-      });
-
-      setClients(clients);
-      console.log(clients);
-    } catch (e) {
-      console.log(e);
+    if (localStorage.getItem("client-info") === null) {
       localStorage.setItem(
         "client-info",
         JSON.stringify([
@@ -107,7 +133,17 @@ const UserAccount = () => {
         ])
       );
     }
+    setClients(JSON.parse(localStorage.getItem("client-info")));
   };
+
+  const deleteClient = (clientID) => {
+    let clients = JSON.parse(localStorage.getItem("client-info"));
+    clients = clients.filter((client) => client.clientID !== clientID);
+    localStorage.setItem("client-info", JSON.stringify(clients));
+    setClients(clients.filter((client) => client.clientID !== clientID));
+    console.log("client created  successfully ✅", clientID);
+  };
+
   return (
     <div>
       <div className="user-account__header">
@@ -124,10 +160,18 @@ const UserAccount = () => {
           />
         }
         userClientPanels={
-          <UserClientCard
-            onDeleteClient={(cli) => console.log(cli)}
-            clients={clients}
-          />
+          <div>
+            <UserClientCard
+              clients={clients}
+              topics={topics}
+              onCreateTopic={(topicName) => createTopic(topicName)}
+              onDeleteTopic={(topicName) => deleteTopic(topicName)}
+            />
+            <UserClientNavbar
+              handleCreate={(client) => createClient(client)}
+              handleDelete={(clientID) => deleteClient(clientID)}
+            />
+          </div>
         }
         userDashboards={<div />}
       />
@@ -152,3 +196,4 @@ export default UserAccount;
 //     clientID: "TFF-1"
 //   })
 // );
+// TODO: create apis for whenever you use local storage so that it can be easily turned into aws storage

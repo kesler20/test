@@ -1,7 +1,7 @@
 import { React, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Amplify, Auth } from "aws-amplify";
-import awsExports from "./config/aws-exports"; //Some tutorials suggest awsconfig instead
+import awsExports from "./aws-exports"; //Some tutorials suggest awsconfig instead
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import Pages from "./pages/Pages";
 import Navbar from "./components/navbar/Navbar";

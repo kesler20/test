@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import React, { useEffect, useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import {
@@ -11,35 +13,6 @@ import {
 import { Card } from "react-bootstrap";
 import CustomPaginationActionsTable from "../table_user_data/TabularUserFiles";
 import "./UserAccountCardComponents.css";
-// let object = {
-//     name: 'Jack',
-//     age: 25
-//   };
-//   let keys = Object.keys(object)
-//   console.log(keys);
-
-// const initialClients = [
-//   {
-//     channelID: 0,
-//     readTopic: "pump/pressure",
-//     writeTopic: "pump/control",
-//     controlled: true,
-//     errorBound: 5,
-//     smoothing: { value: 0, visible: false },
-//     controlIntensity: 1,
-//     online: true,
-//   },
-//   {
-//     channelID: 1,
-//     readTopic: "pump/temperature",
-//     writeTopic: "heater/control",
-//     controlled: true,
-//     errorBound: 5,
-//     smoothing: { value: 0, visible: false },
-//     controlIntensity: 1,
-//     online: true,
-//   },
-// ];
 
 export const UserFilesCard = ({ files, onDeleteFile }) => {
   const [viewContent, setViewContent] = useState(false);
@@ -48,11 +21,11 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
     <>
       <Splide
         options={{
-          perPage: 4,
-          arrows: false,
+          perPage: 3,
+          arrows: true,
           pagination: false,
           drag: "free",
-          gap: "530px",
+          gap: "10px",
         }}
       >
         {files.map((file) => {
@@ -115,29 +88,43 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
   );
 };
 
-export const UserClientCard = ({ clients, onDeleteClient }) => {
+export const UserClientCard = ({
+  clients,
+  topics,
+  onCreateTopic,
+  onDeleteTopic,
+}) => {
   const [connected, setConnected] = useState(false);
-  const [age, setAge] = useState("");
+  const [newTopic, setNewTopic] = useState("");
+  const [currentReadTopic, setCurrentReadTopic] = useState("");
+  const [currentWriteTopic, setCurrentWriteTopic] = useState("");
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  useEffect(() => {
+    console.log(
+      clients.map((client) => {
+        return client.channelID;
+      })
+    );
+  }, []);
 
   return (
     <>
       <Splide
         options={{
-          perPage: 4,
+          perPage: 2,
           arrows: true,
           pagination: false,
           drag: "free",
-          gap: "580px",
+          gap: "0px",
         }}
       >
         {clients.map((client) => {
           return (
             <SplideSlide key={clients.indexOf(client)}>
-              <Card className="angry-grid" key={clients.indexOf(client)}>
+              <Card
+                className="angry-grid--client"
+                key={clients.indexOf(client)}
+              >
                 <div id="item-0" className="user-card__header">
                   <p>client ID</p>
                   <hr />
@@ -156,12 +143,27 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
                   </Button>
                   <Button
                     className="user-card__buttons__btn"
-                    onClick={() => onDeleteClient(client)}
+                    onClick={() => onCreateTopic(newTopic)}
                     variant="outlined"
-                    color="error"
+                    color="success"
                   >
-                    Delete
+                    Create Topic
                   </Button>
+                  <Button
+                    className="user-card__buttons__btn"
+                    onClick={() => onDeleteTopic(newTopic)}
+                    variant="outlined"
+                    color="success"
+                  >
+                    Delete Topic
+                  </Button>
+                  <TextField
+                    onChange={(e) => setNewTopic(e.target.value)}
+                    id="outlined-basic"
+                    label="Write Topic Name"
+                    color="secondary"
+                    variant="outlined"
+                  />
                 </div>
                 <div id="item-3">
                   <p className="user-card__header">status</p>
@@ -175,26 +177,66 @@ export const UserClientCard = ({ clients, onDeleteClient }) => {
                   <hr />
                 </div>
                 <div id="item-6" className="user-card__body">
-                  <FormControl fullWidth>
-                    <InputLabel
-                      className="user-card__header"
-                      id="demo-simple-select-label"
-                    >
-                      DATA
-                    </InputLabel>
-                    <Select
-                      className="user-card__header"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={age}
-                      label="Age"
-                      onChange={handleChange}
-                    >
-                      <MenuItem value={10}>DATA/pressure</MenuItem>
-                      <MenuItem value={20}>DATA/temperature</MenuItem>
-                      <MenuItem value={30}>DATA/concentration</MenuItem>
-                    </Select>
-                  </FormControl>
+                  <div
+                    className="flex-space-between"
+                    style={{ width: "270px" }}
+                  >
+                    <FormControl fullWidth>
+                      <InputLabel
+                        className="user-card__header"
+                        id="demo-simple-select-label"
+                      >
+                        READ
+                      </InputLabel>
+                      <Select
+                        style={{ marginRight: "10px" }}
+                        className="user-card__header"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={currentReadTopic}
+                        label="topic"
+                        onChange={(e) => setCurrentReadTopic(e.target.value)}
+                      >
+                        {topics.map((topic) => {
+                          return (
+                            <MenuItem
+                              key={topics.indexOf(topic)}
+                              value={topics.indexOf(topic)}
+                            >
+                              {topic}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        className="user-card__header"
+                        id="demo-simple-select-label"
+                      >
+                        WRITE
+                      </InputLabel>
+                      <Select
+                        className="user-card__header"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={currentWriteTopic}
+                        label="topic"
+                        onChange={(e) => setCurrentWriteTopic(e.target.value)}
+                      >
+                        {topics.map((topic) => {
+                          return (
+                            <MenuItem
+                              key={topics.indexOf(topic)}
+                              value={topics.indexOf(topic)}
+                            >
+                              {topic}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </div>
                 </div>
               </Card>
             </SplideSlide>

@@ -1,12 +1,11 @@
 /* Montserrat */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,300&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 
 /*-------------------------------------------------- General Styling ---------------------------------------------------------------------------------*/
 /* style or your elements here such as p tags etc.. */
@@ -19,7 +18,7 @@ body {
   background-color: #161d33;
   margin: 2% 5%;
   max-height: 50vh;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 body.light {
@@ -29,7 +28,6 @@ body.light {
 button {
   text-decoration: none;
 }
-
 
 /*---------------------------------------------------Structural Styling-----------------------------------------------------------------------------------------*/
 /*include all the styles which affect the order in which components are laid*/
@@ -54,6 +52,15 @@ button {
   align-items: center;
 }
 
+.flex-space-between {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+input#outlined-basic {
+  color: white;
+}
 
 /* --------------------------------------------------------------- Media Queries -----------------------------------------------*/
 @media (max-width: 990px) {
@@ -71,70 +78,6 @@ button {
   header div.nav img {
     display: none;
   }
-
-  header div.nav nav div.hamburger {
-    position: absolute;
-    cursor: pointer;
-    right: 5%;
-    top: 50%;
-    transform: translate(-5%, -50%);
-  }
-}
-
-@media (min-width: 990px) {
-  header div.nav div.site-title {
-    margin-right: 55%;
-  }
 }
 
 /* --------------------------------------------------------------- Key Frames -----------------------------------------------*/
-
-@keyframes fade-out-left {
-  from {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    opacity: 0;
-    transform: translate3d(-100%, 0, 0);
-  }
-}
-
-@keyframes animate {
-  0% {
-    background-position: -500%;
-  }
-  100% {
-    background-position: 500%;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slide-in-left {
-  from {
-    transform: translate3d(-100%, 0, 0);
-    visibility: visible;
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes roll-in-right {
-  from {
-    opacity: 0;
-    transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(-40%, 0, 0);
-  }
-}

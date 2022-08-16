@@ -1,0 +1,80 @@
+.modal__card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 350px;
+  border: 0.1px solid rgb(190, 190, 190);
+  background-color: #24315a;
+  transform: translate(-40%);
+  border-radius: 15px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -120%);
+}
+
+.modal__card__form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modal__card input {
+  background: transparent;
+  border: none;
+  color: white;
+  border-bottom: 1px solid white;
+  outline: none;
+  font-size: 17px;
+  margin-left: 10px;
+}
+
+.modal__container {
+  margin-top: 100px;
+}
+
+.modal__card__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.modal__card__header input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid white;
+  outline: none;
+  font-size: 17px;
+  margin-left: 10px;
+}
+
+.modal__card__badge--delete {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  background-color: rgb(255, 88, 88);
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.modal__card__btn--delete {
+  width: 180px;
+  height: 50px;
+  border-radius: 20px;
+  color: white;
+  border: none;
+  margin-top: 25%;
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    151deg,
+    rgba(255, 255, 0, 1) 0%,
+    rgba(255, 255, 0, 1) 0%,
+    rgba(255, 59, 0, 1) 28%
+  );
+}
