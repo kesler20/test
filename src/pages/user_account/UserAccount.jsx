@@ -35,7 +35,7 @@ const UserAccount = () => {
     if (localStorage.getItem("user-topics") === null) {
       localStorage.setItem(
         "user-topics",
-        JSON.stringify(["concentration", "temperature", "pressure"])
+        JSON.stringify(["pump/pressure", "pump/temperature", "pump/control", "heater/control"])
       );
     }
 
@@ -144,6 +144,15 @@ const UserAccount = () => {
     console.log("client created  successfully ✅", clientID);
   };
 
+  const changeClientConnection = (channelID) => {
+    clients[channelID].online = !clients[channelID].online
+    // TODO: change both the state and the local storage
+    setClients(clients) 
+    console.log(clients)
+  }
+  const changeClientReadTopic = () => {}
+  const changeClientWriteTopic = () => {}
+
   return (
     <div>
       <div className="user-account__header">
@@ -166,10 +175,15 @@ const UserAccount = () => {
               topics={topics}
               onCreateTopic={(topicName) => createTopic(topicName)}
               onDeleteTopic={(topicName) => deleteTopic(topicName)}
+              onChangeConnection={(channelID) =>
+                changeClientConnection(channelID)
+              }
+              onChangeWriteTopic={(topic) => changeClientWriteTopic(topic)}
+              onChangeReadTopic={(topic) => changeClientReadTopic(topic)}
             />
             <UserClientNavbar
               handleCreate={(client) => createClient(client)}
-              handleDelete={(clientID) => deleteClient(clientID)}
+              handleDelete={(channelID) => deleteClient(channelID)}
             />
           </div>
         }

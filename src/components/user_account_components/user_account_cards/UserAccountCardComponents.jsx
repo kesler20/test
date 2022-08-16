@@ -93,19 +93,11 @@ export const UserClientCard = ({
   topics,
   onCreateTopic,
   onDeleteTopic,
+  onChangeConnection,
+  onChangeReadTopic,
+  onChangeWriteTopic
 }) => {
-  const [connected, setConnected] = useState(false);
   const [newTopic, setNewTopic] = useState("");
-  const [currentReadTopic, setCurrentReadTopic] = useState("");
-  const [currentWriteTopic, setCurrentWriteTopic] = useState("");
-
-  useEffect(() => {
-    console.log(
-      clients.map((client) => {
-        return client.channelID;
-      })
-    );
-  }, []);
 
   return (
     <>
@@ -135,11 +127,11 @@ export const UserClientCard = ({
                 <div id="item-2" className="user-card__buttons">
                   <Button
                     className="user-card__buttons__btn"
-                    onClick={() => setConnected(!connected)}
+                    onClick={() => onChangeConnection(client.channelID)}
                     variant="outlined"
                     color="success"
                   >
-                    {connected === false ? "Switch on" : "Switch off"}
+                    {client.online === false ? "Switch on" : "Switch off"}
                   </Button>
                   <Button
                     className="user-card__buttons__btn"
@@ -170,7 +162,7 @@ export const UserClientCard = ({
                   <hr />
                 </div>
                 <p id="item-4" className="user-card__body">
-                  {connected === false ? "online ✅" : "offline ❌"}
+                  {client.online === true ? "online ✅" : "offline ❌"}
                 </p>
                 <div id="item-5">
                   <p className="user-card__header">topic</p>
@@ -193,9 +185,9 @@ export const UserClientCard = ({
                         className="user-card__header"
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={currentReadTopic}
+                        value={client.readTopic}
                         label="topic"
-                        onChange={(e) => setCurrentReadTopic(e.target.value)}
+                        onChange={(e) => onChangeReadTopic(e.target.value)}
                       >
                         {topics.map((topic) => {
                           return (
@@ -220,9 +212,9 @@ export const UserClientCard = ({
                         className="user-card__header"
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={currentWriteTopic}
+                        value={client.writeTopic}
                         label="topic"
-                        onChange={(e) => setCurrentWriteTopic(e.target.value)}
+                        onChange={(e) => onChangeWriteTopic(e.target.value)}
                       >
                         {topics.map((topic) => {
                           return (
