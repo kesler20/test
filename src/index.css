@@ -52,9 +52,15 @@ button {
   align-items: center;
 }
 
-.flex-space-between {
+.flex-space-evenly {
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
+}
+
+.flex-spae-between {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 

@@ -23,6 +23,9 @@ const UserAccount = () => {
     getUserTopics();
   }, []);
 
+  /* 
+  //////////////////////////// CRUD TOPICS ////////////////////////// 
+  */
   const createTopic = (name) => {
     let topicNames = JSON.parse(localStorage.getItem("user-topics"));
     topicNames.push(name);
@@ -35,7 +38,12 @@ const UserAccount = () => {
     if (localStorage.getItem("user-topics") === null) {
       localStorage.setItem(
         "user-topics",
-        JSON.stringify(["pump/pressure", "pump/temperature", "pump/control", "heater/control"])
+        JSON.stringify([
+          "pump/pressure",
+          "pump/temperature",
+          "pump/control",
+          "heater/control",
+        ])
       );
     }
 
@@ -50,6 +58,9 @@ const UserAccount = () => {
     console.log("topic created  successfully ✅", name);
   };
 
+  /* 
+  //////////////////////////// CRUD USER FILES ////////////////////////// 
+  */
   const getUserFiles = async () => {
     try {
       setFiles(JSON.parse(localStorage.getItem("userFiles")));
@@ -68,8 +79,29 @@ const UserAccount = () => {
         }
       );
       response.json().then((res) => {
+        console.log(res['files found'])
         setFiles(res["files found"]);
         localStorage.setItem("userFiles", JSON.stringify(res["files found"]));
+        res["files found"].forEach((v, k) => {
+
+          let file = res["files found"][k].file_content;
+          let fileColumns = Object.keys(file);
+          // assuming square matrix
+          let fileRows = Object.keys(file[fileColumns[0]]);
+          let cleanerData = [];
+   
+          fileRows.forEach(() => cleanerData.push({}));
+          for (let row of fileRows) {
+            for (let col of fileColumns) {
+              cleanerData[fileRows.indexOf(row)][col] = file[col][row];
+            }
+          }
+
+          localStorage.setItem(
+            `user-file-${k}`,
+            JSON.stringify(cleanerData)
+          );
+        });
       });
     }
   };
@@ -82,19 +114,22 @@ const UserAccount = () => {
           "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
         }),
         method: "POST",
-        body: filename,
+        body: JSON.stringify(filename),
       }
     );
 
     response.json().then((res) => {
-      setFiles(res["deleted file"]);
-      localStorage.setItem("userFiles", JSON.stringify(res["deleted file"]));
+      console.log('the backend returned',res)
+      let newFiles = files.filter((file) => file.filename !== filename)
+      localStorage.setItem('userFiles', JSON.stringify(newFiles))
     });
 
     setFiles(files.filter((file) => file.filename !== filename));
     console.log(files);
   };
-
+  /* 
+    //////////////////////////// CRUD CLIENTS ////////////////////////// 
+  */
   const createClient = (client) => {
     let clients = JSON.parse(localStorage.getItem("client-info"));
     clients.push(client);
@@ -139,19 +174,28 @@ const UserAccount = () => {
   const deleteClient = (clientID) => {
     let clients = JSON.parse(localStorage.getItem("client-info"));
     clients = clients.filter((client) => client.clientID !== clientID);
-    localStorage.setItem("client-info", JSON.stringify(clients));
     setClients(clients.filter((client) => client.clientID !== clientID));
     console.log("client created  successfully ✅", clientID);
   };
 
   const changeClientConnection = (channelID) => {
-    clients[channelID].online = !clients[channelID].online
-    // TODO: change both the state and the local storage
-    setClients(clients) 
-    console.log(clients)
-  }
-  const changeClientReadTopic = () => {}
-  const changeClientWriteTopic = () => {}
+    let clients = JSON.parse(localStorage.getItem("client-info"));
+    clients[channelID].online = !clients[channelID].online;
+    localStorage.setItem("client-info", JSON.stringify(clients));
+    setClients(clients);
+  };
+  const changeClientReadTopic = (topic, channelID) => {
+    let clients = JSON.parse(localStorage.getItem("client-info"));
+    clients[channelID].readTopic = topic;
+    localStorage.setItem("client-info", JSON.stringify(clients));
+    setClients(clients);
+  };
+  const changeClientWriteTopic = (topic, channelID) => {
+    let clients = JSON.parse(localStorage.getItem("client-info"));
+    clients[channelID].writeTopic = topic;
+    localStorage.setItem("client-info", JSON.stringify(clients));
+    setClients(clients);
+  };
 
   return (
     <div>
@@ -178,8 +222,12 @@ const UserAccount = () => {
               onChangeConnection={(channelID) =>
                 changeClientConnection(channelID)
               }
-              onChangeWriteTopic={(topic) => changeClientWriteTopic(topic)}
-              onChangeReadTopic={(topic) => changeClientReadTopic(topic)}
+              onChangeWriteTopic={(topic, channelID) =>
+                changeClientWriteTopic(topic, channelID)
+              }
+              onChangeReadTopic={(topic, channelID) =>
+                changeClientReadTopic(topic, channelID)
+              }
             />
             <UserClientNavbar
               handleCreate={(client) => createClient(client)}
