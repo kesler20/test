@@ -38,3 +38,5 @@ LocalStorage: set()
 
 #### DELETE Method
 >when a resource is deleted this is removed from the database and a delete request will be sent to the backend
+
+
