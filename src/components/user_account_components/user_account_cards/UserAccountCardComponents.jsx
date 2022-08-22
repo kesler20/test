@@ -16,6 +16,12 @@ import "./UserAccountCardComponents.css";
 
 export const UserFilesCard = ({ files, onDeleteFile }) => {
   const [viewContent, setViewContent] = useState(false);
+  const [userFileID, setUserFileID] = useState(0); // this is used to toggle the right read
+
+  const toggleTable = (fileID) => {
+    setUserFileID(fileID);
+    setViewContent(!viewContent);
+  };
 
   return (
     <>
@@ -42,18 +48,11 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
                 <div id="item-2" className="user-card__buttons">
                   <Button
                     className="user-card__buttons__btn"
-                    onClick={() => setViewContent(!viewContent)}
+                    onClick={() => toggleTable(files.indexOf(file))}
                     variant="outlined"
                     color="success"
                   >
                     Read
-                  </Button>
-                  <Button
-                    className="user-card__buttons__btn"
-                    variant="outlined"
-                    color="success"
-                  >
-                    Update
                   </Button>
                   <Button
                     className="user-card__buttons__btn"
@@ -83,7 +82,11 @@ export const UserFilesCard = ({ files, onDeleteFile }) => {
           );
         })}
       </Splide>
-      {viewContent === true ? <CustomPaginationActionsTable /> : ""}
+      {viewContent === true ? (
+        <CustomPaginationActionsTable fileID={userFileID} />
+      ) : (
+        ""
+      )}
     </>
   );
 };
@@ -95,7 +98,7 @@ export const UserClientCard = ({
   onDeleteTopic,
   onChangeConnection,
   onChangeReadTopic,
-  onChangeWriteTopic
+  onChangeWriteTopic,
 }) => {
   const [newTopic, setNewTopic] = useState("");
 
@@ -170,7 +173,7 @@ export const UserClientCard = ({
                 </div>
                 <div id="item-6" className="user-card__body">
                   <div
-                    className="flex-space-between"
+                    className="flex-space-evenly"
                     style={{ width: "270px" }}
                   >
                     <FormControl fullWidth>
@@ -187,7 +190,9 @@ export const UserClientCard = ({
                         id="demo-simple-select"
                         value={client.readTopic}
                         label="topic"
-                        onChange={(e) => onChangeReadTopic(e.target.value)}
+                        onChange={(e) =>
+                          onChangeReadTopic(e.target.value, client.channelID)
+                        }
                       >
                         {topics.map((topic) => {
                           return (
@@ -214,7 +219,9 @@ export const UserClientCard = ({
                         id="demo-simple-select"
                         value={client.writeTopic}
                         label="topic"
-                        onChange={(e) => onChangeWriteTopic(e.target.value)}
+                        onChange={(e) =>
+                          onChangeWriteTopic(e.target.value, client.channelID)
+                        }
                       >
                         {topics.map((topic) => {
                           return (

@@ -10,6 +10,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import "./TabularUserFiles.css";
+import { rows } from "../../../helpers/otherScripts";
 
 import {
   Paper,
@@ -20,6 +21,7 @@ import {
   TableBody,
   TableHead,
 } from "@material-ui/core";
+import { useState, useEffect } from "react";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -94,29 +96,22 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-  return { name, calories, fat };
-}
+const CustomPaginationActionsTable = ({ fileID }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [fileRows, setFileRows] = useState(rows);
+  const [fileColumns, setFileColumns] = useState(["name", "calories", "fat"]);
 
-const rows = [
-  createData("Cupcake", 305, 3.7),
-  createData("Donut", 452, 25.0),
-  createData("Eclair", 262, 16.0),
-  createData("Frozen yoghurt", 159, 6.0),
-  createData("Gingerbread", 356, 16.0),
-  createData("Honeycomb", 408, 3.2),
-  createData("Ice cream sandwich", 237, 9.0),
-  createData("Jelly Bean", 375, 0.0),
-  createData("KitKat", 518, 26.0),
-  createData("Lollipop", 392, 0.2),
-  createData("Marshmallow", 318, 0),
-  createData("Nougat", 360, 19.0),
-  createData("Oreo", 437, 18.0),
-].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+  useEffect(() => {
+    if (localStorage.getItem(`user-file-${fileID}`) === null) {
+      localStorage.setItem(`user-file-${fileID}`, JSON.stringify(fileRows));
+    }
 
-export default function CustomPaginationActionsTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    setFileRows(JSON.parse(localStorage.getItem(`user-file-${fileID}`)));
+    setFileColumns(
+      Object.keys(JSON.parse(localStorage.getItem(`user-file-${fileID}`))[0])
+    );
+  }, []);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -136,46 +131,41 @@ export default function CustomPaginationActionsTable() {
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <TableCell className="user-file__table__content">
-              Dessert (100g serving)
-            </TableCell>
-            <TableCell className="user-file__table__content" align="right">
-              Carbs&nbsp;(g)
-            </TableCell>
-            <TableCell className="user-file__table__content" align="right">
-              Protein&nbsp;(g)
-            </TableCell>
+            {fileColumns.map((col) => {
+              return (
+                <TableCell
+                  key={fileColumns.indexOf(col)}
+                  className="user-file__table__content"
+                >
+                  {col}
+                </TableCell>
+              );
+            })}
           </TableRow>
         </TableHead>
         <TableBody className="user-file__table__content">
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
+            ? fileRows.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : fileRows
           ).map((row) => (
-            <TableRow key={row.name}>
-              <TableCell
-                className="user-file__table__content"
-                component="th"
-                scope="row"
-              >
-                {row.name}
-              </TableCell>
-              <TableCell
-                className="user-file__table__content"
-                style={{ width: 160 }}
-                align="right"
-              >
-                {row.calories}
-              </TableCell>
-              <TableCell
-                className="user-file__table__content"
-                style={{ width: 160 }}
-                align="right"
-              >
-                {row.fat}
-              </TableCell>
+            <TableRow key={fileRows.indexOf(row)}>
+              {fileColumns.map((col) => {
+                return (
+                  <TableCell
+                    className="user-file__table__content"
+                    component="th"
+                    scope="row"
+                  >
+                    {row[col]}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           ))}
+
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
               <TableCell colSpan={6} />
@@ -206,4 +196,6 @@ export default function CustomPaginationActionsTable() {
       </Table>
     </TableContainer>
   );
-}
+};
+
+export default CustomPaginationActionsTable;
