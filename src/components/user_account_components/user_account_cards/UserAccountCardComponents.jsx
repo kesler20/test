@@ -193,7 +193,7 @@ export const UserClientCard = ({
                           return (
                             <MenuItem
                               key={topics.indexOf(topic)}
-                              value={topics.indexOf(topic)}
+                              value={topic}
                             >
                               {topic}
                             </MenuItem>
@@ -220,7 +220,7 @@ export const UserClientCard = ({
                           return (
                             <MenuItem
                               key={topics.indexOf(topic)}
-                              value={topics.indexOf(topic)}
+                              value={topic}
                             >
                               {topic}
                             </MenuItem>

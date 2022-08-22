@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MQTTApi, { check } from "../APIs/mqttProtocol";
-import DatabaseApi from "../APIs/redisDatabase";
+import MQTTApi, { check } from "../APIs/MQTTApi";
+import DatabaseApi from "../APIs/DatabaseApi";
 import ChannelCommand from "../components/channel_command_interface/ChannelCommand";
 
 const Channel = (props) => {

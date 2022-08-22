@@ -1,5 +1,7 @@
 /* Montserrat */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,300&display=swap");
+/*"Poppins", sans-serif */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 * {
   margin: 0;
@@ -29,20 +31,24 @@ button {
   text-decoration: none;
 }
 
+input#outlined-basic {
+  color: rgb(156, 39, 177);
+}
+
 /*---------------------------------------------------Structural Styling-----------------------------------------------------------------------------------------*/
 /*include all the styles which affect the order in which components are laid*/
-
-.flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .grid {
   display: grid;
   justify-content: center;
   align-items: center;
   grid-template-columns: repeat(1fr, 2);
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flex-column {
@@ -58,26 +64,46 @@ button {
   align-items: center;
 }
 
-input#outlined-basic {
-  color: white;
+.flex-space-evenly {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.flex-space-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.relative {
+  position: relative;
+}
+
+.child-absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* --------------------------------------------------------------- Media Queries -----------------------------------------------*/
 @media (max-width: 990px) {
-  header div.nav navbar ul {
-    flex-direction: column;
-    position: fixed;
-    background: #5b78c7;
-    height: 100vh;
-    width: 100%;
-  }
-
-  header div.nav div.site-title {
-    margin-left: 5%;
-  }
-  header div.nav img {
-    display: none;
-  }
 }
 
 /* --------------------------------------------------------------- Key Frames -----------------------------------------------*/
+
+@keyframes fade-in-bottom-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-100%, 100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}

@@ -1,0 +1,121 @@
+/*-------------------------------------- general ----------------------------------*/
+.margin-xxl {
+  margin: 40rem;
+}
+.margin-xl {
+  margin: 16rem;
+}
+
+.margin-l {
+  margin: 4rem;
+}
+
+.margin-m {
+  margin: 2rem;
+}
+
+.margin-s {
+  margin: 1rem;
+}
+
+.margin-xs {
+  margin: 0.1rem;
+}
+/*-------------------------------------- TOP ----------------------------------*/
+
+.margin-top-xxl {
+  margin-top: 40rem;
+}
+.margin-top-xl {
+  margin-top: 16rem;
+}
+
+.margin-top-l {
+  margin-top: 4rem;
+}
+
+.margin-top-m {
+  margin-top: 2rem;
+}
+
+.margin-top-s {
+  margin-top: 1rem;
+}
+
+.margin-top-xs {
+  margin-top: 0.1rem;
+}
+
+/*-------------------------------------- bottom ----------------------------------*/
+.margin-bottom-xxl {
+  margin-bottom: 40rem;
+}
+.margin-bottom-xl {
+  margin-bottom: 16rem;
+}
+
+.margin-bottom-l {
+  margin-bottom: 4rem;
+}
+
+.margin-bottom-m {
+  margin-bottom: 2rem;
+}
+
+.margin-bottom-s {
+  margin-bottom: 1rem;
+}
+
+.margin-bottom-xs {
+  margin-bottom: 0.1rem;
+}
+
+/*-------------------------------------- RIGHT ----------------------------------*/
+
+.margin-right-xxl {
+  margin-right: 40rem;
+}
+.margin-right-xl {
+  margin-right: 16rem;
+}
+
+.margin-right-l {
+  margin-right: 4rem;
+}
+
+.margin-right-m {
+  margin-right: 2rem;
+}
+
+.margin-right-s {
+  margin-right: 1rem;
+}
+
+.margin-right-xs {
+  margin-right: 0.1rem;
+}
+
+/*-------------------------------------- left ----------------------------------*/
+
+.margin-left-xxl {
+  margin-left: 40rem;
+}
+.margin-left-xl {
+  margin-left: 16rem;
+}
+
+.margin-left-l {
+  margin-left: 4rem;
+}
+
+.margin-left-m {
+  margin-left: 2rem;
+}
+
+.margin-left-s {
+  margin-left: 1rem;
+}
+
+.margin-left-xs {
+  margin-left: 0.1rem;
+}

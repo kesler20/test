@@ -1,0 +1,40 @@
+.command-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 40px;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 5px 5px 23px rgb(222, 222, 222);
+  position: absolute;
+  top:13%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+
+.command-line__button {
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.command-line__button:hover {
+  background-color: rgb(230, 230, 230);
+}
+
+.command-line__selector {
+  width: 200px;
+}
+
+.command-line__command-line__hamburger {
+  width: 50px;
+  color: black;
+}
+
+.command-line__button,
+.command-line__selector {
+  margin: 1px;
+}

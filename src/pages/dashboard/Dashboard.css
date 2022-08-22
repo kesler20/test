@@ -1,0 +1,19 @@
+body {
+  margin-top : 1px;
+  margin-left: 81px;
+  margin-right: 0px;
+}
+
+.dashboard__nav--light {
+  width: 100%;
+  padding: 15px;
+  height: 80px;
+  background-color: #edf3f4;
+}
+
+.dashboard__nav--dark {
+  width: 100%;
+  padding: 15px;
+  height: 80px;
+  background-color: #1b2444;
+}

@@ -12,6 +12,21 @@ import LetterAvatars from "../../components/user_account_components/letter_avata
 
 let username = localStorage.getItem("username");
 
+/**
+ *
+ * @returns
+ *
+ * ## Dev Information
+ *
+ * the `UserAccount` is the main container of the user account page
+ * the container manages 3 main resources:
+ *
+ * - mqtt topics
+ * - user clients
+ * - user files
+ *
+ * the container can perform CRUD operations on them
+ */
 const UserAccount = () => {
   const [files, setFiles] = useState([]);
   const [clients, setClients] = useState([]);
@@ -22,6 +37,10 @@ const UserAccount = () => {
     getUserClients();
     getUserTopics();
   }, []);
+
+  /////////////////////////
+  // RESOURCE - MQTT TOPICS
+  /////////////////////////
 
   const createTopic = (name) => {
     let topicNames = JSON.parse(localStorage.getItem("user-topics"));
@@ -35,7 +54,12 @@ const UserAccount = () => {
     if (localStorage.getItem("user-topics") === null) {
       localStorage.setItem(
         "user-topics",
-        JSON.stringify(["pump/pressure", "pump/temperature", "pump/control", "heater/control"])
+        JSON.stringify([
+          "pump/pressure",
+          "pump/temperature",
+          "pump/control",
+          "heater/control",
+        ])
       );
     }
 
@@ -50,9 +74,15 @@ const UserAccount = () => {
     console.log("topic created  successfully ✅", name);
   };
 
+  ////////////////////////
+  // RESOURCE - USER FILES
+  ////////////////////////
+
   const getUserFiles = async () => {
     try {
-      setFiles(JSON.parse(localStorage.getItem("userFiles")));
+      if (JSON.parse(localStorage.getItem("userFiles")) !== null) {
+        setFiles(JSON.parse(localStorage.getItem("userFiles")));
+      }
     } catch (e) {
       console.log(e);
     }
@@ -94,6 +124,10 @@ const UserAccount = () => {
     setFiles(files.filter((file) => file.filename !== filename));
     console.log(files);
   };
+
+  //////////////////////////
+  // RESOURCE - USER CLIENT
+  /////////////////////////
 
   const createClient = (client) => {
     let clients = JSON.parse(localStorage.getItem("client-info"));
@@ -145,13 +179,13 @@ const UserAccount = () => {
   };
 
   const changeClientConnection = (channelID) => {
-    clients[channelID].online = !clients[channelID].online
+    clients[channelID].online = !clients[channelID].online;
     // TODO: change both the state and the local storage
-    setClients(clients) 
-    console.log(clients)
-  }
-  const changeClientReadTopic = () => {}
-  const changeClientWriteTopic = () => {}
+    setClients(clients);
+    console.log(clients);
+  };
+  const changeClientReadTopic = () => {};
+  const changeClientWriteTopic = () => {};
 
   return (
     <div>

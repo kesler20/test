@@ -1,5 +1,5 @@
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { range } from "../helpers/otherScripts";
+import { range } from "../modules/otherScripts";
 import React, { Component } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
@@ -129,7 +129,35 @@ const updateChannelPlot = (data, boundValue, channelID) => {
 };
 
 const initialClients = JSON.parse(localStorage.getItem("client-info"));
-
+if (initialClients == null) {
+  localStorage.setItem(
+    "client-info",
+    JSON.stringify([
+      {
+        channelID: 0,
+        readTopic: "pump/pressure",
+        writeTopic: "pump/control",
+        controlled: true,
+        errorBound: 5,
+        smoothing: { value: 0, visible: false },
+        controlIntensity: 1,
+        online: true,
+        clientID: "TFF-1",
+      },
+      {
+        channelID: 1,
+        readTopic: "pump/temperature",
+        writeTopic: "heater/control",
+        controlled: true,
+        errorBound: 5,
+        smoothing: { value: 0, visible: false },
+        controlIntensity: 1,
+        online: true,
+        clientID: "IVT-1",
+      },
+    ])
+  );
+}
 class Iot extends Component {
   state = {
     plotlyInterface: new PlotlyInterface(
