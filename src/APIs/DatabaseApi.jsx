@@ -1,27 +1,38 @@
+import RESTfulApiInterface from "./RESTfulApi";
 
+/**
+ * This api is used to connect the front end to the local storage and the backend
+ * 
+ * @param resourceKey - The unique identifier key of the resource, this needs to be a string
+ */
 export default class DatabaseApi {
-    constructor(resourceKey) {
-      this.resourceKey = resourceKey;
+    constructor(resourcesDomain) {
+      this.resourcesDomain = resourcesDomain
+      this.api = new RESTfulApiInterface()
     }
-  
-    createResource(resource) {
-      //check for existing resources or if the resource is an object
-      let existingResources = JSON.parse(localStorage.getItem(`${this.resourceKey}`));
-      if (existingResources === null) {
-        existingResources = []
-      }
+
+    createResource(resourceKey, resource) {
+      localStorage.setItem(resourceKey,JSON.stringify(resource))
+
+    }
+    updateResource(resourceKey, resource) {
+      /*
+      
+      - check for existing resources and if the resource is an object
+
+      */
+      let existingResources = this.readResource(resourceKey)
       let updatedResources = [...existingResources, resource];
-      updatedResources = JSON.stringify(updatedResources);
-  
-      localStorage.setItem(`${this.resourceKey}`, updatedResources);
+      this.createResource(resourceKey, resource)
     }
   
     viewDatabase = async () => {
       return await localStorage.getItem(`${this.resourceKey}`);
     };
   
-    getResource = (resourceName) => {
+    readResource = (resourceName) => {
       let resource =  JSON.parse(localStorage.getItem(`${this.resourceKey}`));
       return resource.filter((item) => item.name === resourceName);
     };
+    
   }

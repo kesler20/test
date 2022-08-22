@@ -28,8 +28,7 @@ LocalStorage: set()
 ```
 
 #### CREATE Method
->once the resource is created it can be saved to the local storage using Set()
-within the local storage the resource is backed up every 20 mins as the local storage api will first try to Put() the resource and if a resource non-existing response is returned the api will Post() the resource to CREATE it in the backend
+>once the resource is created it can be saved to the local storage using Set(), then the resource will be created in the backend as the local storage api will first try to Put() the resource and if a resource non-existing response is returned the api will Post() it
 
 ### READ Method
 >when the user tries to access the data the application will look for the resource within local storage first and then try to send a GET request to the database to find the desired resource, if the response is ok the value retrieved will be stored to the database
