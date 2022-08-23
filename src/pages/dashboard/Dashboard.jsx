@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
 import GridLayout from "react-grid-layout";
-import PlotComponent from "../../components/PlotComponent";
-import Nav from "../../components/dashboard_speedial/Nav";
-import DashboardThemeBtn from "../../components/DashboardThemeBtn";
-import DashboardTitle from "../../components/DashboardTitle";
-import "../../components/Dashboard.css";
+import PlotComponent from "../../components/dashboard_components/plot_component/PlotComponent";
+import Nav from "../../components/dashboard_components/dashboard_speedial/Nav";
+import DashboardThemeBtn from "../../components/dashboard_components/dashboard_theme_btn/DashboardThemeBtn";
+import DashboardTitle from "../../components/dashboard_components/dashboard_title/DashboardTitle";
+import "./Dashboard.css";
 
 /////////////////////////////////////////////
 // DASHBOARD CONTAINER FOR THE DASHBOARD PAGE

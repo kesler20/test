@@ -9,7 +9,7 @@ import {
 } from "../../components/user_account_components/user_account_cards/UserAccountCardComponents";
 import LabTabs from "../../components/user_account_components/user_account_navigation_bar/UserAccountNavigation";
 import LetterAvatars from "../../components/user_account_components/letter_avatar/LetterAvatar";
-
+import DatabaseApi from "../.../../../APIs/DatabaseApi";
 let username = localStorage.getItem("username");
 
 /**
@@ -31,11 +31,15 @@ const UserAccount = () => {
   const [files, setFiles] = useState([]);
   const [clients, setClients] = useState([]);
   const [topics, setTopics] = useState([]);
+  const [api, setApi] = useState(new DatabaseApi('userFiles'));
+
 
   useEffect(() => {
     getUserFiles();
     getUserClients();
     getUserTopics();
+    //console.log('API response',api.readResource("userFiles"))
+    
   }, []);
 
   //////////////////////////////////////////
@@ -98,17 +102,16 @@ const UserAccount = () => {
         }
       );
       response.json().then((res) => {
-        console.log(res['files found'])
+        console.log(res["files found"]);
         setFiles(res["files found"]);
         localStorage.setItem("userFiles", JSON.stringify(res["files found"]));
         res["files found"].forEach((v, k) => {
-
           let file = res["files found"][k].file_content;
           let fileColumns = Object.keys(file);
           // assuming square matrix
           let fileRows = Object.keys(file[fileColumns[0]]);
           let cleanerData = [];
-   
+
           fileRows.forEach(() => cleanerData.push({}));
           for (let row of fileRows) {
             for (let col of fileColumns) {
@@ -116,10 +119,7 @@ const UserAccount = () => {
             }
           }
 
-          localStorage.setItem(
-            `user-file-${k}`,
-            JSON.stringify(cleanerData)
-          );
+          localStorage.setItem(`user-file-${k}`, JSON.stringify(cleanerData));
         });
       });
     }
@@ -138,9 +138,9 @@ const UserAccount = () => {
     );
 
     response.json().then((res) => {
-      console.log('the backend returned',res)
-      let newFiles = files.filter((file) => file.filename !== filename)
-      localStorage.setItem('userFiles', JSON.stringify(newFiles))
+      console.log("the backend returned", res);
+      let newFiles = files.filter((file) => file.filename !== filename);
+      localStorage.setItem("userFiles", JSON.stringify(newFiles));
     });
 
     setFiles(files.filter((file) => file.filename !== filename));

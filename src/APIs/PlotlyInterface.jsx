@@ -5,22 +5,21 @@
 /**
  * This is an interface for the Plotly Library
  *
- * @param canvasID - this is the id of the div where the plot will be generated
- * @param {*} plotly - this takes the window.Plotly object
+ * @param {*} canvasID - this is the id of the div where the plot will be generated
  *
- * properties:
- * - fontColor - this will change the font color of the title and y/x axis labels
- * - plotColor - this changes the color of the paper and the plot
- * - gridColor - this changes the color of the grid within the plot
+ * ### Dev Information
+ * - this is the plotly cdn
+ * ```HTML
+ * <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+ * ```
  */
- export default class PlotlyInterface {
-  /*
-  - Take the plotly object from the window
-  - to allow this make sure that the plotly cdn is included in the index.html document
-  - ensure that the plotly constant is initialized within a useEffect or a componentDidMount callback
-  - this will ensure that the div with the plotly ID is in the DOM when the function runs 
-
-  */
+export default class PlotlyInterface {
+  /**
+   * Take the plotly object from the window
+   * to allow this make sure that the following plotly cdn provided above is included in the index.html document
+   * ensure that the plotly constant is initialized within a useEffect or a componentDidMount callback
+   * this will ensure that the div with the plotly ID is in the DOM when the function runs
+   */
   constructor(canvasID) {
     this.canvasID = canvasID;
     this.plotly = window.Plotly;
@@ -52,36 +51,36 @@
           color: this.fontColor,
         },
       },
-      sliders: [
-        {
-          pad: { t: 30 },
-          currentvalue: {
-            xanchor: "right",
-            prefix: "color: ",
-            font: {
-              color: "#888",
-              size: 20,
-            },
-          },
-          steps: [
-            {
-              label: "red",
-              method: "restyle",
-              args: ["line.color", "red"],
-            },
-            {
-              label: "green",
-              method: "restyle",
-              args: ["line.color", "green"],
-            },
-            {
-              label: "blue",
-              method: "restyle",
-              args: ["line.color", "blue"],
-            },
-          ],
-        },
-      ],
+      // sliders: [
+      //   {
+      //     pad: { t: 30 },
+      //     currentvalue: {
+      //       xanchor: "right",
+      //       prefix: "color: ",
+      //       font: {
+      //         color: "#888",
+      //         size: 20,
+      //       },
+      //     },
+      //     steps: [
+      //       {
+      //         label: "red",
+      //         method: "restyle",
+      //         args: ["line.color", "red"],
+      //       },
+      //       {
+      //         label: "green",
+      //         method: "restyle",
+      //         args: ["line.color", "green"],
+      //       },
+      //       {
+      //         label: "blue",
+      //         method: "restyle",
+      //         args: ["line.color", "blue"],
+      // //       },
+      // //     ],
+      //   },
+      // ],
     };
     this.config = {
       responsive: true,

@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import PlotCommandLine from "../plot_command_line/PlotCommandLine";
-import PlotlyInterface from "./DashboardMetaData";
+import PlotCommandLine from "../plot_component/plot_command_line/PlotCommandLine";
+import PlotlyInterface from "../../../APIs/PlotlyInterface";
 
 /////////////////////////////////////
 //PLOT COMPONENT DISPLAYING THE GRAPH

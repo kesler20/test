@@ -34,7 +34,8 @@ export default class RESTfulApiInterface {
    * - the URI and the response from the backend are logged to the console
    *
    * ### Dev Information
-   *  - to access the data within the response use .then(res => store(res)) on the response
+   * - the status code and the backend response will be logged to the console
+   * - to access the data within the response use .then(res => store(res)) on the response
    * - the status code is a value of the key statusCode
    *
    * If you send the same PUT request multiple times, the result will remain the same but
@@ -71,7 +72,7 @@ export default class RESTfulApiInterface {
    * @param {*} resourceEndpoint - string specifying the endpoint where the backend
    * allows users to consume the specified resource of the form ``topic/resourceCategory``
    *
-   * @returns {*} {statusCode, resource} - a ``<Promise>`` containing the status code and 
+   * @returns {*} {statusCode, resource} - a ``<Promise>`` containing the status code and
    * the resource returned by the server of the request
    *
    * ### Dev Information
@@ -101,12 +102,13 @@ export default class RESTfulApiInterface {
    *
    * @param {*} resourceEndpoint - string specifying the endpoint where the backend
    * allows users to consume the specified resource of the form ``topic/resourceCategory``
-   * 
+   *
    * @param {*} resourceKey - string specifying the unique identifier of the resource to be deleted
    *
    * @returns {*} {statusCode} - a ``<Promise>`` containing the status code of the request
    *
    * ### Dev Information
+   * - the status code and the backend response will be logged to the console
    * - to access the data within the response use .then(res => store(res)) on the response
    * - the status code is a value of the key statusCode
    */
