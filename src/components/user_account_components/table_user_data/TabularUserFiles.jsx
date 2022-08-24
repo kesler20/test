@@ -10,8 +10,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import "./TabularUserFiles.css";
-import { rows } from "../../../modules/otherScripts";
-
+import { rows } from "../../../modules/DataProcessing";
 import {
   Paper,
   TableCell,

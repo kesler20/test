@@ -1,9 +1,9 @@
 import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { range } from "../modules/otherScripts";
+import { range } from "../modules/DataProcessing";
 import React, { Component } from "react";
 import Channel from "./Channel";
 import PlotlyInterface from "../APIs/PlotlyInterface";
-
+import DatabaseApi from "../APIs/DatabaseApi";
 // this pure function returns 3 colors given the channelID
 // returns -> total color , trend color, boundary color
 const plotColorPalette = (channelID) => {
@@ -166,6 +166,7 @@ class Iot extends Component {
       "Value",
       "Date Time"
     ),
+    databaseApi : new DatabaseApi('userIoTData'),
     channels: initialClients,
     dataSet: [], // array with the same lenght of the number of channels there should be a symmetry between channel id and index of global infos
     cnt: [], // array with the same length of the number of channels
@@ -341,6 +342,7 @@ class Iot extends Component {
       extendedTrace.y.push(...val.y);
       extendedTrace.x.push(...val.x);
     });
+    console.log("this is the exteneded traces", extendedTrace);
 
     this.state.plotlyInterface.updateInitialPlot(
       extendedTrace.y,

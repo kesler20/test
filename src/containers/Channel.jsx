@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import MQTTApi, { check } from "../APIs/MQTTApi";
+import MQTTApi from "../APIs/MQTTApi";
+import Controller from "../modules/Controller";
 import DatabaseApi from "../APIs/DatabaseApi";
 import ChannelCommand from "../components/channel_command_interface/ChannelCommand";
+import { convertEpochTimeToLocalTime, convertUnixEpochTimeSToDate } from "../modules/DataProcessing";
 
 const Channel = (props) => {
   const {
@@ -13,12 +15,44 @@ const Channel = (props) => {
     onChangeErrorBound,
     handleControlIntensity,
     onViewOff,
-    clientID
+    clientID,
   } = props;
 
   const [mqttClient, setMqttClient] = useState(new MQTTApi(clientID));
-  const [db, setDb] = useState(new DatabaseApi(`/${readTopic}/json-database`));
-  const [lastTrace, setLastTrace] = useState([]);
+  const [controller, setController] = useState(
+    new Controller(mqttClient.client)
+  );
+  const [db, setDb] = useState(new DatabaseApi(`userIoTData`));
+
+  const onMessageCallback = (message) => {
+    let data = { x_value: [0], total_1: [0], trend_1: [0] };
+    try {
+      data = JSON.parse(message);
+      data.x_value = convertEpochTimeToLocalTime(data.x_value)
+      console.log("the following data will be stored", data);
+      db.saveResourceToLocalStorage(`/${readTopic}/json-database`,data);
+      onUpdateDatabase();
+    } catch (e) {
+      console.log(e);
+    }
+
+    const { controlStatus, controlIntensity, target } = JSON.parse(
+      localStorage.getItem(`channel ${id} control state`)
+    );
+
+    try {
+      controller.check(
+        data.trend_1,
+        data.total_1,
+        controlStatus,
+        writeTopic,
+        controlIntensity,
+        target
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     mqttClient.onConnect(() => {
@@ -26,35 +60,7 @@ const Channel = (props) => {
         console.log(`channel ${id} subscribed to topic : ${readTopic} 👂🎶...`);
         console.log(`channel ${id} and controls topic : ${writeTopic} 🖊️`);
       });
-      mqttClient.client.on("message", (topic, message) => {
-        let data = { x_value: [0], total_1: [0], trend_1: [0] };
-        try {
-          data = JSON.parse(message.toString());
-          console.log("the following data will be stored", data);
-          db.createResource(data);
-          onUpdateDatabase();
-        } catch (e) {
-          console.log(e);
-        }
-
-        const { controlStatus, controlIntensity, target } = JSON.parse(
-          localStorage.getItem(`channel ${id} control state`)
-        );
-        try {
-          check(
-            mqttClient.client,
-            data.trend_1,
-            data.total_1,
-            controlStatus,
-            writeTopic,
-            controlIntensity,
-            target
-          );
-        } catch (e) {
-          console.log(e);
-        }
-
-      });
+      mqttClient.onMessage(onMessageCallback);
     }, []);
   });
 

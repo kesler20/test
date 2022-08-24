@@ -21,7 +21,7 @@ export default class DatabaseApi {
      * check if the resource already exists in the database
      * put resource as a JSON object to ./baseURL/resourcesDomain/CREATE if does not exist
      */
-    localStorage.setItem(resourceKey, JSON.stringify(resource))
+    localStorage.setItem(resourceKey, JSON.stringify(resource));
     this.api.putResource(this.resourcesDomain, resource);
   }
 
@@ -59,7 +59,7 @@ export default class DatabaseApi {
      * call the GET method on the backend
      * if the resource remains undefined after the request return an empty list
      */
-    let resource;
+    let resource = [];
     if (localStorage.getItem(resourceKey) != null)
       return JSON.parse(localStorage.getItem(resourceKey));
     this.api.getResource(this.resourcesDomain).then((res) => {
