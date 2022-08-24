@@ -16,11 +16,12 @@ export default class DatabaseApi {
    *
    * @param {*} resource - The resource that will be stored, preferably an object or array of objects
    */
-  createResource(resource) {
+  createResource(resourceKey, resource) {
     /**
      * check if the resource already exists in the database
      * put resource as a JSON object to ./baseURL/resourcesDomain/CREATE if does not exist
      */
+    localStorage.setItem(resourceKey, JSON.stringify(resource))
     this.api.putResource(this.resourcesDomain, resource);
   }
 

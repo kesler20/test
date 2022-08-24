@@ -1,4 +1,9 @@
+import testFetch from "../__test__/test_fetch";
 /**
+ * This is an implementation of a RESTful Api using the fetch api
+ *
+ * to test this class you can call the update fetch function
+ *
  * __Common Successful Response messages__
  * | Response | Status  | Description |
  * | -------- | ----------- | ----------- |
@@ -17,6 +22,51 @@
 export default class RESTfulApiInterface {
   constructor() {
     this.baseUrl = `${process.env.REACT_APP_BACKEND_URL_DEV}`;
+    this.jwtToken = "Bearer " + localStorage.getItem("jwtToken");
+    this.activateTestMode = false;
+  }
+
+  /**
+   * This is a method for sending http requests
+   *
+   * @param {*} URL - the url to call the request to in the form ``this.baseUrl}/resourceEndpoint/METHOD``
+   * @param {*} method - an HTTP method such as ["GET", "POST"]
+   * @param {*} body - has to be a stringified serializable JSON string, use ``JSON.stringify(param)``
+   */
+  async HTTPcall(URL, method, body) {
+    let statusCode = 0;
+    const HTTPRequest = this.activateTestMode ? testFetch : fetch;
+    if (body === undefined) {
+      await HTTPRequest(URL, {
+        headers: new Headers({
+          "X-JWT": this.jwtToken,
+        }),
+        method: method,
+      })
+        .then((res) => {
+          statusCode = res.status;
+          return res.json();
+        })
+        .then((res) => {
+          let _ = this.activateTestMode
+            ? ""
+            : console.log(`${method} ${URL} backend response`, res);
+          return { resource: res, statusCode };
+        });
+    } else {
+      await HTTPRequest(URL, {
+        headers: new Headers({
+          "X-JWT": this.jwtToken,
+        }),
+        method: method,
+        body: JSON.stringify(body),
+      }).then((res) => {
+        let _ = this.activateTestMode
+          ? ""
+          : console.log(`${method} ${URL} backend response`, res);
+        return res.status;
+      });
+    }
   }
 
   /**
@@ -31,7 +81,7 @@ export default class RESTfulApiInterface {
    * @returns {*} statusCode - a ``<Promise>`` containing the status code of the request
    *
    * Side Effects:
-   * - the URI and the response from the backend are logged to the console
+   * - the URL and the response from the backend are logged to the console
    *
    * ### Dev Information
    * - the status code and the backend response will be logged to the console
@@ -45,24 +95,11 @@ export default class RESTfulApiInterface {
    * for more information
    */
   async putResource(resourceEndpoint, resource) {
-    let URI = `${this.baseUrl}/${resourceEndpoint}/CREATE`;
-    let statusCode = 0;
-    let _ = await fetch(URI, {
-      headers: new Headers({
-        "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-      }),
-      method: "POST",
-      body: JSON.stringify(resource),
-    })
-      .then((res) => {
-        statusCode = res.status;
-        return res.json();
-      })
-      .then((res) => {
-        console.log("backend response", res);
-        console.log(`PUT ${URI}`, resource);
-      });
-    return { statusCode };
+    return this.HTTPcall(
+      `${this.baseUrl}/${resourceEndpoint}/CREATE`,
+      "POST",
+      resource
+    );
   }
 
   /**
@@ -80,20 +117,10 @@ export default class RESTfulApiInterface {
    * - the status code is a value of the key statusCode
    */
   async getResource(resourceEndpoint) {
-    let URI = `http://127.0.0.1:8000/${resourceEndpoint}/READ`;
-    let statusCode = 0;
-    let resource = await fetch(URI, {
-      headers: new Headers({
-        "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-      }),
-      method: "GET",
-    })
-      .then((res) => {
-        statusCode = res.status;
-        return res.json();
-      })
-      .then((resource) => resource);
-    return { resource, statusCode };
+    return this.HTTPcall(
+      `http://127.0.0.1:8000/${resourceEndpoint}/READ`,
+      "GET"
+    );
   }
 
   /**
@@ -113,23 +140,10 @@ export default class RESTfulApiInterface {
    * - the status code is a value of the key statusCode
    */
   async deleteResource(resourceEndpoint, resourceKey) {
-    let URI = `${this.baseUrl}/${resourceEndpoint}/DELETE`;
-    let statusCode = 0;
-    let _ = await fetch(URI, {
-      headers: new Headers({
-        "X-JWT": "Bearer " + localStorage.getItem("jwtToken"),
-      }),
-      method: "DELETE",
-      body: JSON.stringify(resourceKey),
-    })
-      .then((res) => {
-        statusCode = res.status;
-        return res.json();
-      })
-      .then((res) => {
-        console.log("backend response", res);
-        console.log(`DELETE ${URI}`, resourceKey);
-      });
-    return { statusCode };
+    return this.HTTPcall(
+      `${this.baseUrl}/${resourceEndpoint}/DELETE`,
+      "POST",
+      resourceKey
+    );
   }
 }
