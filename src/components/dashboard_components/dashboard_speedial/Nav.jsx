@@ -1,9 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
+import SpeedDial from "@mui/lab/SpeedDial";
+import SpeedDialIcon from "@mui/lab/SpeedDialIcon";
+import SpeedDialAction from "@mui/lab/SpeedDialAction";
 import { Edit } from "@material-ui/icons";
 import { Save } from "@material-ui/icons";
 import { Add } from "@material-ui/icons";

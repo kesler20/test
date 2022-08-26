@@ -116,4 +116,20 @@ test("delete one object from local storage", () => {
   expect(dbApi.readResource("testFiles")).toHaveLength(0);
 });
 
+test("update a resource in local storage", () => {
+  dbApi.saveResourceToLocalStorage("testFiles", { objectAttribute: "test1" });
+  dbApi.saveResourceToLocalStorage("testFiles", {
+    name: "testToChange",
+    objectAttribute1: "test2",
+  });
+  dbApi.updateResourceInLocalStorage("testFiles", "name", "testToChange", {
+    name: "testToChange",
+    objectAttribute1: "test3",
+  });
+  expect(
+    dbApi
+      .readResourceFromLocalStorage("testFiles")
+      .filter((testFile) => testFile["name"] === "testToChange")
+  ).toHaveAttribute("objectAttribute1", "test3");
+});
 // THE CREATE FILE FUNCTIONALITY IS TESTED USING JEST INTEGRATION TESTING

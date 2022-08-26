@@ -142,7 +142,7 @@ export default class RESTfulApiInterface {
   async deleteResource(resourceEndpoint, resourceKey) {
     return this.HTTPcall(
       `${this.baseUrl}/${resourceEndpoint}/DELETE`,
-      "POST",
+      "DELETE",
       resourceKey
     );
   }

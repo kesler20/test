@@ -44,6 +44,61 @@ export default class DatabaseApi {
     let updatedResources = [...existingResources, resource];
     localStorage.setItem(resourceKey, JSON.stringify(updatedResources));
   }
+  /**
+   * Get resources as parsed objects from local storage with the corresponding resourceKey
+   * otherwise return asn empty array
+   *
+   * @param {*} resourceKey - The unique identifier key of the resource, this needs to be a string
+   *
+   * __NOTE ensure that the resource key is a string
+   */
+  readResourceFromLocalStorage(resourceKey) {
+    /**
+     * return [] if the local storage item is not created which means that the localStorage.getItem returns null
+     * otherwise return parsed object
+     */
+    return localStorage.getItem(resourceKey) === null
+      ? []
+      : JSON.parse(localStorage.getItem(resourceKey));
+  }
+
+  /**
+   * This function will replace an existing resource with the provided key value pair in local storage 
+   * in the event that there are no resources with the given resourceKey, the resource will be saved to local storage
+   * 
+   * @param {*} resourceKey - The unique identifier key of the resource, this needs to be a string
+   * @param {*} targetKey - The key of the target resource that you want to replace
+   * @param {*} targetValue - The value of the resource that you want to replace
+   * @param {*} resource - The new resource to insert to the local storage
+   * 
+   */
+  updateResourceInLocalStorage(resourceKey, targetKey, targetValue, resource) {
+    let existingResources = this.readResource(resourceKey);
+
+    /**
+     * if there are no existing resources then the resource will be created 
+     * in local storage 
+     */
+    if (existingResources.length > 0) {
+      let indexOfTargetResource = [];
+
+      /**
+       * get the index of the resource that we want to replace
+       */
+      existingResources.forEach((element) => {
+        if (element[`${targetKey}`] === targetValue) {
+          indexOfTargetResource.push(existingResources.indexOf(element));
+        }
+      });
+
+      /**
+       * replace the resource that was previously in that position with the new one
+       */
+      existingResources.splice(indexOfTargetResource, 1, resource);
+    } else {
+      this.saveResourceToLocalStorage(resourceKey, resource);
+    }
+  }
 
   /**
    * This method will read the resource from local storage, if the resource key will not be found
@@ -59,13 +114,12 @@ export default class DatabaseApi {
      * call the GET method on the backend
      * if the resource remains undefined after the request return an empty list
      */
-    let resource = [];
-    if (localStorage.getItem(resourceKey) != null)
-      return JSON.parse(localStorage.getItem(resourceKey));
-    this.api.getResource(this.resourcesDomain).then((res) => {
-      resource = res;
-    });
-    return resource === undefined ? [] : resource;
+    let resource = this.readResourceFromLocalStorage(resourceKey);
+    if (resource === [])
+      this.api.getResource(this.resourcesDomain).then((res) => {
+        resource = res;
+      });
+    return resource;
   }
 
   /**

@@ -128,3 +128,111 @@ export const rows = [
   createData("Nougat", 360, 19.0),
   createData("Oreo", 437, 18.0),
 ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+
+// this pure function returns 3 colors given the channelID
+// returns -> total color , trend color, boundary color
+export const plotColorPalette = (channelID) => {
+  if (channelID === 0) return ["green", "yellow", "#79eec9"];
+  if (channelID === 1) return ["rgb(255, 0, 76)", "white", "#f6aac6"];
+  if (channelID === 2) return ["green", "yellow", "#79eec9"];
+  return ["green", "yellow", "#79eec9"];
+};
+
+export const constructChannelPlot = (
+  data,
+  boundValues,
+  channelID,
+  visibility,
+  channelVisibility
+) => {
+  let dataParams = [`total_${channelID + 1}`, `trend_${channelID + 1}`];
+
+  if (data.length === 0) return [];
+  if (data[data.length - 1][dataParams[0]] === undefined) return [];
+
+  const total = [];
+  const trend = [];
+  const x_values = [];
+  let upperBound = [];
+  let lowerBound = [];
+
+  data.forEach((val) => {
+    total.push(val[dataParams[0]]);
+    trend.push(val[dataParams[1]]);
+    upperBound.push(val[dataParams[1]] + boundValues);
+    lowerBound.push(val[dataParams[1]] - boundValues);
+    x_values.push(val.x_value);
+  });
+
+  const total1 = {
+    x: [...x_values],
+    y: [...total],
+    mode: "lines",
+    name: `Channel ${channelID}`,
+    visible: channelVisibility,
+    line: {
+      color: plotColorPalette(channelID)[0],
+      dash: "solid",
+      width: "5",
+    },
+  };
+  const trend1 = {
+    x: [...x_values],
+    y: [...trend],
+    mode: "lines",
+    visible: channelVisibility,
+    name: `Trend ${channelID}`,
+    line: {
+      color: plotColorPalette(channelID)[1],
+      dash: "dot",
+    },
+  };
+  const trend1Upper = {
+    x: [...x_values],
+    y: [...upperBound],
+    mode: "lines",
+    name: `Trend ${channelID} Upper Bound`,
+    visible: visibility,
+    showlegend: false,
+    line: {
+      color: plotColorPalette(channelID)[2],
+    },
+  };
+  const trend1Lower = {
+    x: [...x_values],
+    y: [...lowerBound],
+    mode: "lines",
+    visible: visibility,
+    showlegend: false,
+    fill: "tonexty",
+    name: `Trend ${channelID} Lower Bound`,
+    line: {
+      color: plotColorPalette(channelID)[2],
+    },
+  };
+  return [total1, trend1, trend1Upper, trend1Lower];
+};
+
+export const updateChannelPlot = (data, boundValue, channelID) => {
+  let y = [];
+  let x = [];
+  let dataParams = [`total_${channelID + 1}`, `trend_${channelID + 1}`];
+
+  if (data[data.length - 1] === undefined) return { y: [], x: [] };
+  if (data[data.length - 1][dataParams[0]] === undefined)
+    return { y: [], x: [] };
+
+  y.push([data[data.length - 1][dataParams[0]]]);
+  y.push([data[data.length - 1][dataParams[1]]]);
+  y.push([data[data.length - 1][dataParams[1]] + boundValue]);
+  y.push([data[data.length - 1][dataParams[1]] - boundValue]);
+  // x array must be of the same length of the y array
+  y.forEach((val) => {
+    x.push([data[data.length - 1].x_value]);
+  });
+
+  return {
+    y: y,
+    x: x,
+  };
+};

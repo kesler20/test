@@ -10,6 +10,9 @@ const Channel = (props) => {
     id,
     readTopic,
     writeTopic,
+    controlStatus,
+    controlIntensity,
+    target,
     onUpdateDatabase,
     onChangeControlled,
     onChangeErrorBound,
@@ -25,6 +28,7 @@ const Channel = (props) => {
   const [db, setDb] = useState(new DatabaseApi(`userIoTData`));
 
   const onMessageCallback = (message) => {
+    console.log("this is also called ")
     let data = { x_value: [0], total_1: [0], trend_1: [0] };
     try {
       data = JSON.parse(message);
@@ -35,10 +39,6 @@ const Channel = (props) => {
     } catch (e) {
       console.log(e);
     }
-
-    const { controlStatus, controlIntensity, target } = JSON.parse(
-      localStorage.getItem(`channel ${id} control state`)
-    );
 
     try {
       controller.check(
