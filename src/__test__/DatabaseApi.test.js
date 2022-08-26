@@ -129,7 +129,7 @@ test("update a resource in local storage", () => {
   expect(
     dbApi
       .readResourceFromLocalStorage("testFiles")
-      .filter((testFile) => testFile["name"] === "testToChange")
-  ).toHaveAttribute("objectAttribute1", "test3");
+      .filter((testFile) => testFile["name"] === "testToChange")[0]["objectAttribute1"]
+  ).toBe("test3");
 });
 // THE CREATE FILE FUNCTIONALITY IS TESTED USING JEST INTEGRATION TESTING

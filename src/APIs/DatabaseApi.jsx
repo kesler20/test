@@ -25,6 +25,10 @@ export default class DatabaseApi {
     this.api.putResource(this.resourcesDomain, resource);
   }
 
+  createResourceInLocalStorage(resourceKey, resource) {
+    localStorage.setItem(resourceKey, JSON.stringify(resource))
+  }
+
   /**
    * Update resources in local storage,this function can be run iteratively as
    * the resource value will be overridden each times the function is called
@@ -63,21 +67,20 @@ export default class DatabaseApi {
   }
 
   /**
-   * This function will replace an existing resource with the provided key value pair in local storage 
+   * This function will replace an existing resource with the provided key value pair in local storage
    * in the event that there are no resources with the given resourceKey, the resource will be saved to local storage
-   * 
+   *
    * @param {*} resourceKey - The unique identifier key of the resource, this needs to be a string
    * @param {*} targetKey - The key of the target resource that you want to replace
    * @param {*} targetValue - The value of the resource that you want to replace
    * @param {*} resource - The new resource to insert to the local storage
-   * 
    */
   updateResourceInLocalStorage(resourceKey, targetKey, targetValue, resource) {
     let existingResources = this.readResource(resourceKey);
 
     /**
-     * if there are no existing resources then the resource will be created 
-     * in local storage 
+     * if there are no existing resources then the resource will be created
+     * in local storage
      */
     if (existingResources.length > 0) {
       let indexOfTargetResource = [];
@@ -95,8 +98,9 @@ export default class DatabaseApi {
        * replace the resource that was previously in that position with the new one
        */
       existingResources.splice(indexOfTargetResource, 1, resource);
+      this.createResourceInLocalStorage(resourceKey, existingResources);
     } else {
-      this.saveResourceToLocalStorage(resourceKey, resource);
+      this.createResourceInLocalStorage(resourceKey, resource);
     }
   }
 
