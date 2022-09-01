@@ -1,0 +1,16 @@
+{
+  "authSelections": "userPoolOnly",
+  "resourceName": "journalfrontend81b09ec6",
+  "serviceType": "imported",
+  "region": "eu-west-2",
+  "requiredAttributes": [
+    "email"
+  ],
+  "passwordPolicyMinLength": 8,
+  "passwordPolicyCharacters": [],
+  "mfaConfiguration": "OFF",
+  "autoVerifiedAttributes": [
+    "email"
+  ],
+  "mfaTypes": []
+}

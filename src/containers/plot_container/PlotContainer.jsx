@@ -1,7 +1,7 @@
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { range } from "../../modules/DataProcessing";
 import React, { Component } from "react";
-import Channel from "../Channel";
+import Channel from "../channel_container/Channel";
 import PlotlyInterface from "../../APIs/PlotlyInterface";
 import DatabaseApi from "../../APIs/DatabaseApi";
 import {

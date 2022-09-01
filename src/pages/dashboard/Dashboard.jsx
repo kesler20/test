@@ -6,6 +6,7 @@ import PlotComponent from "../../components/dashboard_components/plot_component/
 import Nav from "../../components/dashboard_components/dashboard_speedial/Nav";
 import DashboardThemeBtn from "../../components/dashboard_components/dashboard_theme_btn/DashboardThemeBtn";
 import DashboardTitle from "../../components/dashboard_components/dashboard_title/DashboardTitle";
+import InteractivityPanel from "../../components/dashboard_components/interactivity_panel/InteractivityPanel";
 import "./Dashboard.css";
 
 /////////////////////////////////////////////
@@ -69,8 +70,11 @@ const editableFeatures = [
  * - mode - the dashboard can be in one of two modes ['edit','view']
  */
 const Dashboard = () => {
-  const [dataGrid, setDataGrid] = useState([{ x: 0, y: 0, w: 5, h: 10 }]);
-  const [plotKeys, setPlotKeys] = useState([0]);
+  const [dataGrid, setDataGrid] = useState([
+    { x: 0, y: 0, w: 5, h: 10 },
+    { x: 0, y: 0, w: 5, h: 10 },
+  ]);
+  const [plotKeys, setPlotKeys] = useState([0,1]);
   const [mode, setMode] = useState("edit");
   const [plotMetaData, setPlotMetaData] = useState(editableFeatures);
   const [selectedPlotFeature, setSelectedPlotFeature] = useState(
@@ -78,7 +82,7 @@ const Dashboard = () => {
   );
   const [theme, setTheme] = useState(false);
   const [dashboardStructure, setDashboardStructure] = useState([
-    { data: { x, y }, layout: {}, plotType: "scatter" },
+    { data: { x, y }, layout: {}, plotType: "scatter" },{ tools : "filter" }
   ]);
 
   /**
@@ -168,7 +172,8 @@ const Dashboard = () => {
           isDraggable={mode === "edit" ? true : false}
         >
           {plotKeys.map((plotKey) => {
-            return (
+            console.log("this is cool",dashboardStructure[plotKey].data)
+            return dashboardStructure[plotKey].data !== undefined ? (
               <PlotComponent
                 data={dashboardStructure[plotKey].data}
                 layout={dashboardStructure[plotKey].layout}
@@ -182,6 +187,13 @@ const Dashboard = () => {
                 onFeatureSelected={(selection) =>
                   handleFeatureSelection(selection)
                 }
+                onRemoveBtnClicked={(plotKey) => handleRemovePlot(plotKey)}
+                viewMode={mode}
+              />
+            ) : (
+              <InteractivityPanel
+                key={plotKey}
+                data-grid={dataGrid[plotKey]}
                 onRemoveBtnClicked={(plotKey) => handleRemovePlot(plotKey)}
                 viewMode={mode}
               />

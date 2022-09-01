@@ -27,7 +27,7 @@ const SideBar = styled.div`
   flex-direction: column;
 `;
 
-const Navbar = () => {
+const Navbar = ({ onSignOut }) => {
   const [currentPage, setCurrentPage] = useState("iot");
   return (
     <SideBar>
@@ -86,6 +86,35 @@ const Navbar = () => {
         <Tooltip title="dashboard">
           <IconButton
             onClick={() => setCurrentPage("dashboard")}
+            className={
+              currentPage === "dashboard"
+                ? "icon navbar__navigation-link--active"
+                : "icon navbar__navigation-link--inactive"
+            }
+          >
+            <MdDashboard className="navbar__navigation-link__icon" />
+          </IconButton>
+        </Tooltip>
+      </Link>
+      <Link to={"./dashboard"}>
+        <Tooltip title="dashboard">
+          <IconButton
+            onClick={() => setCurrentPage("dashboard")}
+            className={
+              currentPage === "dashboard"
+                ? "icon navbar__navigation-link--active"
+                : "icon navbar__navigation-link--inactive"
+            }
+          >
+            <MdDashboard className="navbar__navigation-link__icon" />
+          </IconButton>
+        </Tooltip>
+      </Link>
+
+      <Link to={"./"}>
+        <Tooltip title="Sign out">
+          <IconButton
+            onClick={() => onSignOut()}
             className={
               currentPage === "dashboard"
                 ? "icon navbar__navigation-link--active"

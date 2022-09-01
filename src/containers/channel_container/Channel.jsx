@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import MQTTApi from "../APIs/MQTTApi";
-import Controller from "../modules/Controller";
-import DatabaseApi from "../APIs/DatabaseApi";
-import ChannelCommand from "../components/channel_command_interface/ChannelCommand";
-import { convertEpochTimeToLocalTime, convertUnixEpochTimeSToDate } from "../modules/DataProcessing";
+import MQTTApi from "../../APIs/MQTTApi";
+import Controller from "../../modules/Controller";
+import DatabaseApi from "../../APIs/DatabaseApi";
+import ChannelCommand from "../../components/channel_command_interface/ChannelCommand";
+import { convertEpochTimeToLocalTime, convertUnixEpochTimeSToDate } from "../../modules/DataProcessing";
 
 const Channel = (props) => {
   const {

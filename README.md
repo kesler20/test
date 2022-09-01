@@ -6,4 +6,10 @@
 production such that the backend which the front-end listens to is the correct one 
 - include a websocket connection
 
-
+to start the application use amplify configure
+configure the user
+then use amplify pull
+amplify import auth -> congnito_pool
+amplify import storage -> database
+amplify import storage -> bucket
+etc...

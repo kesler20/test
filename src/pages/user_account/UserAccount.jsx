@@ -31,20 +31,20 @@ const UserAccount = () => {
   const [files, setFiles] = useState([]);
   const [clients, setClients] = useState([]);
   const [topics, setTopics] = useState([]);
-  const [api, setApi] = useState(new DatabaseApi('userFiles'));
-
+  //const [api, setApi] = useState(new DatabaseApi("userFiles"));
 
   useEffect(() => {
     getUserFiles();
     getUserClients();
     getUserTopics();
     //console.log('API response',api.readResource("userFiles"))
-    
   }, []);
 
-  //////////////////////////////////////////
-  // CRUD OPERATIONS ON MQTT TOPICS RESOURCE
-  /////////////////////////////////////////
+  //----------------------------------------//
+  //                                        //
+  // CRUD OPERATIONS ON MQTT TOPICS RESOURCE//
+  //                                        //
+  //----------------------------------------//
 
   const createTopic = (name) => {
     let topicNames = JSON.parse(localStorage.getItem("user-topics"));
@@ -78,9 +78,11 @@ const UserAccount = () => {
     console.log("topic created  successfully ✅", name);
   };
 
-  ///////////////////////////////////////////
-  // CRUD OPERATIONS ON USER FILES - RESOURCE
-  ///////////////////////////////////////////
+  //------------------------------------------//
+  //                                          //
+  // CRUD OPERATIONS ON USER FILES - RESOURCE //
+  //                                          //
+  //------------------------------------------//
 
   const getUserFiles = async () => {
     try {

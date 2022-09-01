@@ -34,7 +34,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Navbar></Navbar>
+        <Navbar onSignOut={signOut}></Navbar>
         <Pages />
       </BrowserRouter>
     </div>

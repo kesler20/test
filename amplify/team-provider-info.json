@@ -1,0 +1,54 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-journalfrontend-dev-163004-authRole",
+      "UnauthRoleArn": "arn:aws:iam::876979855395:role/amplify-journalfrontend-dev-163004-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::876979855395:role/amplify-journalfrontend-dev-163004-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-journalfrontend-dev-163004-deployment",
+      "UnauthRoleName": "amplify-journalfrontend-dev-163004-unauthRole",
+      "StackName": "amplify-journalfrontend-dev-163004",
+      "StackId": "arn:aws:cloudformation:eu-west-2:876979855395:stack/amplify-journalfrontend-dev-163004/78fd3100-1e41-11ed-abac-0227584845da",
+      "AmplifyAppId": "dvj0k4w1hlwdu"
+    },
+    "categories": {
+      "storage": {
+        "dynamo28f97260dev": {
+          "tableName": "dynamo28f97260-dev",
+          "region": "eu-west-2",
+          "arn": "arn:aws:dynamodb:eu-west-2:876979855395:table/dynamo28f97260-dev",
+          "streamArn": "arn:aws:dynamodb:eu-west-2:876979855395:table/dynamo28f97260-dev/stream/2022-07-28T13:08:19.187",
+          "partitionKeyName": "topic",
+          "partitionKeyType": "S",
+          "sortKeyName": "accountID",
+          "sortKeyType": "S"
+        },
+        "journalfrontend64615553": {
+          "bucketName": "test-20220728140647-hostingbucket-dev",
+          "region": "eu-west-2"
+        }
+      },
+      "auth": {
+        "journalfrontend9786bfed": {
+          "userPoolId": "eu-west-2_41z8aLc9G",
+          "userPoolName": "test83ed4818_userpool_83ed4818-dev",
+          "webClientId": "53nheqqjmm6fvip4q2jhuij24t",
+          "nativeClientId": "53nheqqjmm6fvip4q2jhuij24t",
+          "identityPoolId": "eu-west-2:a8ed0b33-acf9-48b3-82d5-806992699221",
+          "identityPoolName": "test83ed4818_identitypool_83ed4818__dev",
+          "allowUnauthenticatedIdentities": false,
+          "authRoleArn": "arn:aws:iam::876979855395:role/amplify-test-dev-140005-authRole",
+          "authRoleName": "amplify-test-dev-140005-authRole",
+          "unauthRoleArn": "arn:aws:iam::876979855395:role/amplify-test-dev-140005-unauthRole",
+          "unauthRoleName": "amplify-test-dev-140005-unauthRole"
+        },
+        "journalfrontend81b09ec6": {
+          "userPoolId": "eu-west-2_41z8aLc9G",
+          "userPoolName": "test83ed4818_userpool_83ed4818-dev",
+          "webClientId": "34i87s4h5o9h7uvil9jcv2pd6r",
+          "nativeClientId": "53nheqqjmm6fvip4q2jhuij24t"
+        }
+      }
+    }
+  }
+}
