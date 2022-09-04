@@ -8,7 +8,7 @@ import DashboardThemeBtn from "../../components/dashboard_components/dashboard_t
 import DashboardTitle from "../../components/dashboard_components/dashboard_title/DashboardTitle";
 import InteractivityPanel from "../../components/dashboard_components/interactivity_panel/InteractivityPanel";
 import "./Dashboard.css";
-
+import { useStateContext } from "../../contexts/ContextProvider";
 /////////////////////////////////////////////
 // DASHBOARD CONTAINER FOR THE DASHBOARD PAGE
 /////////////////////////////////////////////
@@ -70,11 +70,12 @@ const editableFeatures = [
  * - mode - the dashboard can be in one of two modes ['edit','view']
  */
 const Dashboard = () => {
+  const { readableUserFiles } = useStateContext();
   const [dataGrid, setDataGrid] = useState([
     { x: 0, y: 0, w: 5, h: 10 },
     { x: 0, y: 0, w: 5, h: 10 },
   ]);
-  const [plotKeys, setPlotKeys] = useState([0,1]);
+  const [plotKeys, setPlotKeys] = useState([0, 1]);
   const [mode, setMode] = useState("edit");
   const [plotMetaData, setPlotMetaData] = useState(editableFeatures);
   const [selectedPlotFeature, setSelectedPlotFeature] = useState(
@@ -82,7 +83,8 @@ const Dashboard = () => {
   );
   const [theme, setTheme] = useState(false);
   const [dashboardStructure, setDashboardStructure] = useState([
-    { data: { x, y }, layout: {}, plotType: "scatter" },{ tools : "filter" }
+    { data: { x, y }, layout: {}, plotType: "scatter" },
+    { tools: "filter" },
   ]);
 
   /**
@@ -150,17 +152,11 @@ const Dashboard = () => {
       }}
     >
       <Nav onNavBtnClicked={(btnName) => handleNavBtnClicked(btnName)} />
-      <div className={theme ? "dashboard__nav--light" : "dashboard__nav--dark"}>
-        <div className="flex-space-evenly">
-          <DashboardTitle viewMode={mode} theme={theme} />
-          <DashboardThemeBtn onThemeChange={() => setTheme(!theme)} />
-        </div>
-      </div>
       <div
         style={{
           width: "100%",
           height: "100vh",
-          backgroundColor: `${theme ? "#d6e4ea" : "#161d33"}`,
+          backgroundColor: "#d6e4ea",
         }}
       >
         <GridLayout
@@ -172,7 +168,7 @@ const Dashboard = () => {
           isDraggable={mode === "edit" ? true : false}
         >
           {plotKeys.map((plotKey) => {
-            console.log("this is cool",dashboardStructure[plotKey].data)
+            console.log(readableUserFiles);
             return dashboardStructure[plotKey].data !== undefined ? (
               <PlotComponent
                 data={dashboardStructure[plotKey].data}
